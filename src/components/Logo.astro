@@ -14,14 +14,14 @@ const wordSize = size === 'sm' ? 'text-[15px]' : 'text-[17px]';
   href={href}
   class:list={[
     'group inline-flex items-center gap-2.5 rounded-full font-heading',
-    variant === 'light' ? 'text-white' : 'text-ink',
+    variant === 'light' ? 'text-on-ink' : 'text-ink',
   ]}
   aria-label="Image Redaction home"
 >
   <span
     class:list={[
       'grid place-items-center rounded-[9px]',
-      variant === 'light' ? 'bg-white text-ink' : 'bg-ink text-white',
+      variant === 'light' ? 'bg-canvas text-ink' : 'bg-ink text-on-ink',
     ]}
     style={`width:${markSize}px;height:${markSize}px`}
   >

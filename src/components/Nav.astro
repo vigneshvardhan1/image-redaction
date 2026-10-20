@@ -2,6 +2,7 @@
 import Logo from './Logo.astro';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
 const links = [
@@ -45,6 +46,7 @@ function isActive(link: (typeof links)[number]) {
         </div>
 
         <div class="flex items-center gap-1.5">
+          <ThemeToggle />
           <span class="hidden sm:block">
             <Button href="/#editor" size="md" iconRight="arrow-right">
               Redact an image

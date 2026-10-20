@@ -3,6 +3,9 @@
 /* The local Tailwind documentation snapshot is not page source. */
 @source not "../../.agents";
 
+/* Dark mode is driven by a class on <html>, not by the OS media query. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: "Inter Variable", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Helvetica Neue", Arial, sans-serif;
@@ -17,6 +20,20 @@
   --color-hairline: #e0e0e0;
   --color-hairline-soft: #f0f0f0;
   --color-accent: #0066ff;
+
+  /* Text that sits on an ink-filled surface. Inverts with the theme. */
+  --color-on-ink: #ffffff;
+  /* Text that sits on an accent-filled surface. Inverts with the theme. */
+  --color-on-accent: #ffffff;
+  /* A surface lifted above a soft track (active segment, floating chip). */
+  --color-raised: #ffffff;
+  /* Chrome drawn on top of user images. Never inverts — it must stay legible. */
+  --color-overlay-ink: #141414;
+  /* Editor backdrop behind the canvas. */
+  --color-stage: #ededed;
+  --color-stage-dot: rgba(20, 20, 20, 0.11);
+  /* Warm backdrop behind the sample imagery. */
+  --color-sample-tile: #e7e5df;
 
   --radius-tile: 1rem;
   --radius-card: 1.5rem;
@@ -56,6 +73,30 @@
     background-color: var(--color-canvas);
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+  }
+
+  /* Dark palette. The ladder is inverted: ink becomes the light surface,
+     canvas becomes the dark one, and everything keeps its role. */
+  html.dark {
+    color-scheme: dark;
+
+    --color-ink: #f4f4f5;
+    --color-ink-soft: #d6d6d9;
+    --color-muted: #a1a1a7;
+    --color-faint: #7e7e84;
+    --color-canvas: #0c0c0d;
+    --color-canvas-soft: #17171a;
+    --color-field: #1f1f23;
+    --color-hairline: #34343a;
+    --color-hairline-soft: #24242a;
+    --color-accent: #4d94ff;
+    --color-on-ink: #0c0c0d;
+    --color-on-accent: #0c0c0d;
+    --color-raised: #2e2e34;
+    --color-stage: #141417;
+    --color-stage-dot: rgba(255, 255, 255, 0.09);
+    --color-sample-tile: #1b1b1e;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -160,8 +201,8 @@
   }
 
   .canvas-stage {
-    background-color: #ededed;
-    background-image: radial-gradient(rgba(20, 20, 20, 0.11) 1px, transparent 1px);
+    background-color: var(--color-stage);
+    background-image: radial-gradient(var(--color-stage-dot) 1px, transparent 1px);
     background-size: 16px 16px;
   }
 
@@ -195,7 +236,7 @@
   .selection-box {
     position: absolute;
     border: 1.5px solid #ffffff;
-    box-shadow: 0 0 0 1.5px var(--color-ink);
+    box-shadow: 0 0 0 1.5px var(--color-overlay-ink);
     border-radius: 2px;
     pointer-events: none;
   }
@@ -205,7 +246,7 @@
     width: 11px;
     height: 11px;
     background: #ffffff;
-    border: 1.5px solid var(--color-ink);
+    border: 1.5px solid var(--color-overlay-ink);
     border-radius: 2px;
     pointer-events: auto;
     touch-action: none;
@@ -246,7 +287,7 @@
     padding: 2px 6px;
     border-radius: 9999px;
     background: var(--color-accent);
-    color: #ffffff;
+    color: var(--color-on-accent);
     font-size: 10px;
     font-weight: 600;
     line-height: 1.4;
@@ -270,7 +311,7 @@
 
   .ghost-box {
     position: absolute;
-    border: 1.5px dashed var(--color-ink);
+    border: 1.5px dashed var(--color-overlay-ink);
     background: rgba(20, 20, 20, 0.08);
     border-radius: 2px;
     pointer-events: none;
@@ -298,7 +339,7 @@
   }
 
   .tool-btn[aria-pressed="true"] {
-    background-color: var(--color-canvas);
+    background-color: var(--color-raised);
     color: var(--color-ink);
     box-shadow: 0 1px 2px rgba(20, 20, 20, 0.07);
   }
@@ -384,7 +425,7 @@
     display: block;
     width: 10px;
     height: 10px;
-    border: 1.5px solid var(--color-ink);
+    border: 1.5px solid var(--color-overlay-ink);
     border-radius: 2px;
     background: #ffffff;
   }
@@ -399,7 +440,7 @@
     border-radius: 9999px;
     background-color: var(--color-ink);
     padding: 0.7rem 1.1rem;
-    color: #ffffff;
+    color: var(--color-on-ink);
     font-size: 13px;
     line-height: 1.35;
     opacity: 0;
@@ -415,7 +456,7 @@
   }
 
   [data-dropzone].is-dragging {
-    background-color: #ffffff;
+    background-color: var(--color-canvas);
     box-shadow: inset 0 0 0 2px var(--color-ink);
   }
 
@@ -441,6 +482,51 @@
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  .theme-toggle {
+    display: inline-grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 9999px;
+    color: var(--color-muted);
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  /* One icon per mode: the moon invites a switch to dark, the sun back to light. */
+  .theme-toggle .theme-icon-sun {
+    display: none;
+  }
+
+  html.dark .theme-toggle .theme-icon-sun {
+    display: block;
+  }
+
+  html.dark .theme-toggle .theme-icon-moon {
+    display: none;
+  }
+
+  /* The accessible name follows the same rule as the icon, so it is correct
+     on the very first paint — before any script runs. */
+  .theme-label-dark {
+    display: none;
+  }
+
+  html.dark .theme-label-light {
+    display: none;
+  }
+
+  html.dark .theme-label-dark {
+    display: block;
   }
 }
 

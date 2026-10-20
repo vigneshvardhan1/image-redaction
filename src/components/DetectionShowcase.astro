@@ -21,14 +21,14 @@ const boxes = [
       <span class="whitespace-nowrap text-[11px] font-heading">Chat screenshot</span>
       <span class="hidden whitespace-nowrap text-[10px] text-faint sm:inline">Sample scan</span>
     </div>
-    <span class="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-2.5 py-1 text-[10px] font-heading leading-none text-white">
+    <span class="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-2.5 py-1 text-[10px] font-heading leading-none text-on-ink">
       <Icon name="sparkles" size={11} />
       7 details
     </span>
   </div>
 
   <div
-    class="relative aspect-[3/2] overflow-hidden bg-[#e7e5df]"
+    class="relative aspect-[3/2] overflow-hidden bg-sample-tile"
     role="img"
     aria-label="A sample chat screenshot with dashed detection boxes over a name, email address, phone number, two address lines, and two card detail lines."
   >
@@ -48,7 +48,7 @@ const boxes = [
           style={box.style}
           aria-hidden="true"
         >
-          <span class="absolute -top-[17px] left-0 hidden rounded-full bg-accent px-1.5 py-[1px] text-[9px] font-heading leading-[1.5] text-white sm:inline">
+          <span class="absolute -top-[17px] left-0 hidden rounded-full bg-accent px-1.5 py-[1px] text-[9px] font-heading leading-[1.5] text-on-accent sm:inline">
             {box.label}
           </span>
         </div>
