@@ -11,7 +11,18 @@ const SOURCE = '/samples/id.svg';
 const INK = '/samples/id-redacted.svg';
 const WIDTH = 1200;
 const HEIGHT = 800;
-const DURATION = 5200;
+/**
+ * A style does not wait around. It lands, the arrows sweep out and back, and
+ * the next style takes over — about a second and a half in total.
+ */
+const DWELL = 300;
+/**
+ * One leg of the sweep. Both legs use the same number, so left to right and
+ * right to left take exactly the same time.
+ */
+const SWEEP = 620;
+/** The length of one style: settle, sweep out, sweep back. */
+const CYCLE = DWELL + SWEEP * 2;
 /** Half the drag grip, so the handle never gets clipped by the frame. */
 const GRIP = 22;
 /** Below this the original is not really visible, so its label stays hidden. */
@@ -99,6 +110,12 @@ function createTour(root: HTMLElement, render: Renderer): void {
   let last = 0;
   /** A keyboard visitor gets the tour held still while they read the tabs. */
   let held = false;
+  /** rest → the handle sweeps out to the right → it sweeps back to the left. */
+  let phase: 'rest' | 'out' | 'back' = 'rest';
+  /** Time spent in the current sweep leg. Both legs count the same way. */
+  let sweepElapsed = 0;
+  /** Once the visitor grabs the handle, the tour stops moving it. */
+  let userMoved = false;
 
   const setProgress = (value: number) => {
     const progress = Math.min(1, Math.max(0, value));
@@ -111,12 +128,16 @@ function createTour(root: HTMLElement, render: Renderer): void {
 
   const updateCompare = () => {
     const value = Number(range.value);
-    afterWrap.style.clipPath = `inset(0 0 0 ${value}%)`;
 
     const width = panel.getBoundingClientRect().width;
     const grip = Math.min(GRIP, Math.max(0, width / 2 - GRIP));
-    const position = (value / 100) * width;
-    handle.style.left = `${Math.min(Math.max(position, grip), Math.max(grip, width - grip))}px`;
+    const raw = (value / 100) * width;
+    const position = Math.min(Math.max(raw, grip), Math.max(grip, width - grip));
+
+    // The split follows the grip, so the cover and the arrows never disagree.
+    const split = width > 0 ? (position / width) * 100 : value;
+    afterWrap.style.clipPath = `inset(0 0 0 ${split}%)`;
+    handle.style.left = `${position}px`;
     // The split line only means something once there is something to split.
     handle.style.backgroundColor = value > 1 ? '' : 'transparent';
 
@@ -129,6 +150,14 @@ function createTour(root: HTMLElement, render: Renderer): void {
       'aria-valuetext',
       `${value}% original, ${100 - value}% ${label}`
     );
+  };
+
+  /** Moves the handle and the split together. */
+  const setHandle = (value: number) => {
+    const next = Math.min(100, Math.max(0, Math.round(value)));
+    if (String(next) === range.value) return;
+    range.value = String(next);
+    updateCompare();
   };
 
   const setMode = (next: number) => {
@@ -159,7 +188,10 @@ function createTour(root: HTMLElement, render: Renderer): void {
 
     elapsed = 0;
     last = 0;
+    phase = 'rest';
+    sweepElapsed = 0;
     setProgress(0);
+    if (!userMoved) setHandle(0);
     updateCompare();
   };
 
@@ -171,14 +203,35 @@ function createTour(root: HTMLElement, render: Renderer): void {
     if (!canAnimate()) return;
 
     if (!last) last = now;
-    elapsed += Math.min(120, now - last);
+    const delta = Math.min(120, now - last);
+    elapsed += delta;
     last = now;
 
-    const progress = elapsed / DURATION;
-    setProgress(progress);
-
-    if (progress >= 1) {
-      setMode(index + 1);
+    if (phase === 'rest') {
+      setProgress(Math.min(1, elapsed / CYCLE));
+      if (elapsed >= DWELL) {
+        if (userMoved) {
+          setMode(index + 1);
+        } else {
+          phase = 'out';
+          sweepElapsed = 0;
+        }
+      }
+    } else if (phase === 'out') {
+      setProgress(Math.min(1, elapsed / CYCLE));
+      sweepElapsed += delta;
+      const t = Math.min(1, sweepElapsed / SWEEP);
+      setHandle(t * 100);
+      if (t >= 1) {
+        phase = 'back';
+        sweepElapsed = 0;
+      }
+    } else {
+      setProgress(Math.min(1, elapsed / CYCLE));
+      sweepElapsed += delta;
+      const t = Math.min(1, sweepElapsed / SWEEP);
+      setHandle((1 - t) * 100);
+      if (t >= 1) setMode(index + 1);
     }
 
     frame = requestAnimationFrame(tick);
@@ -239,13 +292,30 @@ function createTour(root: HTMLElement, render: Renderer): void {
     sync();
   });
 
-  range.addEventListener('input', updateCompare);
+  range.addEventListener('input', () => {
+    userMoved = true;
+    updateCompare();
+  });
 
-  // Pointing at the sample gives the current style a full run of the cycle.
-  root.addEventListener('pointerenter', () => {
+  // A hand on the handle wins: the tour stops moving it.
+  range.addEventListener('pointerdown', () => {
+    userMoved = true;
+    phase = 'rest';
     elapsed = 0;
+    sweepElapsed = 0;
+    last = 0;
+  });
+
+  // Pointing at the sample gives the current style a full run of the cycle,
+  // with the arrows back on the left.
+  root.addEventListener('pointerenter', () => {
+    if (userMoved) return;
+    phase = 'rest';
+    elapsed = 0;
+    sweepElapsed = 0;
     last = 0;
     setProgress(0);
+    setHandle(0);
   });
 
   reduceMotion.addEventListener('change', sync);
