@@ -1,0 +1,80 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'outline' | 'soft' | 'ghost' | 'light';
+  size?: 'sm' | 'md' | 'lg';
+  iconLeft?: string;
+  iconRight?: string;
+  type?: 'button' | 'submit';
+  class?: string;
+  ariaLabel?: string;
+  target?: string;
+  id?: string;
+  disabled?: boolean;
+  dataAttrs?: Record<string, string>;
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  iconLeft,
+  iconRight,
+  type = 'button',
+  class: className = '',
+  ariaLabel,
+  target,
+  id,
+  disabled = false,
+  dataAttrs = {},
+} = Astro.props;
+
+const base =
+  'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-heading leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-40';
+
+const sizes = {
+  sm: 'h-9 px-3.5 text-[13px]',
+  md: 'h-11 px-4 text-[15px]',
+  lg: 'h-12 px-5 text-[16px]',
+};
+
+const variants = {
+  primary: 'bg-ink text-white hover:bg-ink-soft',
+  outline: 'border border-hairline bg-canvas text-ink hover:bg-canvas-soft',
+  soft: 'bg-canvas-soft text-ink hover:bg-field',
+  ghost: 'text-ink hover:bg-canvas-soft',
+  light: 'bg-white text-ink hover:bg-canvas-soft',
+};
+
+const iconSize = size === 'sm' ? 14 : 16;
+const classes = [base, sizes[size], variants[variant], className].join(' ');
+
+const attrs = {
+  class: classes,
+  ...(href ? { href } : {}),
+  ...(ariaLabel ? { 'aria-label': ariaLabel } : {}),
+  ...(target ? { target, rel: 'noreferrer' } : {}),
+  ...(id ? { id } : {}),
+  ...(href ? {} : { type }),
+  ...(disabled ? { disabled: true, 'aria-disabled': 'true' } : {}),
+  ...dataAttrs,
+};
+---
+
+{
+  href ? (
+    <a {...attrs}>
+      {iconLeft && <Icon name={iconLeft as any} size={iconSize} />}
+      <span><slot /></span>
+      {iconRight && <Icon name={iconRight as any} size={iconSize} />}
+    </a>
+  ) : (
+    <button {...attrs}>
+      {iconLeft && <Icon name={iconLeft as any} size={iconSize} />}
+      <span><slot /></span>
+      {iconRight && <Icon name={iconRight as any} size={iconSize} />}
+    </button>
+  )
+}

@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <rect width="1400" height="900" fill="#e6e3dc"/>
+  <rect x="36" y="28" width="1328" height="844" rx="16" fill="#ffffff" stroke="#d9d5ca" stroke-width="1.5"/>
+  <path d="M36 44a16 16 0 0 1 16-16h1296a16 16 0 0 1 16 16v36H36V44Z" fill="#f5f3ee"/>
+  <circle cx="62" cy="54" r="5" fill="#d3cec2"/><circle cx="80" cy="54" r="5" fill="#d3cec2"/><circle cx="98" cy="54" r="5" fill="#d3cec2"/>
+  <rect x="360" y="41" width="680" height="26" rx="13" fill="#ebe8e1"/>
+  <text x="700" y="59" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#7c786e">app.acme.co/customers?view=all</text>
+
+  <rect x="36" y="80" width="232" height="792" fill="#f7f5f0"/>
+  <line x1="268" y1="80" x2="268" y2="872" stroke="#e6e2d8" stroke-width="1.5"/>
+  <rect x="64" y="112" width="30" height="30" rx="8" fill="#1d3a33"/>
+  <text x="106" y="134" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#1b1b1b">Acme</text>
+  <text x="64" y="196" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#8a8579">WORKSPACE</text>
+  <rect x="52" y="214" width="200" height="42" rx="8" fill="#e9e6de"/>
+  <text x="76" y="241" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#1b1b1b">Overview</text>
+  <text x="76" y="291" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f5c54">Customers</text>
+  <text x="76" y="337" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f5c54">Invoices</text>
+  <text x="76" y="383" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f5c54">Reports</text>
+  <text x="64" y="780" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#8a8579">Signed in as</text>
+  <text x="64" y="804" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" fill="#1b1b1b">Riya Kapoor</text>
+  <text x="64" y="826" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#6f6b62">riya.kapoor@acme.co</text>
+
+  <text x="308" y="140" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" fill="#1b1b1b">Customers</text>
+  <text x="308" y="170" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#7c786e">All accounts across the workspace.</text>
+  <rect x="1080" y="112" width="248" height="44" rx="22" fill="#f1efe9"/>
+  <text x="1104" y="139" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#9c978c">Search customers...</text>
+
+  <rect x="308" y="208" width="330" height="130" rx="12" fill="#f8f6f1" stroke="#e8e4da" stroke-width="1.5"/>
+  <text x="332" y="244" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#7c786e">Monthly recurring revenue</text>
+  <text x="332" y="294" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" fill="#1b1b1b">$48,290</text>
+  <text x="332" y="320" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#3b6b4a">+12.4% vs last month</text>
+
+  <rect x="662" y="208" width="330" height="130" rx="12" fill="#f8f6f1" stroke="#e8e4da" stroke-width="1.5"/>
+  <text x="686" y="244" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#7c786e">Active customers</text>
+  <text x="686" y="294" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" fill="#1b1b1b">1,284</text>
+  <text x="686" y="320" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#3b6b4a">+64 this month</text>
+
+  <rect x="1016" y="208" width="312" height="130" rx="12" fill="#f8f6f1" stroke="#e8e4da" stroke-width="1.5"/>
+  <text x="1040" y="244" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#7c786e">Net revenue retention</text>
+  <text x="1040" y="294" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" fill="#1b1b1b">118%</text>
+  <text x="1040" y="320" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#7c786e">Trailing 12 months</text>
+
+  <rect x="308" y="366" width="1020" height="474" rx="12" fill="#fdfcf9" stroke="#e8e4da" stroke-width="1.5"/>
+  <text x="332" y="406" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#1b1b1b">Recent accounts</text>
+  <line x1="308" y1="432" x2="1328" y2="432" stroke="#ece8df" stroke-width="1.5"/>
+  <text x="332" y="468" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#8a8579">CUSTOMER</text>
+  <text x="632" y="468" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#8a8579">EMAIL</text>
+  <text x="1010" y="468" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#8a8579">PLAN</text>
+  <text x="1230" y="468" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#8a8579">MRR</text>
+
+  <line x1="308" y1="490" x2="1328" y2="490" stroke="#f0ece3" stroke-width="1.5"/>
+  <text x="332" y="530" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1b1b1b">Ava Thompson</text>
+  <text x="632" y="530" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">ava@northstar.io</text>
+  <text x="1010" y="530" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">Scale</text>
+  <text x="1230" y="530" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#1b1b1b">$1,200</text>
+
+  <line x1="308" y1="552" x2="1328" y2="552" stroke="#f0ece3" stroke-width="1.5"/>
+  <text x="332" y="592" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1b1b1b">Liam Chen</text>
+  <text x="632" y="592" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">liam@brightpath.co</text>
+  <text x="1010" y="592" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">Growth</text>
+  <text x="1230" y="592" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#1b1b1b">$640</text>
+
+  <line x1="308" y1="614" x2="1328" y2="614" stroke="#f0ece3" stroke-width="1.5"/>
+  <text x="332" y="654" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1b1b1b">Noah Williams</text>
+  <text x="632" y="654" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">noah@fieldwork.dev</text>
+  <text x="1010" y="654" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">Scale</text>
+  <text x="1230" y="654" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#1b1b1b">$980</text>
+
+  <line x1="308" y1="676" x2="1328" y2="676" stroke="#f0ece3" stroke-width="1.5"/>
+  <text x="332" y="716" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1b1b1b">Mia Rodriguez</text>
+  <text x="632" y="716" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">mia@lumenlabs.com</text>
+  <text x="1010" y="716" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">Starter</text>
+  <text x="1230" y="716" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#1b1b1b">$180</text>
+
+  <line x1="308" y1="738" x2="1328" y2="738" stroke="#f0ece3" stroke-width="1.5"/>
+  <text x="332" y="778" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1b1b1b">Ethan Park</text>
+  <text x="632" y="778" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">ethan.park@vertexhq.com</text>
+  <text x="1010" y="778" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#4b4a45">Growth</text>
+  <text x="1230" y="778" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#1b1b1b">$720</text>
+</svg>

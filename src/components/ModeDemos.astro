@@ -1,0 +1,77 @@
+---
+import Icon from './Icon.astro';
+
+const modes = [
+  {
+    id: 'ink',
+    icon: 'square',
+    title: 'Ink black',
+    copy: 'An opaque bar that leaves nothing behind. The right default for card numbers, IDs, and anything financial.',
+    badge: 'Most secure',
+  },
+  {
+    id: 'pixelate',
+    icon: 'pixelate',
+    title: 'Pixelate',
+    copy: 'A chunky mosaic with no readable letters. Great for casual screenshots where a softer look fits.',
+    badge: 'Soft',
+  },
+  {
+    id: 'blur',
+    icon: 'blur',
+    title: 'Blur',
+    copy: 'A natural, photographic blur. Fine for faces and context, but never the first choice for secrets.',
+    badge: 'Soft',
+  },
+  {
+    id: 'emoji',
+    icon: 'emoji',
+    title: 'Emoji sticker',
+    copy: 'An opaque sticker plate with an emoji on top. Friendly on a face, still fully covered.',
+    badge: 'Casual',
+  },
+];
+---
+
+<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+  {
+    modes.map((mode) => (
+      <article class="overflow-hidden rounded-card border border-hairline-soft bg-canvas">
+        <div class="relative aspect-[8/5] overflow-hidden bg-canvas-soft">
+          <canvas
+            data-mode-demo={mode.id}
+            width="800"
+            height="500"
+            class="h-full w-full"
+            aria-label={`Example of the ${mode.title} redaction style applied to a student ID card`}
+            role="img"
+          ></canvas>
+          <span class="absolute right-2.5 top-2.5 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-heading text-ink backdrop-blur-sm">
+            {mode.badge}
+          </span>
+        </div>
+        <div class="p-4">
+          <div class="flex items-center gap-2">
+            <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft text-ink">
+              <Icon name={mode.icon as any} size={14} />
+            </span>
+            <h3 class="text-[15px] font-heading">{mode.title}</h3>
+          </div>
+          <p class="mt-2 text-[12px] leading-relaxed text-muted">{mode.copy}</p>
+        </div>
+      </article>
+    ))
+  }
+</div>
+
+<p class="mt-4 flex items-start gap-2 text-[11px] leading-relaxed text-muted">
+  <Icon name="info" size={13} class="mt-0.5 shrink-0" />
+  <span>
+    Blur and pixelation can sometimes be partially reversed. For identity documents,
+    card numbers, and addresses, use ink black — and run Verify before you share.
+  </span>
+</p>
+
+<script>
+  import '../scripts/mode-demos';
+</script>

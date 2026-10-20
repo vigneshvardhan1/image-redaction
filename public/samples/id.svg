@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="800" fill="#dfdcd4"/>
+  <rect x="176" y="136" width="880" height="580" rx="28" fill="#1b1b1b" opacity="0.12" filter="url(#cardShadow)"/>
+  <rect x="160" y="110" width="880" height="580" rx="28" fill="#fbfaf6" stroke="#d5d0c4" stroke-width="1.5"/>
+  <path d="M160 138a28 28 0 0 1 28-28h14v580h-14a28 28 0 0 1-28-28V138Z" fill="#1d3a33"/>
+  <text x="220" y="174" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#43574d">NORTHFIELD UNIVERSITY</text>
+  <text x="220" y="202" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#8a8579">STUDENT IDENTITY CARD</text>
+
+  <rect x="220" y="248" width="220" height="282" rx="14" fill="#e5e1d6"/>
+  <circle cx="330" cy="340" r="54" fill="#aeb8aa"/>
+  <path d="M246 530c0-58 38-98 84-98s84 40 84 98v0H246Z" fill="#9aa697"/>
+  <circle cx="330" cy="602" r="26" fill="#c9b98a"/>
+
+  <text x="500" y="300" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700" fill="#1b1b1b">Vikram Mehta</text>
+  <text x="500" y="356" font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#4b4a45">DOB: 14 Mar 1991</text>
+  <text x="500" y="402" font-family="Arial, Helvetica, sans-serif" font-size="21" fill="#4b4a45">ID No: 8821 4470 9932</text>
+  <text x="500" y="448" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#4b4a45">Address: 17 Rosewood Lane, Pune 411001</text>
+  <text x="500" y="522" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#4b4a45">Valid through 08/2029</text>
+
+  <rect x="500" y="602" width="260" height="58" rx="4" fill="#f2efe7"/>
+  <g fill="#2b2b2b">
+    <rect x="514" y="612" width="3" height="38"/><rect x="522" y="612" width="6" height="38"/><rect x="533" y="612" width="2" height="38"/><rect x="540" y="612" width="8" height="38"/><rect x="553" y="612" width="3" height="38"/><rect x="561" y="612" width="5" height="38"/><rect x="571" y="612" width="2" height="38"/><rect x="578" y="612" width="7" height="38"/><rect x="590" y="612" width="4" height="38"/><rect x="599" y="612" width="9" height="38"/><rect x="613" y="612" width="3" height="38"/><rect x="621" y="612" width="6" height="38"/><rect x="632" y="612" width="2" height="38"/><rect x="639" y="612" width="8" height="38"/><rect x="652" y="612" width="4" height="38"/><rect x="661" y="612" width="3" height="38"/><rect x="669" y="612" width="7" height="38"/><rect x="681" y="612" width="2" height="38"/><rect x="688" y="612" width="5" height="38"/><rect x="698" y="612" width="8" height="38"/><rect x="711" y="612" width="3" height="38"/><rect x="719" y="612" width="6" height="38"/><rect x="730" y="612" width="2" height="38"/><rect x="737" y="612" width="8" height="38"/>
+  </g>
+
+  <rect x="918" y="558" width="84" height="84" rx="6" fill="#f2efe7"/>
+  <g fill="#2b2b2b">
+    <rect x="928" y="568" width="18" height="18"/><rect x="974" y="568" width="18" height="18"/><rect x="928" y="614" width="18" height="18"/>
+    <rect x="956" y="584" width="8" height="8"/><rect x="968" y="600" width="6" height="6"/><rect x="952" y="604" width="7" height="7"/><rect x="962" y="614" width="8" height="8"/><rect x="976" y="620" width="14" height="14"/>
+  </g>
+
+  <text x="220" y="656" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#9a958a">Property of Northfield University. If found, call +91 20 6600 1188.</text>
+</svg>

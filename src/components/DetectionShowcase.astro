@@ -1,0 +1,63 @@
+---
+import Icon from './Icon.astro';
+
+const boxes = [
+  { label: 'Name', style: 'left:12%;top:6.6%;width:16.7%;height:4%' },
+  { label: 'Email', style: 'left:7.5%;top:37.1%;width:33.5%;height:8.5%' },
+  { label: 'Phone', style: 'left:7.5%;top:46.1%;width:28.5%;height:8.5%' },
+  { label: 'Address', style: 'left:52.5%;top:55.5%;width:37%;height:8%' },
+  { label: 'Address', style: 'left:7.5%;top:64.6%;width:55.8%;height:9.25%' },
+  { label: 'Card', style: 'left:52.5%;top:75%;width:34%;height:8%' },
+  { label: 'Card', style: 'left:7.5%;top:83.9%;width:36.7%;height:8.5%' },
+];
+---
+
+<div class="overflow-hidden rounded-card border border-hairline-soft bg-canvas">
+  <div class="flex items-center justify-between gap-2 border-b border-hairline-soft px-3.5 py-2.5">
+    <div class="flex min-w-0 items-center gap-2">
+      <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas-soft">
+        <Icon name="chat" size={14} />
+      </span>
+      <span class="whitespace-nowrap text-[11px] font-heading">Chat screenshot</span>
+      <span class="hidden whitespace-nowrap text-[10px] text-faint sm:inline">Sample scan</span>
+    </div>
+    <span class="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-2.5 py-1 text-[10px] font-heading leading-none text-white">
+      <Icon name="sparkles" size={11} />
+      7 details
+    </span>
+  </div>
+
+  <div
+    class="relative aspect-[3/2] overflow-hidden bg-[#e7e5df]"
+    role="img"
+    aria-label="A sample chat screenshot with dashed detection boxes over a name, email address, phone number, two address lines, and two card detail lines."
+  >
+    <img
+      src="/samples/chat.svg"
+      width="1200"
+      height="800"
+      alt=""
+      class="h-full w-full object-cover"
+      loading="lazy"
+      decoding="async"
+    />
+    {
+      boxes.map((box) => (
+        <div
+          class="absolute rounded-[3px] border border-dashed border-accent bg-accent/[0.08]"
+          style={box.style}
+          aria-hidden="true"
+        >
+          <span class="absolute -top-[17px] left-0 hidden rounded-full bg-accent px-1.5 py-[1px] text-[9px] font-heading leading-[1.5] text-white sm:inline">
+            {box.label}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="flex items-start gap-2 border-t border-hairline-soft px-3.5 py-2.5 text-[10px] leading-relaxed text-muted">
+    <Icon name="info" size={12} class="mt-0.5 shrink-0" />
+    <span>Illustrative result. OCR is best-effort — always review the boxes before you export.</span>
+  </div>
+</div>

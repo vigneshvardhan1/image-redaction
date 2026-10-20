@@ -1,0 +1,339 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqs } from '../data/faq';
+
+const inBrowser = [
+  {
+    title: 'You choose a file',
+    copy: 'A file picker, a paste, or a drop. The browser creates a local object URL — no request leaves the page.',
+    icon: 'file' as const,
+  },
+  {
+    title: 'The browser decodes it',
+    copy: 'The image is drawn to an in-memory canvas. This is the same canvas API every image editor uses.',
+    icon: 'monitor' as const,
+  },
+  {
+    title: 'You draw the boxes',
+    copy: 'Redactions are drawn over the local pixels. Undo history lives in JavaScript memory, not a database.',
+    icon: 'square' as const,
+  },
+  {
+    title: 'Canvas exports a new image',
+    copy: 'The download is a fresh file encoded from the canvas. It carries no EXIF, GPS, or device metadata.',
+    icon: 'download' as const,
+  },
+];
+
+const networkRows = [
+  {
+    request: 'This page and its font',
+    when: 'When you open the site',
+    contains: 'HTML, CSS, JavaScript, and the self-hosted Inter font. No image.',
+  },
+  {
+    request: 'Tesseract.js',
+    when: 'First time you run Smart detect',
+    contains: 'The OCR library from jsDelivr. No image.',
+  },
+  {
+    request: 'OCR core and English model',
+    when: 'First Smart detect in a browser',
+    contains: 'WebAssembly and language data requested by Tesseract.js. No image.',
+  },
+  {
+    request: 'Your screenshot',
+    when: 'Never',
+    contains: 'Nothing. There is no upload endpoint to receive it.',
+  },
+];
+
+const verifySteps = [
+  'Open your browser’s developer tools and switch to the Network tab. Clear the list.',
+  'Load an image and draw a few boxes. Watch the request list: no image request appears.',
+  'Run Smart detect. You will see requests for the OCR library and model. The screenshot is not among them.',
+  'Disconnect from the internet. Manual redaction, copy, and download still work because the pixels are already local.',
+  'Open the downloaded file’s properties. There is no camera, GPS, or device metadata field to find.',
+];
+
+const privacyFaqs = [faqs[0], faqs[1], faqs[3], faqs[5], faqs[8], faqs[9]];
+---
+
+<BaseLayout
+  title="Privacy — Image Redaction"
+  description="Your screenshot is never uploaded. See exactly what runs in your browser, the one disclosed CDN request used for optional OCR, and how to verify the claims yourself."
+>
+  <PageHero
+    eyebrow="Privacy"
+    title="The image never leaves this tab."
+    lead="Not after processing. Not for moderation. Not as an anonymous analytics event. Your browser reads the file, redacts it, and writes a new one."
+  >
+    <Button slot="actions" href="/#editor" size="lg" iconRight="arrow-right">Open the editor</Button>
+    <Button slot="actions" href="#verify" variant="outline" size="lg">Verify it yourself</Button>
+  </PageHero>
+
+  <section class="container-page">
+    <div class="grid gap-px overflow-hidden rounded-card border border-hairline-soft bg-hairline-soft sm:grid-cols-2 lg:grid-cols-4">
+      {
+        [
+          ['No image uploads', 'lock'],
+          ['No account', 'shield'],
+          ['No analytics', 'eye-off'],
+          ['No cookies', 'check'],
+        ].map(([label, icon]) => (
+          <div class="flex items-center gap-2.5 bg-canvas px-4 py-4">
+            <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={icon as any} size={13} />
+            </span>
+            <span class="text-[12px] font-heading">{label}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead
+      eyebrow="Data flow"
+      title="The whole trip happens inside the page."
+      copy="There is no processing queue, no temporary bucket, and no “we delete it after 24 hours” promise to trust. The file is decoded by your browser."
+    />
+
+    <div class="mt-8 grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
+      <div class="rounded-card border border-hairline-soft bg-canvas p-5 md:p-6">
+        <div class="flex items-center justify-between gap-3 border-b border-hairline-soft pb-4">
+          <h3 class="text-[15px] font-heading">In this browser tab</h3>
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] text-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+            Local only
+          </span>
+        </div>
+        <ol class="mt-5 space-y-5">
+          {
+            inBrowser.map((step, index) => (
+              <li class="flex gap-3.5">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft text-[11px] font-heading">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <p class="text-[14px] font-heading leading-tight">{step.title}</p>
+                  <p class="mt-1 text-[12px] leading-relaxed text-muted">{step.copy}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <div class="flex-1 rounded-card border border-dashed border-hairline bg-canvas-soft p-6">
+          <span class="grid h-10 w-10 place-items-center rounded-full bg-canvas">
+            <Icon name="wifi-off" size={18} />
+          </span>
+          <h3 class="mt-4 text-[18px] leading-tight">No server in the middle.</h3>
+          <p class="mt-2 text-[13px] leading-relaxed text-muted">
+            There is no endpoint to receive an image, so there is nothing to retain,
+            log, moderate, or sell. Closing the tab clears the working copy from memory.
+          </p>
+        </div>
+        <div class="rounded-card border border-hairline-soft bg-canvas p-6">
+          <p class="text-[11px] font-heading text-muted">Illustrative request</p>
+          <code class="mt-3 block rounded-tile bg-canvas-soft p-4 font-mono text-[12px] leading-relaxed text-ink">
+            POST /upload<br />
+            <span class="text-faint">→ 404 Not Found</span>
+          </code>
+          <p class="mt-3 text-[11px] leading-relaxed text-muted">
+            No such endpoint exists on imageredaction.com.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead
+      eyebrow="Network requests"
+      title="The honest list."
+      copy="Smart detection is optional, and it is the only feature that needs to fetch code after the page loads. Here is every request the editor can make."
+    />
+
+    <div class="mt-8 overflow-hidden rounded-card border border-hairline-soft">
+      <div class="hidden md:block">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[720px] border-collapse text-left">
+          <thead>
+            <tr class="border-b border-hairline-soft bg-canvas-soft">
+              <th scope="col" class="px-5 py-4 text-[11px] font-heading text-muted">Request</th>
+              <th scope="col" class="px-5 py-4 text-[11px] font-heading text-muted">When</th>
+              <th scope="col" class="px-5 py-4 text-[11px] font-heading text-muted">What it contains</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              networkRows.map((row) => (
+                <tr class="border-b border-hairline-soft last:border-b-0">
+                  <th scope="row" class="px-5 py-4 align-top text-[13px] font-heading text-ink">
+                    {row.request}
+                    {row.request === 'Your screenshot' && (
+                      <span class="ml-2 rounded-full bg-ink px-2 py-0.5 text-[9px] leading-none text-white">
+                        never
+                      </span>
+                    )}
+                  </th>
+                  <td class="px-5 py-4 align-top text-[12px] text-muted">{row.when}</td>
+                  <td class="px-5 py-4 align-top text-[12px] leading-relaxed text-muted">{row.contains}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="md:hidden">
+        <div class="divide-y divide-hairline-soft">
+          {
+            networkRows.map((row) => (
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <p class="text-[13px] font-heading leading-snug text-ink">{row.request}</p>
+                  {row.request === 'Your screenshot' && (
+                    <span class="shrink-0 rounded-full bg-ink px-2 py-0.5 text-[9px] leading-none text-white">
+                      never
+                    </span>
+                  )}
+                </div>
+                <p class="mt-2 text-[11px] leading-snug text-muted">
+                  <span class="font-heading text-faint">When: </span>
+                  {row.when}
+                </p>
+                <p class="mt-1.5 text-[12px] leading-relaxed text-muted">{row.contains}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 rounded-tile bg-canvas-soft p-4 md:p-5">
+      <div class="flex gap-3">
+        <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas">
+          <Icon name="info" size={14} />
+        </span>
+        <div>
+          <p class="text-[13px] font-heading leading-tight">What “on-device” means here</p>
+          <p class="mt-1.5 max-w-3xl text-[12px] leading-relaxed text-muted">
+            The OCR engine is downloaded code, and the recognition runs inside your
+            browser. Your image is not sent with the request. The static host and the
+            CDN may keep ordinary access logs for the requests that do happen, as any
+            website or CDN does. Those logs contain the request URL, not your screenshot.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="verify" class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <div class="rounded-panel bg-canvas-soft p-5 md:p-10 lg:p-12">
+      <div class="grid gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+        <div>
+          <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+            Verify it yourself
+          </p>
+          <h2 class="mt-4 text-h2">Do not take the page’s word for it.</h2>
+          <p class="mt-4 text-[15px] leading-relaxed text-muted">
+            The claim is testable in about two minutes. If you find a request that
+            contains your image, that is a bug worth reporting.
+          </p>
+          <div class="mt-6">
+            <Button
+              href="mailto:hello@imageredaction.com?subject=Privacy%20claim%20issue"
+              variant="outline"
+              iconRight="arrow-up-right"
+            >
+              Report a problem
+            </Button>
+          </div>
+        </div>
+
+        <ol class="space-y-3">
+          {
+            verifySteps.map((step, index) => (
+              <li class="flex gap-3 rounded-tile bg-canvas p-4">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas-soft text-[10px] font-heading">
+                  {index + 1}
+                </span>
+                <p class="text-[12px] leading-relaxed text-ink">{step}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-3 md:grid-cols-3">
+      <div class="rounded-card border border-hairline-soft bg-canvas p-5">
+        <span class="grid h-8 w-8 place-items-center rounded-full bg-canvas-soft">
+          <Icon name="monitor" size={14} />
+        </span>
+        <h2 class="mt-4 text-[16px] leading-tight">Your device, your responsibility</h2>
+        <p class="mt-2 text-[12px] leading-relaxed text-muted">
+          Browser extensions, clipboard managers, and screen-recording tools can read
+          what happens in a tab. If your threat model includes a compromised browser,
+          use a clean profile or a separate device.
+        </p>
+      </div>
+      <div class="rounded-card border border-hairline-soft bg-canvas p-5">
+        <span class="grid h-8 w-8 place-items-center rounded-full bg-canvas-soft">
+          <Icon name="shield" size={14} />
+        </span>
+        <h2 class="mt-4 text-[16px] leading-tight">No account, no profile</h2>
+        <p class="mt-2 text-[12px] leading-relaxed text-muted">
+          There is no sign-in, no email capture, and no per-user storage. The editor
+          has no idea who you are. That is also why there is no usage history to export.
+        </p>
+      </div>
+      <div class="rounded-card border border-hairline-soft bg-canvas p-5">
+        <span class="grid h-8 w-8 place-items-center rounded-full bg-canvas-soft">
+          <Icon name="code" size={14} />
+        </span>
+        <h2 class="mt-4 text-[16px] leading-tight">Open to inspection</h2>
+        <p class="mt-2 text-[12px] leading-relaxed text-muted">
+          The editor is plain JavaScript and canvas. There is no hidden native layer.
+          Use the network tab, read the request list, and test the offline behaviour.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead
+      eyebrow="Privacy questions"
+      title="The short version, repeated."
+      copy="The same answers as the FAQ, focused on where the image goes and what leaves the page."
+    />
+    <div class="mt-8">
+      <Faq items={privacyFaqs} />
+    </div>
+  </section>
+
+  <CtaBand
+    class="mt-20 md:mt-28"
+    eyebrow="See for yourself"
+    title="Bring an image. Watch the network tab."
+    copy="The editor is the proof. Load a screenshot, redact it, export it, and inspect the file. Nothing needs to leave the tab."
+    cta="Open the editor"
+    href="/#editor"
+    secondary="Read the guides"
+    secondaryHref="/guides"
+  />
+</BaseLayout>

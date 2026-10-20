@@ -1,0 +1,41 @@
+---
+import Button from './Button.astro';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  copy?: string;
+  cta?: string;
+  href?: string;
+  secondary?: string;
+  secondaryHref?: string;
+  class?: string;
+}
+
+const {
+  eyebrow = 'Ready when you are',
+  title = 'The safest screenshot is the one with less in it.',
+  copy = 'Open the editor, drop an image, and take a minute to cover what should not travel with it. No account, no upload, no watermark.',
+  cta = 'Redact an image',
+  href = '/#editor',
+  secondary = 'Read the privacy notes',
+  secondaryHref = '/privacy',
+  class: className = '',
+} = Astro.props;
+---
+
+<section class:list={['container-page', className]}>
+  <div class="rounded-panel bg-canvas-soft px-6 py-14 text-center md:px-12 md:py-20">
+    <p class="flex items-center justify-center gap-2 text-[12px] font-heading leading-none text-muted">
+      <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+      {eyebrow}
+    </p>
+    <h2 class="mx-auto mt-5 max-w-3xl text-h2">{title}</h2>
+    <p class="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-muted">{copy}</p>
+    <div class="mt-8 flex flex-col items-center justify-center gap-2 sm:flex-row">
+      <Button href={href} size="lg" iconRight="arrow-right">{cta}</Button>
+      <Button href={secondaryHref} variant="outline" size="lg">{secondary}</Button>
+    </div>
+    <p class="mt-5 text-[11px] text-faint">Free · No account · Nothing uploaded</p>
+  </div>
+</section>

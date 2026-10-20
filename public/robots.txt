@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://imageredaction.com/sitemap-index.xml

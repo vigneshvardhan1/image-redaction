@@ -1,0 +1,29 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  class?: string;
+}
+
+const { eyebrow, title, lead, class: className = '' } = Astro.props;
+const hasActions = Astro.slots.has('actions');
+---
+
+<section class:list={['container-page pb-12 pt-16 md:pb-16 md:pt-24', className]}>
+  <div class="max-w-4xl">
+    <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+      <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+      {eyebrow}
+    </p>
+    <h1 class="mt-5 max-w-3xl text-h1">{title}</h1>
+    {lead && <p class="mt-6 max-w-2xl text-[19px] font-light leading-relaxed text-muted">{lead}</p>}
+    {
+      hasActions && (
+        <div class="mt-8 flex flex-col items-start gap-2 sm:flex-row sm:items-center">
+          <slot name="actions" />
+        </div>
+      )
+    }
+  </div>
+</section>

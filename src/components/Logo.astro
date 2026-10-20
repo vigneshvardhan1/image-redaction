@@ -1,0 +1,40 @@
+---
+interface Props {
+  variant?: 'ink' | 'light';
+  size?: 'sm' | 'md';
+  href?: string;
+}
+
+const { variant = 'ink', size = 'md', href = '/' } = Astro.props;
+const markSize = size === 'sm' ? 26 : 30;
+const wordSize = size === 'sm' ? 'text-[15px]' : 'text-[17px]';
+---
+
+<a
+  href={href}
+  class:list={[
+    'group inline-flex items-center gap-2.5 rounded-full font-heading',
+    variant === 'light' ? 'text-white' : 'text-ink',
+  ]}
+  aria-label="Image Redaction home"
+>
+  <span
+    class:list={[
+      'grid place-items-center rounded-[9px]',
+      variant === 'light' ? 'bg-white text-ink' : 'bg-ink text-white',
+    ]}
+    style={`width:${markSize}px;height:${markSize}px`}
+  >
+    <svg
+      width={markSize * 0.58}
+      height={markSize * 0.58}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect x="2" y="6" width="20" height="12" rx="3" stroke="currentColor" stroke-width="1.6" opacity="0.5" />
+      <rect x="6" y="9.5" width="12" height="5" rx="1.5" fill="currentColor" />
+    </svg>
+  </span>
+  <span class:list={['whitespace-nowrap leading-none', wordSize]}>image redaction</span>
+</a>

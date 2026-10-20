@@ -1,0 +1,509 @@
+---
+import Icon from './Icon.astro';
+---
+
+<section id="editor" class="scroll-mt-24" data-redactor>
+  <div class="overflow-hidden rounded-card border border-hairline bg-canvas">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-hairline-soft px-3 py-2.5 md:px-4">
+      <div class="flex min-w-0 items-center gap-2">
+        <span class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+          <span class="absolute inline-flex h-full w-full rounded-full bg-accent opacity-25"></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
+        </span>
+        <span class="text-[11px] font-heading leading-none">On-device editor</span>
+        <span class="text-[11px] leading-none text-faint" aria-hidden="true">/</span>
+        <span data-filename class="max-w-[150px] truncate text-[11px] leading-none text-muted sm:max-w-[260px]">
+          No image open
+        </span>
+        <span data-image-size class="hidden text-[11px] leading-none text-faint sm:inline"></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] leading-none text-muted">
+          <Icon name="lock" size={11} />
+          0 bytes uploaded
+        </span>
+      </div>
+    </div>
+
+    <div data-dropzone class="p-3 transition-shadow md:p-4">
+      <div class="rounded-tile border border-dashed border-hairline bg-canvas-soft/60 px-5 py-10 md:px-8 md:py-14">
+        <div class="mx-auto max-w-2xl text-center">
+          <div class="relative mx-auto grid h-16 w-16 place-items-center rounded-[20px] border border-hairline-soft bg-canvas">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="14" rx="2" stroke="#141414" stroke-width="1.4" />
+              <circle cx="8.5" cy="10" r="1.3" stroke="#141414" stroke-width="1.3" />
+              <path d="m21 15.5-4.5-4.5L6 21" stroke="#141414" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+              <rect x="6.5" y="12.5" width="11" height="3" rx="1.5" fill="#141414" />
+            </svg>
+          </div>
+
+          <h2 class="mt-6 text-[clamp(1.5rem,3vw,2rem)] leading-[1.1]">
+            Drop a screenshot. Keep the secrets.
+          </h2>
+          <p class="mx-auto mt-3 max-w-lg text-[14px] leading-relaxed text-muted">
+            Paste with <kbd class="rounded bg-field px-1.5 py-0.5 font-sans text-[11px] font-heading text-ink">Ctrl</kbd>/<kbd class="rounded bg-field px-1.5 py-0.5 font-sans text-[11px] font-heading text-ink">⌘ V</kbd>,
+            drop a file, or choose one. PNG, JPG, WebP, GIF, or BMP up to 25 MB.
+          </p>
+
+          <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              data-open-file
+              class="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-[14px] font-heading text-white transition-colors hover:bg-ink-soft"
+            >
+              <Icon name="image" size={16} />
+              Choose an image
+            </button>
+            <span class="inline-flex items-center gap-1.5 px-2 text-[11px] text-muted">
+              <Icon name="lock" size={12} />
+              Nothing is uploaded
+            </span>
+          </div>
+
+          <input
+            class="hidden"
+            data-file-input
+            type="file"
+            tabindex="-1"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,image/avif"
+            aria-label="Choose an image to redact"
+          />
+
+          <p class="mt-4 text-[11px] text-faint">
+            Your browser reads the file locally. There is no upload endpoint.
+          </p>
+        </div>
+
+        <div class="mx-auto mt-9 max-w-3xl border-t border-hairline-soft pt-5">
+          <p class="text-center text-[11px] font-heading text-muted">Or try a sample</p>
+          <div class="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <button
+              type="button"
+              data-sample="/samples/chat.svg"
+              data-sample-name="Chat screenshot"
+              class="group rounded-tile text-left disabled:opacity-50"
+              aria-label="Try the chat screenshot sample"
+            >
+              <span class="block overflow-hidden rounded-tile border border-hairline bg-canvas">
+                <img
+                  src="/samples/chat.svg"
+                  width="480"
+                  height="320"
+                  alt=""
+                  decoding="async"
+                  class="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"
+                />
+              </span>
+              <span class="mt-2 flex items-baseline justify-between gap-2 text-[11px] leading-tight">
+                <span class="font-heading">Chat</span>
+                <span class="text-faint">Sample</span>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-sample="/samples/id.svg"
+              data-sample-name="Student ID"
+              class="group rounded-tile text-left disabled:opacity-50"
+              aria-label="Try the student ID sample"
+            >
+              <span class="block overflow-hidden rounded-tile border border-hairline bg-canvas">
+                <img
+                  src="/samples/id.svg"
+                  width="480"
+                  height="320"
+                  alt=""
+                  decoding="async"
+                  class="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"
+                />
+              </span>
+              <span class="mt-2 flex items-baseline justify-between gap-2 text-[11px] leading-tight">
+                <span class="font-heading">Student ID</span>
+                <span class="text-faint">Sample</span>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-sample="/samples/receipt.svg"
+              data-sample-name="Receipt"
+              class="group rounded-tile text-left disabled:opacity-50"
+              aria-label="Try the receipt sample"
+            >
+              <span class="block overflow-hidden rounded-tile border border-hairline bg-canvas">
+                <img
+                  src="/samples/receipt.svg"
+                  width="480"
+                  height="320"
+                  alt=""
+                  decoding="async"
+                  class="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"
+                />
+              </span>
+              <span class="mt-2 flex items-baseline justify-between gap-2 text-[11px] leading-tight">
+                <span class="font-heading">Receipt</span>
+                <span class="text-faint">Sample</span>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              data-sample="/samples/dashboard.svg"
+              data-sample-name="Dashboard"
+              class="group rounded-tile text-left disabled:opacity-50"
+              aria-label="Try the dashboard sample"
+            >
+              <span class="block overflow-hidden rounded-tile border border-hairline bg-canvas">
+                <img
+                  src="/samples/dashboard.svg"
+                  width="480"
+                  height="320"
+                  alt=""
+                  decoding="async"
+                  class="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"
+                />
+              </span>
+              <span class="mt-2 flex items-baseline justify-between gap-2 text-[11px] leading-tight">
+                <span class="font-heading">Dashboard</span>
+                <span class="text-faint">Sample</span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div data-workspace hidden>
+      <div class="flex flex-wrap items-center gap-1.5 border-b border-hairline-soft px-2 py-2 md:px-3">
+        <div class="flex items-center gap-0.5 rounded-full bg-canvas-soft p-1" role="group" aria-label="Redaction style">
+          <button type="button" class="tool-btn" data-tool="ink" aria-pressed="true" aria-label="Ink black" title="Ink black (B)">
+            <Icon name="square" size={14} />
+            <span class="hidden md:inline">Ink</span>
+          </button>
+          <button type="button" class="tool-btn" data-tool="pixelate" aria-pressed="false" aria-label="Pixelate" title="Pixelate (P)">
+            <Icon name="pixelate" size={14} />
+            <span class="hidden md:inline">Pixelate</span>
+          </button>
+          <button type="button" class="tool-btn" data-tool="blur" aria-pressed="false" aria-label="Blur" title="Blur (L)">
+            <Icon name="blur" size={14} />
+            <span class="hidden md:inline">Blur</span>
+          </button>
+          <button type="button" class="tool-btn" data-tool="emoji" aria-pressed="false" aria-label="Emoji sticker" title="Emoji sticker (E)">
+            <Icon name="emoji" size={14} />
+            <span class="hidden md:inline">Emoji</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-0.5 rounded-full bg-canvas-soft p-1" role="group" aria-label="Selection shape">
+          <button type="button" class="tool-btn !px-2" data-shape="rect" aria-pressed="true" aria-label="Rectangle selection" title="Rectangle (R)">
+            <Icon name="square" size={14} />
+          </button>
+          <button type="button" class="tool-btn !px-2" data-shape="ellipse" aria-pressed="false" aria-label="Oval selection" title="Oval (O)">
+            <Icon name="circle" size={14} />
+          </button>
+        </div>
+
+        <div data-emoji-palette hidden class="flex items-center gap-0.5 rounded-full bg-canvas-soft p-1" role="group" aria-label="Sticker">
+          <span class="px-1.5 text-[10px] font-heading text-muted">Sticker</span>
+          <button type="button" class="grid h-7 w-7 place-items-center rounded-full text-[15px] hover:bg-canvas" data-emoji="😎" aria-pressed="true" aria-label="Use sunglasses emoji">😎</button>
+          <button type="button" class="grid h-7 w-7 place-items-center rounded-full text-[15px] hover:bg-canvas" data-emoji="😀" aria-pressed="false" aria-label="Use smiling emoji">😀</button>
+          <button type="button" class="grid h-7 w-7 place-items-center rounded-full text-[15px] hover:bg-canvas" data-emoji="🐱" aria-pressed="false" aria-label="Use cat emoji">🐱</button>
+          <button type="button" class="grid h-7 w-7 place-items-center rounded-full text-[15px] hover:bg-canvas" data-emoji="❤️" aria-pressed="false" aria-label="Use heart emoji">❤️</button>
+          <button type="button" class="grid h-7 w-7 place-items-center rounded-full text-[15px] hover:bg-canvas" data-emoji="🚫" aria-pressed="false" aria-label="Use prohibition emoji">🚫</button>
+          <button type="button" class="grid h-7 w-7 place-items-center rounded-full text-[15px] hover:bg-canvas" data-emoji="🙈" aria-pressed="false" aria-label="Use see-no-evil emoji">🙈</button>
+        </div>
+
+        <button
+          type="button"
+          data-action="scan"
+          class="ml-0 inline-flex h-8 items-center gap-1.5 rounded-full bg-ink px-3 text-[12px] font-heading text-white transition-colors hover:bg-ink-soft disabled:opacity-40 sm:ml-1"
+          title="Find sensitive text with on-device OCR"
+        >
+          <Icon name="sparkles" size={14} />
+          <span class="hidden sm:inline">Smart detect</span>
+          <span class="sm:hidden">Detect</span>
+        </button>
+
+        <div class="ml-auto flex items-center gap-0.5">
+          <button type="button" class="icon-btn" data-open-file aria-label="Replace image" title="Replace image">
+            <Icon name="refresh" size={15} />
+          </button>
+          <button type="button" class="icon-btn" data-action="undo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>
+            <Icon name="undo" size={15} />
+          </button>
+          <button type="button" class="icon-btn" data-action="redo" aria-label="Redo" title="Redo (Ctrl+Shift+Z)" disabled>
+            <Icon name="redo" size={15} />
+          </button>
+          <button type="button" class="tool-btn !px-2" data-action="compare" aria-pressed="false" aria-label="Compare with original" title="Compare with original (C)">
+            <Icon name="eye" size={14} />
+            <span class="hidden lg:inline">Compare</span>
+          </button>
+          <button type="button" class="icon-btn" data-action="clear" aria-label="Clear all redactions" title="Clear all redactions" disabled>
+            <Icon name="trash" size={15} />
+          </button>
+        </div>
+      </div>
+
+      <div
+        data-detect-banner
+        hidden
+        aria-live="polite"
+        class="border-b border-hairline-soft bg-canvas-soft px-3 py-2.5 md:px-4"
+      >
+        <div class="flex flex-wrap items-center gap-2.5">
+          <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas">
+            <Icon name="sparkles" size={15} />
+          </span>
+          <div class="min-w-[170px] flex-1">
+            <p data-detect-title class="text-[12px] font-heading leading-tight"></p>
+            <p data-detect-sub class="text-[11px] leading-snug text-muted"></p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button
+              type="button"
+              data-detect-primary
+              class="inline-flex h-8 items-center rounded-full bg-ink px-3 text-[12px] font-heading text-white disabled:opacity-40"
+            >
+              Redact 0
+            </button>
+            <button
+              type="button"
+              data-detect-all
+              class="inline-flex h-8 items-center rounded-full border border-hairline bg-canvas px-3 text-[12px] font-heading"
+            >
+              All text
+            </button>
+            <button type="button" class="icon-btn" data-detect-dismiss aria-label="Dismiss detections" title="Dismiss">
+              <Icon name="x" size={15} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="canvas-stage relative flex min-h-[300px] items-center justify-center overflow-auto p-4 md:min-h-[420px] md:p-6">
+        <div class="canvas-frame" data-canvas-frame>
+          <canvas
+            data-canvas
+            tabindex="0"
+            aria-label="Redaction canvas. Draw a box over anything you want to hide."
+            aria-describedby="canvas-help"
+          ></canvas>
+          <div data-overlay class="pointer-events-none absolute inset-0">
+            <div data-suggestions class="pointer-events-none absolute inset-0 z-10"></div>
+            <div data-ghost hidden class="ghost-box z-30"></div>
+            <div data-selection hidden class="pointer-events-none absolute z-20">
+              <div class="selection-box absolute inset-0"></div>
+              <button
+                type="button"
+                data-delete-selected
+                class="pointer-events-auto absolute -right-3 -top-9 grid h-7 w-7 place-items-center rounded-full bg-ink text-white"
+                aria-label="Delete selected redaction"
+                title="Delete selected redaction"
+              >
+                <Icon name="x" size={12} />
+              </button>
+              <span data-handle="nw" class="selection-handle" style="left:0;top:0" aria-hidden="true"></span>
+              <span data-handle="ne" class="selection-handle" style="left:100%;top:0" aria-hidden="true"></span>
+              <span data-handle="sw" class="selection-handle" style="left:0;top:100%" aria-hidden="true"></span>
+              <span data-handle="se" class="selection-handle" style="left:100%;top:100%" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+
+        <p id="canvas-help" class="sr-only">
+          Draw a box on the image to redact it. Choose ink, pixelate, blur, or an emoji sticker
+          from the toolbar. Move or resize a redaction by dragging it. Press Control Z to undo and
+          Delete to remove a selected redaction.
+        </p>
+
+        <div
+          data-original-badge
+          hidden
+          class="pointer-events-none absolute left-4 top-4 z-30 inline-flex items-center gap-1.5 rounded-full bg-ink px-2.5 py-1 text-[11px] font-heading text-white md:left-6 md:top-6"
+        >
+          <Icon name="eye" size={12} />
+          Original
+        </div>
+
+        <div
+          data-busy
+          hidden
+          role="status"
+          aria-live="polite"
+          class="absolute inset-0 z-40 grid place-items-center bg-white/85 px-6 backdrop-blur-sm"
+        >
+          <div class="w-full max-w-xs text-center">
+            <div class="mx-auto grid h-11 w-11 place-items-center rounded-full bg-canvas">
+              <Icon name="scan" size={20} class="animate-pulse" />
+            </div>
+            <p data-busy-label class="mt-4 text-[13px] font-heading leading-tight">Reading text on your device…</p>
+            <div class="mt-3 h-1 overflow-hidden rounded-full bg-hairline-soft">
+              <div
+                data-busy-progress
+                class="h-full w-[5%] rounded-full bg-ink transition-[width] duration-300 ease-out"
+                style="width:5%"
+              ></div>
+            </div>
+            <p class="mt-3 text-[11px] leading-relaxed text-muted">
+              OCR runs in your browser. The English model downloads once — your image is never sent.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="size-panel" data-size-panel hidden class="border-t border-hairline-soft bg-canvas-soft px-3 py-3.5 md:px-4">
+        <div class="flex flex-wrap items-start gap-x-8 gap-y-4">
+          <div class="min-w-[210px] flex-1">
+            <div class="flex items-baseline justify-between gap-3">
+              <label for="size-quality" class="text-[11px] font-heading text-ink">Quality</label>
+              <output for="size-quality" data-size-quality-value class="text-[11px] font-heading text-muted">92%</output>
+            </div>
+            <input
+              id="size-quality"
+              data-size-quality
+              type="range"
+              min="30"
+              max="100"
+              step="1"
+              value="92"
+              class="size-slider mt-2.5 w-full"
+              aria-describedby="size-quality-note"
+            />
+            <p id="size-quality-note" data-size-note class="mt-2 text-[10px] leading-relaxed text-muted">
+              Applies to JPG and WebP exports. PNG stays lossless.
+            </p>
+          </div>
+
+          <div class="min-w-[170px]">
+            <label for="size-max" class="text-[11px] font-heading text-ink">Longest edge</label>
+            <div class="relative mt-2.5">
+              <select
+                id="size-max"
+                data-size-max
+                class="h-9 w-full appearance-none rounded-full bg-canvas pl-3 pr-8 text-[11px] font-heading text-ink"
+              >
+                <option value="0">Original size</option>
+                <option value="2560">2560 px</option>
+                <option value="1920">1920 px</option>
+                <option value="1280">1280 px</option>
+                <option value="960">960 px</option>
+              </select>
+              <Icon name="chevron-down" size={12} class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted" />
+            </div>
+            <p class="mt-2 text-[10px] leading-relaxed text-muted">
+              Rescales the flattened result. Redactions stay baked in.
+            </p>
+          </div>
+
+          <div class="min-w-[190px]">
+            <p class="text-[11px] font-heading text-ink">Estimated export</p>
+            <p data-size-estimate class="mt-2.5 text-[11px] leading-snug text-muted">
+              Open the panel to measure it.
+            </p>
+            <p data-size-savings class="mt-1 text-[11px] font-heading text-ink"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-hairline-soft px-3 py-2.5 md:px-4">
+        <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+          <span class="inline-flex items-center gap-1.5 text-[11px] text-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+            <span data-count>0</span>
+            <span data-count-label>redactions</span>
+          </span>
+          <span
+            data-verify-status
+            hidden
+            class="inline-flex items-center gap-1.5 text-[11px] font-heading text-ink"
+            title="Best-effort OCR re-scan. Always review the result yourself."
+          >
+            <span class="grid h-4 w-4 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="shield-check" size={11} />
+            </span>
+            <span data-verify-text></span>
+          </span>
+          <span class="hidden items-center gap-1 text-[10px] text-muted xl:inline-flex" title="Canvas exports do not carry EXIF, GPS, or camera metadata.">
+            <Icon name="shield" size={11} />
+            EXIF stripped on export
+          </span>
+        </div>
+
+        <div class="ml-auto flex flex-wrap items-center gap-1.5">
+          <button
+            type="button"
+            data-action="size"
+            aria-expanded="false"
+            aria-controls="size-panel"
+            class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field"
+            title="Reduce the exported file size"
+          >
+            <Icon name="shrink" size={13} />
+            <span class="hidden sm:inline">Size</span>
+          </button>
+          <div class="relative">
+            <label class="sr-only" for="export-format">Download format</label>
+            <select
+              id="export-format"
+              data-format
+              class="h-9 appearance-none rounded-full bg-canvas-soft pl-3 pr-8 text-[11px] font-heading text-ink"
+            >
+              <option value="image/png">PNG</option>
+              <option value="image/jpeg">JPG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+            <Icon name="chevron-down" size={12} class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted" />
+          </div>
+          <button
+            type="button"
+            data-action="verify"
+            class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field disabled:opacity-40"
+            title="Re-scan the flattened image for readable PII"
+            disabled
+          >
+            <Icon name="shield-check" size={13} />
+            <span class="hidden sm:inline">Verify</span>
+          </button>
+          <button
+            type="button"
+            data-action="copy"
+            class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field disabled:opacity-40"
+            title="Copy the redacted PNG to your clipboard"
+            disabled
+          >
+            <Icon name="copy" size={13} />
+            <span class="hidden sm:inline">Copy</span>
+          </button>
+          <button
+            type="button"
+            data-action="download"
+            class="inline-flex h-9 items-center gap-1.5 rounded-full bg-ink px-3.5 text-[11px] font-heading text-white transition-colors hover:bg-ink-soft disabled:opacity-40"
+            disabled
+          >
+            <Icon name="download" size={13} />
+            Download
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" data-toast role="status" aria-live="polite"></div>
+
+  <div class="mt-3 flex flex-col justify-between gap-2 px-1 text-[11px] text-muted sm:flex-row sm:items-center">
+    <p class="inline-flex items-center gap-1.5">
+      <Icon name="lock" size={12} />
+      Everything happens in this browser tab.
+    </p>
+    <p>Smart detection downloads a text model once. Your image never leaves the page.</p>
+    <p class="inline-flex items-center gap-1.5">
+      <Icon name="shrink" size={12} />
+      The size panel measures the real export before you download it.
+    </p>
+  </div>
+</section>
+
+<script>
+  import '../scripts/redactor';
+</script>

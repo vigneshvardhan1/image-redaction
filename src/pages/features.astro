@@ -1,0 +1,486 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+import SectionHead from '../components/SectionHead.astro';
+import DetectionShowcase from '../components/DetectionShowcase.astro';
+import ModeDemos from '../components/ModeDemos.astro';
+import BeforeAfter from '../components/BeforeAfter.astro';
+import CtaBand from '../components/CtaBand.astro';
+
+const features = [
+  {
+    icon: 'sparkles' as const,
+    title: 'Smart PII detection',
+    copy: 'OCR finds emails, card numbers, phones, IDs, addresses, and likely names — on your device.',
+  },
+  {
+    icon: 'scan' as const,
+    title: 'All text mode',
+    copy: 'Cover every detected line when you would rather not make a judgement call about each one.',
+  },
+  {
+    icon: 'square' as const,
+    title: 'Four redaction styles',
+    copy: 'Opaque ink, pixelate, blur, or an emoji sticker. Use rectangles or ovals.',
+  },
+  {
+    icon: 'move' as const,
+    title: 'Move and resize',
+    copy: 'Nudge a box or drag a corner until it covers the edges. Undo and redo are a keystroke away.',
+  },
+  {
+    icon: 'shield-check' as const,
+    title: 'Verification re-scan',
+    copy: 'Run OCR on the flattened result and flag anything that still reads as sensitive.',
+  },
+  {
+    icon: 'download' as const,
+    title: 'Clean exports',
+    copy: 'Download PNG, JPG, or WebP — or copy to the clipboard. Metadata stays behind, and the file can be shrunk before you send it.',
+  },
+];
+
+const shortcuts = [
+  { keys: 'B', action: 'Ink black' },
+  { keys: 'P', action: 'Pixelate' },
+  { keys: 'L', action: 'Blur' },
+  { keys: 'E', action: 'Emoji sticker' },
+  { keys: 'R', action: 'Rectangle selection' },
+  { keys: 'O', action: 'Oval selection' },
+  { keys: 'C', action: 'Compare with the original' },
+  { keys: 'Ctrl / ⌘ + Z', action: 'Undo' },
+  { keys: 'Ctrl / ⌘ + Shift + Z', action: 'Redo' },
+  { keys: 'Delete', action: 'Remove the selected redaction' },
+  { keys: 'Esc', action: 'Clear the current selection' },
+];
+
+const limits = [
+  {
+    title: 'Faces and machine codes are manual',
+    copy: 'Faces, QR codes, barcodes, MRZs, and logos are not detected yet. Draw a box over each one — and check both sides of an ID.',
+    badge: 'Manual',
+  },
+  {
+    title: 'Names are best-effort',
+    copy: 'Names use a pattern for short, capitalised lines. Unusual names, lowercase handles, and stylised text can slip through.',
+    badge: 'Best-effort',
+  },
+  {
+    title: 'One image at a time',
+    copy: 'There is no batch queue yet. Replace the image and repeat; each export is independent and metadata-free.',
+    badge: 'Not yet',
+  },
+  {
+    title: 'No text annotation',
+    copy: 'You cannot add a “for Acme only” label inside the editor. Add context with a separate markup tool, away from the redacted area.',
+    badge: 'Not yet',
+  },
+];
+---
+
+<BaseLayout
+  title="Features — Image Redaction"
+  description="On-device PII detection, four redaction styles, verification re-scan, metadata-free exports, keyboard shortcuts, and clearly stated limits."
+>
+  <PageHero
+    eyebrow="Features"
+    title="Serious redaction. No upload ritual."
+    lead="Everything you need to remove sensitive details from a screenshot — plus the checks most tools skip, and an honest account of what still needs a human eye."
+  >
+    <Button slot="actions" href="/#editor" size="lg" iconRight="arrow-right">Open the editor</Button>
+    <Button slot="actions" href="/privacy" variant="outline" size="lg">How privacy works</Button>
+  </PageHero>
+
+  <section class="container-page">
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        features.map((feature) => (
+          <article class="rounded-card border border-hairline-soft bg-canvas p-5">
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={feature.icon} size={16} />
+            </span>
+            <h2 class="mt-4 text-[17px] leading-tight">{feature.title}</h2>
+            <p class="mt-2 text-[13px] leading-relaxed text-muted">{feature.copy}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-12">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          Detection
+        </p>
+        <h2 class="mt-4 text-h2">Find the text before you share it.</h2>
+        <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-muted">
+          Smart detection reads the screenshot with Tesseract OCR in a Web Worker,
+          then checks each line against patterns for common identifiers. The image
+          is passed to the worker inside the page; it is never part of a network request.
+        </p>
+
+        <div class="mt-7 grid gap-3 sm:grid-cols-2">
+          <div class="rounded-tile bg-canvas-soft p-4">
+            <p class="text-[13px] font-heading leading-tight">What it looks for</p>
+            <p class="mt-2 text-[12px] leading-relaxed text-muted">
+              Emails, Luhn-valid cards, SSNs, Aadhaar, PAN, GSTIN, IBAN, phone numbers,
+              IP addresses, dates, address keywords, and likely names.
+            </p>
+          </div>
+          <div class="rounded-tile bg-canvas-soft p-4">
+            <p class="text-[13px] font-heading leading-tight">What you control</p>
+            <p class="mt-2 text-[12px] leading-relaxed text-muted">
+              Every box is included by default only when it matches. Click any box to
+              exclude it, or use All text to cover every line.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-7">
+          <Button href="/#editor" iconRight="arrow-right">Try it on a sample</Button>
+        </div>
+      </div>
+
+      <DetectionShowcase />
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead
+      eyebrow="Styles"
+      title="Pick the cover that matches the risk."
+      copy="Ink is the default for a reason. The softer effects are useful when the detail is context rather than identity."
+    />
+    <div class="mt-8">
+      <ModeDemos />
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          Review
+        </p>
+        <h2 class="mt-4 text-h2">A second pass, without leaving the tab.</h2>
+        <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-muted">
+          A redaction is easy to get almost right. Verify re-scans the flattened
+          image for readable PII. Compare flips back to the original so you can see
+          exactly what changed. Undo is there when you spot a mistake.
+        </p>
+
+        <div class="mt-7 space-y-4">
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="shield-check" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Verify the result, not the preview</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                The re-scan runs on the rendered output, so it sees what the exported file will contain.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="eye" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Compare without losing your work</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                Toggle the original on and off. Your boxes and history stay intact.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="undo" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Undo the whole history</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                Drawing, moving, resizing, and clearing all join the same undo stack.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-card border border-hairline-soft bg-canvas">
+        <div class="flex items-center justify-between gap-3 border-b border-hairline-soft px-4 py-3">
+          <div class="flex items-center gap-2">
+            <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="shield-check" size={14} />
+            </span>
+            <span class="text-[11px] font-heading">Verification</span>
+          </div>
+          <span class="rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] text-muted">Example result</span>
+        </div>
+        <div class="p-4">
+          <div class="flex items-start gap-3 rounded-tile bg-canvas-soft p-4">
+            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-canvas">
+              <Icon name="shield-check" size={17} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">No readable PII found</p>
+              <p class="mt-1 text-[11px] leading-relaxed text-muted">
+                The flattened image was re-scanned. Give it a final visual check anyway.
+              </p>
+            </div>
+          </div>
+          <div class="mt-4 space-y-1.5">
+            {
+              ['Email patterns', 'Card-number patterns', 'Phone patterns', 'ID and date patterns'].map(
+                (label) => (
+                  <div class="flex items-center justify-between rounded-full px-3 py-2 text-[11px] odd:bg-canvas-soft">
+                    <span class="text-muted">{label}</span>
+                    <span class="inline-flex items-center gap-1 font-heading text-ink">
+                      <Icon name="check" size={11} />
+                      0 matches
+                    </span>
+                  </div>
+                )
+              )
+            }
+          </div>
+          <p class="mt-4 flex items-start gap-1.5 text-[10px] leading-relaxed text-faint">
+            <Icon name="info" size={11} class="mt-0.5 shrink-0" />
+            Best-effort OCR. A clean scan is evidence, not a guarantee.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-12">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          Delivery
+        </p>
+        <h2 class="mt-4 text-h2">Redact it, then make it small enough to send.</h2>
+        <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-muted">
+          A redacted screenshot is often still too heavy for a chat, a ticket, or an
+          email. The Size panel measures the real export in your browser: lower the
+          quality for JPG and WebP, cap the longest edge, and read the actual byte
+          count before you download anything.
+        </p>
+
+        <div class="mt-7 space-y-4">
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="gauge" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">A live estimate, not a guess</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                The panel encodes the export in your tab and reports the real file size and the
+                percentage saved against the full-size version.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="shrink" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Cap the longest edge</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                Rescale the flattened result to 2560, 1920, 1280, or 960 px. The scene is scaled
+                as a whole, so every redaction lands exactly where you drew it.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="info" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Honest about PNG</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                PNG is lossless, so the quality slider is switched off for it. Use the size cap
+                instead — or pick WebP, which is usually far lighter for screenshots.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-7">
+          <Button href="/#editor" iconRight="arrow-right">Open the size panel</Button>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-card border border-hairline-soft bg-canvas">
+        <div class="flex items-center justify-between gap-3 border-b border-hairline-soft px-4 py-3">
+          <div class="flex items-center gap-2">
+            <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="shrink" size={14} />
+            </span>
+            <span class="text-[11px] font-heading">Reduce size</span>
+          </div>
+          <span class="rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] text-muted">Example result</span>
+        </div>
+        <div class="p-4">
+          <div class="flex flex-wrap items-start gap-x-8 gap-y-4">
+            <div class="min-w-[190px] flex-1">
+              <div class="flex items-baseline justify-between gap-3">
+                <span class="text-[11px] font-heading text-ink">Quality</span>
+                <span class="text-[11px] font-heading text-muted">72%</span>
+              </div>
+              <div class="mt-3 h-1 w-full overflow-hidden rounded-full bg-hairline">
+                <div class="h-full w-[60%] rounded-full bg-ink"></div>
+              </div>
+              <p class="mt-2.5 text-[10px] leading-relaxed text-muted">
+                Applies to JPG and WebP exports. PNG stays lossless.
+              </p>
+            </div>
+
+            <div class="min-w-[160px]">
+              <span class="text-[11px] font-heading text-ink">Longest edge</span>
+              <div class="mt-2.5 flex h-9 items-center justify-between gap-2 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink">
+                1920 px
+                <Icon name="chevron-down" size={12} class="text-muted" />
+              </div>
+              <p class="mt-2 text-[10px] leading-relaxed text-muted">
+                Rescales the flattened result. Redactions stay baked in.
+              </p>
+            </div>
+
+            <div class="min-w-[180px]">
+              <span class="text-[11px] font-heading text-ink">Estimated export</span>
+              <p class="mt-2.5 text-[11px] leading-snug text-muted">212 KB · 1920 × 1080</p>
+              <p class="mt-1 text-[11px] font-heading text-ink">−86% vs 1.5 MB at full size</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-12">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          Proof
+        </p>
+        <h2 class="mt-4 text-h2">See the pixels, not a promise.</h2>
+        <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-muted">
+          The after image is baked, not layered. Drag the handle and inspect the
+          edge of every bar. If anything is still readable, it is not redacted.
+        </p>
+        <div class="mt-6 flex flex-col gap-2 sm:flex-row">
+          <Button
+            dataAttrs={{
+              'data-redactor-sample': '/samples/id.svg',
+              'data-redactor-sample-name': 'Student ID',
+            }}
+            iconRight="arrow-right"
+          >
+            Try the ID sample
+          </Button>
+          <Button href="/guides/blur-vs-pixelate-vs-black-box" variant="outline">
+            Which style is safe?
+          </Button>
+        </div>
+      </div>
+      <BeforeAfter />
+    </div>
+  </section>
+
+  <section id="shortcuts" class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+      <div class="self-start">
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          Speed
+        </p>
+        <h2 class="mt-4 text-h2">Keep your hands on the keyboard.</h2>
+        <p class="mt-4 text-[15px] leading-relaxed text-muted">
+          Paste an image from the clipboard, drop one onto the editor, or replace
+          the current file without reloading. Then switch tools and undo without
+          reaching for the mouse.
+        </p>
+        <ul class="mt-6 space-y-3 text-[13px]">
+          <li class="flex items-center gap-2.5">
+            <span class="grid h-6 w-6 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="keyboard" size={12} />
+            </span>
+            Ctrl / ⌘ + V pastes an image while the editor is in view.
+          </li>
+          <li class="flex items-center gap-2.5">
+            <span class="grid h-6 w-6 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="image" size={12} />
+            </span>
+            Drag and drop works on the start screen.
+          </li>
+          <li class="flex items-center gap-2.5">
+            <span class="grid h-6 w-6 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="refresh" size={12} />
+            </span>
+            Replace the image from the toolbar without losing the page.
+          </li>
+        </ul>
+      </div>
+
+      <div class="overflow-hidden rounded-card border border-hairline-soft bg-canvas">
+        <div class="border-b border-hairline-soft px-5 py-4">
+          <h3 class="text-[14px] font-heading">Shortcuts</h3>
+        </div>
+        <dl class="divide-y divide-hairline-soft">
+          {
+            shortcuts.map((shortcut) => (
+              <div class="flex items-center justify-between gap-4 px-5 py-3">
+                <dt class="text-[12px] text-muted">{shortcut.action}</dt>
+                <dd>
+                  <kbd class="rounded-full bg-canvas-soft px-2.5 py-1 font-sans text-[10px] font-heading text-ink">
+                    {shortcut.keys}
+                  </kbd>
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="rounded-panel bg-canvas-soft p-5 md:p-10 lg:p-12">
+      <SectionHead
+        eyebrow="Honest limits"
+        title="What this tool does not do yet."
+        copy="A redaction tool should be clear about its blind spots. These are the ones worth knowing before you rely on the output."
+      />
+      <div class="mt-8 grid gap-3 sm:grid-cols-2">
+        {
+          limits.map((limit) => (
+            <div class="rounded-tile bg-canvas p-5">
+              <span class="inline-flex rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] font-heading leading-none text-muted">
+                {limit.badge}
+              </span>
+              <h3 class="mt-3 text-[16px] leading-tight">{limit.title}</h3>
+              <p class="mt-2 text-[12px] leading-relaxed text-muted">{limit.copy}</p>
+            </div>
+          ))
+        }
+      </div>
+      <p class="mt-5 flex items-start gap-2 text-[11px] leading-relaxed text-muted">
+        <Icon name="info" size={12} class="mt-0.5 shrink-0" />
+        No automated check can replace a final look at the exported image. When in doubt, use ink and crop more.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand
+    class="mt-20 md:mt-28"
+    title="Use the features, then use your eyes."
+    copy="Smart detection saves the first pass. Ink, Verify, and a final look at 100% save the last one."
+  />
+</BaseLayout>

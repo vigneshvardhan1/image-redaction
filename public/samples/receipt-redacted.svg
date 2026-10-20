@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1200" viewBox="0 0 1000 1200">
+  <rect width="1000" height="1200" fill="#dfdcd4"/>
+  <rect x="150" y="76" width="700" height="1080" rx="10" fill="#1b1b1b" opacity="0.1"/>
+  <rect x="140" y="60" width="700" height="1080" rx="10" fill="#fdfcf8" stroke="#d9d5ca" stroke-width="1.5"/>
+
+  <text x="490" y="156" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" fill="#1b1b1b">MERIDIAN SUPPLY CO.</text>
+  <text x="490" y="190" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#7c786e">Order receipt</text>
+
+  <line x1="200" y1="228" x2="780" y2="228" stroke="#d8d4c8" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+  <text x="200" y="278" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#4b4a45">Order #MS-20481</text>
+  <text x="200" y="312" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#4b4a45">Date: 12 Oct 2026</text>
+
+  <line x1="200" y1="344" x2="780" y2="344" stroke="#e3dfd5" stroke-width="1.5"/>
+  <text x="200" y="388" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#1b1b1b">Walnut desk organizer</text>
+  <text x="780" y="388" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#1b1b1b">$48.00</text>
+  <text x="200" y="432" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#1b1b1b">Linen notebook (x2)</text>
+  <text x="780" y="432" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#1b1b1b">$36.00</text>
+  <text x="200" y="476" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#1b1b1b">Brass desk lamp</text>
+  <text x="780" y="476" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#1b1b1b">$129.00</text>
+
+  <line x1="200" y1="510" x2="780" y2="510" stroke="#e3dfd5" stroke-width="1.5"/>
+  <text x="200" y="556" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#1b1b1b">Total</text>
+  <text x="780" y="556" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#1b1b1b">$213.00</text>
+
+  <line x1="200" y1="592" x2="780" y2="592" stroke="#d8d4c8" stroke-width="1.5" stroke-dasharray="6 6"/>
+
+  <text x="200" y="644" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#1b1b1b">Paid with Visa ending 4821</text>
+  <text x="200" y="686" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#4b4a45">Billing email: meera.k@meridiansupply.com</text>
+  <text x="200" y="728" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#4b4a45">Ship to: 88 Harbor Street, Apt 5C</text>
+  <text x="200" y="760" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#4b4a45">Mumbai 400001</text>
+  <text x="200" y="812" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#4b4a45">GSTIN: 27AABCU9603R1ZX</text>
+  <text x="200" y="854" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#4b4a45">Support: +91 22 4000 8899</text>
+
+  <g fill="#2b2b2b">
+    <rect x="220" y="920" width="4" height="70"/><rect x="232" y="920" width="9" height="70"/><rect x="248" y="920" width="3" height="70"/><rect x="258" y="920" width="12" height="70"/><rect x="277" y="920" width="5" height="70"/><rect x="290" y="920" width="8" height="70"/><rect x="305" y="920" width="3" height="70"/><rect x="316" y="920" width="11" height="70"/><rect x="334" y="920" width="5" height="70"/><rect x="346" y="920" width="8" height="70"/><rect x="361" y="920" width="3" height="70"/><rect x="372" y="920" width="12" height="70"/><rect x="391" y="920" width="5" height="70"/><rect x="404" y="920" width="8" height="70"/><rect x="419" y="920" width="3" height="70"/><rect x="430" y="920" width="11" height="70"/><rect x="448" y="920" width="5" height="70"/><rect x="460" y="920" width="8" height="70"/><rect x="475" y="920" width="4" height="70"/><rect x="486" y="920" width="12" height="70"/><rect x="505" y="920" width="5" height="70"/><rect x="518" y="920" width="8" height="70"/><rect x="533" y="920" width="3" height="70"/><rect x="544" y="920" width="11" height="70"/><rect x="562" y="920" width="5" height="70"/><rect x="574" y="920" width="8" height="70"/><rect x="589" y="920" width="3" height="70"/><rect x="600" y="920" width="12" height="70"/><rect x="619" y="920" width="5" height="70"/><rect x="632" y="920" width="8" height="70"/><rect x="647" y="920" width="3" height="70"/><rect x="658" y="920" width="11" height="70"/><rect x="676" y="920" width="5" height="70"/><rect x="688" y="920" width="8" height="70"/><rect x="703" y="920" width="4" height="70"/><rect x="714" y="920" width="12" height="70"/><rect x="733" y="920" width="5" height="70"/><rect x="746" y="920" width="8" height="70"/>
+  </g>
+
+  <text x="490" y="1056" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#8a8579">Thank you for your order.</text>
+<g fill="#141414"><rect x="200" y="262" width="190" height="26" rx="3"/><rect x="200" y="628" width="410" height="26" rx="3"/><rect x="200" y="670" width="540" height="26" rx="3"/><rect x="200" y="712" width="450" height="26" rx="3"/><rect x="200" y="744" width="180" height="26" rx="3"/><rect x="200" y="796" width="360" height="26" rx="3"/><rect x="200" y="838" width="330" height="26" rx="3"/></g></svg>
