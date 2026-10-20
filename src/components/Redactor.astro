@@ -6,10 +6,7 @@ import Icon from './Icon.astro';
   <div class="overflow-hidden rounded-card border border-hairline bg-canvas">
     <div class="flex flex-wrap items-center justify-between gap-2 border-b border-hairline-soft px-3 py-2.5 md:px-4">
       <div class="flex min-w-0 items-center gap-2">
-        <span class="relative flex h-2 w-2 shrink-0" aria-hidden="true">
-          <span class="absolute inline-flex h-full w-full rounded-full bg-accent opacity-25"></span>
-          <span class="relative inline-flex h-2 w-2 rounded-full bg-accent"></span>
-        </span>
+        <Icon name="monitor" size={12} class="shrink-0 text-muted" />
         <span class="text-[11px] font-heading leading-none">On-device editor</span>
         <span class="text-[11px] leading-none text-faint" aria-hidden="true">/</span>
         <span data-filename class="max-w-[150px] truncate text-[11px] leading-none text-muted sm:max-w-[260px]">
