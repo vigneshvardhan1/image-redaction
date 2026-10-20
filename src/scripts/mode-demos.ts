@@ -2,6 +2,28 @@ import { drawShape, type Mode } from './render';
 
 const canvases = Array.from(document.querySelectorAll<HTMLCanvasElement>('[data-mode-demo]'));
 
+/**
+ * The style cards can hand their choice to the tour further up the page:
+ * pick a style there, and the sample scrolls into view showing that cover.
+ */
+document.querySelectorAll<HTMLButtonElement>('[data-tour-jump]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const root = document.querySelector<HTMLElement>('[data-tour-root]');
+    const mode = button.dataset.tourJump;
+    if (!root || !mode) return;
+
+    root.dispatchEvent(
+      new CustomEvent('redaction-tour:select', { detail: { mode } })
+    );
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    root.scrollIntoView({
+      behavior: reduce ? 'auto' : 'smooth',
+      block: 'center',
+    });
+  });
+});
+
 if (canvases.length) {
   const image = new Image();
   const ready = new Promise<void>((resolve, reject) => {

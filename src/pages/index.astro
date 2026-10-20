@@ -6,7 +6,7 @@ import Redactor from '../components/Redactor.astro';
 import SectionHead from '../components/SectionHead.astro';
 import DetectionShowcase from '../components/DetectionShowcase.astro';
 import ModeDemos from '../components/ModeDemos.astro';
-import BeforeAfter from '../components/BeforeAfter.astro';
+import RedactionTour from '../components/RedactionTour.astro';
 import ComparisonTable from '../components/ComparisonTable.astro';
 import GuideCard from '../components/GuideCard.astro';
 import Faq from '../components/Faq.astro';
@@ -213,6 +213,75 @@ const faqSchema = {
     </div>
   </section>
 
+  <section id="proof" class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-12">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          Proof, not promises
+        </p>
+        <h2 class="mt-4 text-h2">The black bar is the whole point.</h2>
+        <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-muted">
+          A redaction should be boring: opaque, flattened, and verified. There is no
+          hidden layer to peel back in the file you download — whichever of the four
+          styles you use.
+        </p>
+
+        <div class="mt-7 space-y-4">
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="square" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Flattened, not layered</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                The export is a new image. No hidden layer, no editable mask, no undo in the file.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="shield-check" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Re-scan before sharing</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                Verify reads the flattened image and flags text that still matches a sensitive pattern.
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
+              <Icon name="eye" size={14} />
+            </span>
+            <div>
+              <p class="text-[14px] font-heading leading-tight">Inspect it at full size</p>
+              <p class="mt-1 text-[12px] leading-relaxed text-muted">
+                Step through all four styles in the sample, then drag the handle and
+                look for text peeking out from behind a cover.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-7">
+          <Button
+            variant="outline"
+            iconRight="arrow-right"
+            dataAttrs={{
+              'data-redactor-sample': '/samples/id.svg',
+              'data-redactor-sample-name': 'Student ID',
+            }}
+          >
+            Open the ID sample
+          </Button>
+        </div>
+      </div>
+
+      <RedactionTour />
+    </div>
+  </section>
+
   <section id="use-cases" class="container-page mt-20 scroll-mt-28 md:mt-28">
     <SectionHead
       eyebrow="What people hide"
@@ -319,73 +388,6 @@ const faqSchema = {
     </SectionHead>
     <div class="mt-8">
       <ModeDemos />
-    </div>
-  </section>
-
-  <section id="proof" class="container-page mt-20 scroll-mt-28 md:mt-28">
-    <div class="grid gap-9 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12">
-      <div>
-        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
-          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
-          Proof, not promises
-        </p>
-        <h2 class="mt-4 text-h2">The black bar is the whole point.</h2>
-        <p class="mt-4 max-w-xl text-[16px] leading-relaxed text-muted">
-          A redaction should be boring: opaque, flattened, and verified. There is no
-          hidden layer to peel back in the file you download.
-        </p>
-
-        <div class="mt-7 space-y-4">
-          <div class="flex gap-3">
-            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
-              <Icon name="square" size={14} />
-            </span>
-            <div>
-              <p class="text-[14px] font-heading leading-tight">Flattened, not layered</p>
-              <p class="mt-1 text-[12px] leading-relaxed text-muted">
-                The export is a new image. No hidden layer, no editable mask, no undo in the file.
-              </p>
-            </div>
-          </div>
-          <div class="flex gap-3">
-            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
-              <Icon name="shield-check" size={14} />
-            </span>
-            <div>
-              <p class="text-[14px] font-heading leading-tight">Re-scan before sharing</p>
-              <p class="mt-1 text-[12px] leading-relaxed text-muted">
-                Verify reads the flattened image and flags text that still matches a sensitive pattern.
-              </p>
-            </div>
-          </div>
-          <div class="flex gap-3">
-            <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft">
-              <Icon name="eye" size={14} />
-            </span>
-            <div>
-              <p class="text-[14px] font-heading leading-tight">Inspect it at full size</p>
-              <p class="mt-1 text-[12px] leading-relaxed text-muted">
-                Drag the handle in the sample and look for text peeking out from behind a box.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-7">
-          <Button
-            variant="outline"
-            iconRight="arrow-right"
-            dataAttrs={{
-              'data-redactor-sample': '/samples/id.svg',
-              'data-redactor-sample-name': 'Student ID',
-            }}
-          >
-            Open the ID sample
-          </Button>
-        </div>
-      </div>
-
-      <BeforeAfter />
     </div>
   </section>
 

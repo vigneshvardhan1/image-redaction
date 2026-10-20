@@ -1,0 +1,161 @@
+---
+import Icon from './Icon.astro';
+import { redactionModes } from '../data/redactionModes';
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+const initial = redactionModes[0];
+---
+
+<div class:list={['redaction-tour', className]} data-tour-root data-mode={initial.id}>
+  <div class="mb-3 flex items-center justify-between gap-3">
+    <p class="flex items-center gap-2 text-[11px] font-heading leading-none text-muted">
+      <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+      Style tour
+      <span class="font-body text-faint">· 4 ways to cover</span>
+    </p>
+    <button
+      type="button"
+      data-tour-toggle
+      class="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-hairline bg-canvas px-2.5 text-[11px] font-heading leading-none text-ink transition-colors hover:bg-canvas-soft"
+      aria-label="Pause the style tour"
+    >
+      <span data-tour-play-icon class="hidden"><Icon name="play" size={11} /></span>
+      <span data-tour-pause-icon><Icon name="pause" size={11} /></span>
+      <span data-tour-toggle-label>Pause</span>
+    </button>
+  </div>
+
+  <div class="overflow-hidden rounded-tile border border-hairline-soft bg-canvas">
+    <!-- The guide sits above the sample: what this style does, and when to use it. -->
+    <div class="border-b border-hairline-soft px-4 py-4">
+      <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
+        <span data-tour-step class="text-[10px] font-heading leading-none tabular-nums text-faint">
+          01 / 04
+        </span>
+        <span
+          data-tour-badge
+          class="inline-flex h-5 items-center rounded-full border border-hairline-soft bg-canvas-soft px-2 text-[9px] font-heading leading-none text-muted"
+        >
+          {initial.badge}
+        </span>
+        <h3 data-tour-title class="text-[15px] font-heading leading-none">{initial.title}</h3>
+      </div>
+      <p data-tour-guide class="mt-3 text-[13px] leading-relaxed text-ink">{initial.guide}</p>
+      <p data-tour-copy class="mt-1.5 text-[12px] leading-relaxed text-muted">{initial.copy}</p>
+    </div>
+
+    <div
+      role="tablist"
+      aria-label="Redaction style"
+      class="grid grid-cols-2 gap-1 border-b border-hairline-soft bg-canvas-soft p-2 min-[360px]:grid-cols-4"
+    >
+      {
+        redactionModes.map((mode, index) => (
+          <button
+            type="button"
+            role="tab"
+            id={`redaction-tour-tab-${mode.id}`}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            tabindex={index === 0 ? 0 : -1}
+            aria-controls="redaction-tour-panel"
+            aria-label={mode.title}
+            data-tour-tab={mode.id}
+            data-title={mode.title}
+            data-guide={mode.guide}
+            data-copy={mode.copy}
+            data-badge={mode.badge}
+            data-alt={mode.alt}
+            class="relative inline-flex h-10 items-center justify-center gap-1 overflow-hidden rounded-full px-1 text-[10px] font-heading leading-none text-muted transition-colors hover:text-ink aria-selected:bg-raised aria-selected:text-ink aria-selected:shadow-[0_1px_2px_rgba(20,20,20,0.07)] min-[360px]:px-1 min-[360px]:text-[11px] min-[400px]:gap-1.5 min-[400px]:px-1.5 sm:text-[12px]"
+          >
+            <Icon name={mode.icon as any} size={13} class="shrink-0" />
+            <span class="whitespace-nowrap">{mode.shortTitle}</span>
+            <span
+              data-tour-progress
+              aria-hidden="true"
+              class="pointer-events-none absolute inset-x-4 bottom-1 h-0.5 origin-left rounded-full bg-ink/30"
+              style="transform: scaleX(0)"
+            />
+          </button>
+        ))
+      }
+    </div>
+
+    <div
+      id="redaction-tour-panel"
+      role="tabpanel"
+      aria-labelledby={`redaction-tour-tab-${initial.id}`}
+      class="relative aspect-[3/2] overflow-hidden bg-sample-tile"
+    >
+      <img
+        src="/samples/id.svg"
+        width="1200"
+        height="800"
+        alt="A sample student ID card showing a photo, name, date of birth, ID number, address, barcode, and QR code."
+        class="absolute inset-0 h-full w-full object-cover"
+        decoding="async"
+      />
+      <div data-tour-after-wrap class="absolute inset-0" style="clip-path: inset(0 0 0 50%)">
+        <img
+          data-tour-after
+          src="/samples/id-redacted.svg"
+          width="1200"
+          height="800"
+          alt={initial.alt}
+          class="absolute inset-0 h-full w-full object-cover"
+          decoding="async"
+        />
+      </div>
+
+      <div
+        data-tour-handle
+        class="pointer-events-none absolute inset-y-0 z-20 w-px bg-white"
+        style="left:50%"
+        aria-hidden="true"
+      >
+        <span class="absolute left-1/2 top-1/2 grid h-10 w-10 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-hairline bg-canvas text-ink">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 7 4 12l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="m15 7 5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </div>
+
+      <span class="absolute left-3 top-3 z-20 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-heading text-white backdrop-blur-sm">
+        Before
+      </span>
+      <span class="absolute right-3 top-3 z-20 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-heading text-white backdrop-blur-sm">
+        After
+      </span>
+
+      <input
+        data-tour-range
+        type="range"
+        min="0"
+        max="100"
+        value="50"
+        step="1"
+        class="absolute inset-0 z-30 h-full w-full cursor-ew-resize touch-pan-y opacity-0"
+        aria-label="Compare the original image with the redacted version"
+      />
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-hairline-soft px-4 py-3 text-[10px] leading-none text-muted">
+      <span class="inline-flex items-center gap-1.5">
+        <Icon name="move" size={10} class="text-faint" />
+        Drag the handle to compare.
+      </span>
+      <span class="inline-flex items-center gap-1.5 text-faint">
+        <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+        Flattened pixels, not a removable layer
+      </span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import '../scripts/redaction-tour';
+</script>
