@@ -12,6 +12,10 @@ const INK = '/samples/id-redacted.svg';
 const WIDTH = 1200;
 const HEIGHT = 800;
 const DURATION = 5200;
+/** Half the drag grip, so the handle never gets clipped by the frame. */
+const GRIP = 22;
+/** Below this the original is not really visible, so its label stays hidden. */
+const BEFORE_LABEL = 12;
 
 /** The eight regions covered in /samples/id-redacted.svg. */
 const REGIONS = [
@@ -68,15 +72,12 @@ function createTour(root: HTMLElement, render: Renderer): void {
   const afterWrap = root.querySelector<HTMLElement>('[data-tour-after-wrap]');
   const range = root.querySelector<HTMLInputElement>('[data-tour-range]');
   const handle = root.querySelector<HTMLElement>('[data-tour-handle]');
+  const beforeChip = root.querySelector<HTMLElement>('[data-tour-before-chip]');
   const title = root.querySelector<HTMLElement>('[data-tour-title]');
   const guide = root.querySelector<HTMLElement>('[data-tour-guide]');
   const copy = root.querySelector<HTMLElement>('[data-tour-copy]');
   const badge = root.querySelector<HTMLElement>('[data-tour-badge]');
   const step = root.querySelector<HTMLElement>('[data-tour-step]');
-  const toggle = root.querySelector<HTMLButtonElement>('[data-tour-toggle]');
-  const toggleLabel = root.querySelector<HTMLElement>('[data-tour-toggle-label]');
-  const playIcon = root.querySelector<HTMLElement>('[data-tour-play-icon]');
-  const pauseIcon = root.querySelector<HTMLElement>('[data-tour-pause-icon]');
 
   if (
     !tablist ||
@@ -85,7 +86,6 @@ function createTour(root: HTMLElement, render: Renderer): void {
     !afterWrap ||
     !range ||
     !handle ||
-    !toggle ||
     tabs.length === 0
   ) {
     return;
@@ -93,11 +93,12 @@ function createTour(root: HTMLElement, render: Renderer): void {
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let index = 0;
-  let playing = !reduceMotion.matches;
   let visible = false;
   let frame = 0;
   let elapsed = 0;
   let last = 0;
+  /** A keyboard visitor gets the tour held still while they read the tabs. */
+  let held = false;
 
   const setProgress = (value: number) => {
     const progress = Math.min(1, Math.max(0, value));
@@ -111,7 +112,18 @@ function createTour(root: HTMLElement, render: Renderer): void {
   const updateCompare = () => {
     const value = Number(range.value);
     afterWrap.style.clipPath = `inset(0 0 0 ${value}%)`;
-    handle.style.left = `${value}%`;
+
+    const width = panel.getBoundingClientRect().width;
+    const grip = Math.min(GRIP, Math.max(0, width / 2 - GRIP));
+    const position = (value / 100) * width;
+    handle.style.left = `${Math.min(Math.max(position, grip), Math.max(grip, width - grip))}px`;
+    // The split line only means something once there is something to split.
+    handle.style.backgroundColor = value > 1 ? '' : 'transparent';
+
+    if (beforeChip) {
+      beforeChip.style.opacity = value > BEFORE_LABEL ? '1' : '0';
+    }
+
     const label = tabs[index]?.dataset.title?.toLowerCase() ?? 'redacted';
     range.setAttribute(
       'aria-valuetext',
@@ -151,18 +163,8 @@ function createTour(root: HTMLElement, render: Renderer): void {
     updateCompare();
   };
 
-  const updateToggle = () => {
-    root.dataset.playing = String(playing);
-    toggle.setAttribute(
-      'aria-label',
-      playing ? 'Pause the style tour' : 'Play the style tour'
-    );
-    if (toggleLabel) toggleLabel.textContent = playing ? 'Pause' : 'Play';
-    playIcon?.classList.toggle('hidden', playing);
-    pauseIcon?.classList.toggle('hidden', !playing);
-  };
-
-  const canAnimate = () => playing && visible && !document.hidden;
+  const canAnimate = () =>
+    !reduceMotion.matches && visible && !document.hidden && !held;
 
   const tick = (now: number) => {
     frame = 0;
@@ -199,40 +201,17 @@ function createTour(root: HTMLElement, render: Renderer): void {
     else stop();
   };
 
-  const pause = () => {
-    if (!playing) return;
-    playing = false;
-    sync();
-    updateToggle();
-  };
-
-  const resume = () => {
-    if (playing) return;
-    playing = true;
-    sync();
-    updateToggle();
-  };
-
-  toggle.addEventListener('click', () => {
-    if (playing) pause();
-    else resume();
-  });
-
   tabs.forEach((tab, tabIndex) => {
     tab.addEventListener('click', () => {
-      pause();
       setMode(tabIndex);
     });
   });
-
-  tablist.addEventListener('focusin', pause);
 
   // The style gallery hands its choice to the tour.
   root.addEventListener('redaction-tour:select', (event) => {
     const mode = (event as CustomEvent<{ mode?: string }>).detail?.mode;
     const target = tabs.findIndex((tab) => tab.dataset.tourTab === mode);
     if (target < 0) return;
-    pause();
     setMode(target);
   });
 
@@ -245,23 +224,35 @@ function createTour(root: HTMLElement, render: Renderer): void {
     else return;
 
     event.preventDefault();
-    pause();
     setMode(next);
     tabs[next].focus();
   });
 
-  range.addEventListener('input', updateCompare);
-  range.addEventListener('pointerdown', pause);
-  range.addEventListener('focus', pause);
-
-  reduceMotion.addEventListener('change', (event) => {
-    if (!event.matches) return;
-    playing = false;
+  // Hold the tour still while the tabs have keyboard focus, then let it run
+  // again on the way out.
+  tablist.addEventListener('focusin', () => {
+    held = true;
     sync();
-    updateToggle();
+  });
+  tablist.addEventListener('focusout', () => {
+    held = false;
+    sync();
   });
 
+  range.addEventListener('input', updateCompare);
+
+  // Pointing at the sample gives the current style a full run of the cycle.
+  root.addEventListener('pointerenter', () => {
+    elapsed = 0;
+    last = 0;
+    setProgress(0);
+  });
+
+  reduceMotion.addEventListener('change', sync);
+
   document.addEventListener('visibilitychange', sync);
+
+  window.addEventListener('resize', updateCompare);
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
@@ -278,7 +269,6 @@ function createTour(root: HTMLElement, render: Renderer): void {
   }
 
   setMode(0);
-  updateToggle();
 }
 
 const roots = Array.from(document.querySelectorAll<HTMLElement>('[data-tour-root]'));
