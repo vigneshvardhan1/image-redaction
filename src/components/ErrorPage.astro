@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from './Icon.astro';
+
+interface ErrorLink {
+  label: string;
+  href: string;
+  icon: string;
+}
+
+interface Props {
+  code: string;
+  pageTitle: string;
+  description: string;
+  heading: string;
+  lead: string;
+  panelLabel: string;
+  panelBadge: string;
+  panelIcon?: string;
+  links: ErrorLink[];
+  navLabel?: string;
+  reload?: boolean;
+}
+
+const {
+  code,
+  pageTitle,
+  description,
+  heading,
+  lead,
+  panelLabel,
+  panelBadge,
+  panelIcon = 'lock',
+  links,
+  navLabel = 'Site links',
+  reload = false,
+} = Astro.props;
+---
+
+<BaseLayout title={pageTitle} description={description} noindex canonical={false}>
+  <section class="container-page py-20 md:py-28">
+    <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          {code}
+        </p>
+        <h1 class="mt-5 max-w-2xl text-display">{heading}</h1>
+        <p class="mt-5 max-w-xl text-[18px] font-light leading-relaxed text-muted">
+          {lead}
+        </p>
+        <div class="mt-8 flex flex-col gap-2 sm:flex-row">
+          <slot name="actions" />
+        </div>
+        <slot />
+      </div>
+
+      <div class="rounded-card border border-hairline-soft bg-canvas p-3">
+        <div class="flex items-center justify-between gap-3 px-2 pb-3 pt-1">
+          <p class="text-[11px] font-heading text-muted">{panelLabel}</p>
+          <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] text-muted">
+            <Icon name={panelIcon as any} size={10} />
+            {panelBadge}
+          </span>
+        </div>
+        <nav aria-label={navLabel} class="grid gap-1">
+          {
+            links.map((link) => (
+              <a
+                href={link.href}
+                class="flex min-h-11 items-center justify-between gap-3 rounded-tile px-3 text-[14px] text-ink transition-colors hover:bg-canvas-soft"
+              >
+                <span class="flex items-center gap-2.5">
+                  <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
+                    <Icon name={link.icon as any} size={13} />
+                  </span>
+                  {link.label}
+                </span>
+                <Icon name="arrow-up-right" size={13} class="text-faint" />
+              </a>
+            ))
+          }
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  {
+    reload && (
+      <script is:inline>
+        document.querySelectorAll('[data-error-reload]').forEach((button) => {
+          button.addEventListener('click', () => window.location.reload());
+        });
+      </script>
+    )
+  }
+</BaseLayout>

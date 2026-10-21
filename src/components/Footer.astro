@@ -24,7 +24,7 @@ const year = new Date().getFullYear();
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:justify-items-end">
+        <div class="grid grid-cols-2 gap-x-8 gap-y-10">
           <div>
             <h2 class="text-[12px] font-heading text-on-ink/40">Product</h2>
             <ul class="mt-4 space-y-3 text-[14px]">
@@ -43,15 +43,24 @@ const year = new Date().getFullYear();
               <li><a href="/features#shortcuts" class="text-on-ink/70 transition-colors hover:text-on-ink">Shortcuts</a></li>
             </ul>
           </div>
-          <div class="col-span-2 sm:col-span-1">
-            <h2 class="text-[12px] font-heading text-on-ink/40">Contact</h2>
+          <div>
+            <h2 class="text-[12px] font-heading text-on-ink/40">Company</h2>
             <ul class="mt-4 space-y-3 text-[14px]">
+              <li><a href="/about" class="text-on-ink/70 transition-colors hover:text-on-ink">About</a></li>
+              <li><a href="/contact" class="text-on-ink/70 transition-colors hover:text-on-ink">Contact</a></li>
               <li>
                 <a href="mailto:hello@imageredaction.com" class="inline-flex items-center gap-1.5 text-on-ink/70 transition-colors hover:text-on-ink">
                   Email us
                   <Icon name="arrow-up-right" size={13} />
                 </a>
               </li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="text-[12px] font-heading text-on-ink/40">Legal</h2>
+            <ul class="mt-4 space-y-3 text-[14px]">
+              <li><a href="/privacy-policy" class="text-on-ink/70 transition-colors hover:text-on-ink">Privacy Policy</a></li>
+              <li><a href="/terms" class="text-on-ink/70 transition-colors hover:text-on-ink">Terms &amp; Conditions</a></li>
               <li><a href="/privacy#verify" class="text-on-ink/70 transition-colors hover:text-on-ink">Verify our claims</a></li>
             </ul>
           </div>

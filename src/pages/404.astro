@@ -1,68 +1,28 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import ErrorPage from '../components/ErrorPage.astro';
 import Button from '../components/Button.astro';
-import Icon from '../components/Icon.astro';
 
 const links = [
-  { label: 'Home', href: '/', icon: 'arrow-right' as const },
-  { label: 'Redact an image', href: '/#editor', icon: 'image' as const },
-  { label: 'Features', href: '/features', icon: 'sparkles' as const },
-  { label: 'Privacy notes', href: '/privacy', icon: 'shield' as const },
-  { label: 'Guides', href: '/guides', icon: 'file' as const },
-  { label: 'FAQ', href: '/#faq', icon: 'info' as const },
+  { label: 'Home', href: '/', icon: 'arrow-right' },
+  { label: 'Redact an image', href: '/#editor', icon: 'image' },
+  { label: 'Features', href: '/features', icon: 'sparkles' },
+  { label: 'Privacy notes', href: '/privacy', icon: 'shield' },
+  { label: 'Guides', href: '/guides', icon: 'file' },
+  { label: 'FAQ', href: '/#faq', icon: 'info' },
 ];
 ---
 
-<BaseLayout
-  title="Page not found — Redact"
+<ErrorPage
+  code="404"
+  pageTitle="Page not found — Redact"
   description="This page does not exist. The editor, guides, and privacy notes are still here."
-  noindex
+  heading="This page was redacted."
+  lead="Either it never existed, or it was covered by an unusually large black box. The editor is still one click away."
+  panelLabel="A surviving index"
+  panelBadge="No dead ends"
+  panelIcon="lock"
+  links={links}
 >
-  <section class="container-page py-20 md:py-28">
-    <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
-      <div>
-        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
-          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
-          404
-        </p>
-        <h1 class="mt-5 max-w-2xl text-display">This page was redacted.</h1>
-        <p class="mt-5 max-w-xl text-[18px] font-light leading-relaxed text-muted">
-          Either it never existed, or it was covered by an unusually large black
-          box. The editor is still one click away.
-        </p>
-        <div class="mt-8 flex flex-col gap-2 sm:flex-row">
-          <Button href="/#editor" size="lg" iconRight="arrow-right">Open the editor</Button>
-          <Button href="/" variant="outline" size="lg">Back home</Button>
-        </div>
-      </div>
-
-      <div class="rounded-card border border-hairline-soft bg-canvas p-3">
-        <div class="flex items-center justify-between px-2 pb-3 pt-1">
-          <p class="text-[11px] font-heading text-muted">A surviving index</p>
-          <span class="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] text-muted">
-            <Icon name="lock" size={10} />
-            No dead ends
-          </span>
-        </div>
-        <nav aria-label="Site links" class="grid gap-1">
-          {
-            links.map((link) => (
-              <a
-                href={link.href}
-                class="flex min-h-11 items-center justify-between gap-3 rounded-tile px-3 text-[14px] text-ink transition-colors hover:bg-canvas-soft"
-              >
-                <span class="flex items-center gap-2.5">
-                  <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
-                    <Icon name={link.icon} size={13} />
-                  </span>
-                  {link.label}
-                </span>
-                <Icon name="arrow-up-right" size={13} class="text-faint" />
-              </a>
-            ))
-          }
-        </nav>
-      </div>
-    </div>
-  </section>
-</BaseLayout>
+  <Button slot="actions" href="/#editor" size="lg" iconRight="arrow-right">Open the editor</Button>
+  <Button slot="actions" href="/" variant="outline" size="lg">Back home</Button>
+</ErrorPage>

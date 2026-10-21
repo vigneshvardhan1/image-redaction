@@ -81,6 +81,22 @@ const privacyFaqSchema = buildFaqSchema(privacyFaqs);
   </PageHero>
 
   <section class="container-page">
+    <div class="flex gap-3 rounded-tile border border-hairline-soft bg-canvas-soft px-4 py-3.5">
+      <Icon name="file" size={14} class="mt-0.5 shrink-0 text-muted" />
+      <p class="text-[12px] leading-relaxed text-muted">
+        This page explains how the editor handles your image. For the formal policy —
+        cookies, hosting logs, and your rights — read the{' '}
+        <a
+          href="/privacy-policy"
+          class="font-heading text-ink underline decoration-hairline underline-offset-2 hover:decoration-ink"
+        >
+          Privacy Policy
+        </a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="container-page mt-3">
     <div class="grid gap-px overflow-hidden rounded-card border border-hairline-soft bg-hairline-soft sm:grid-cols-2 lg:grid-cols-4">
       {
         [

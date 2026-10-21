@@ -198,6 +198,101 @@
     border-top: 1px solid var(--color-hairline-soft);
   }
 
+  /* Long-form policy copy. Kept as plain CSS so the markup stays semantic
+     (sections, headings, lists) instead of carrying a class on every node. */
+  .legal-prose {
+    color: var(--color-ink);
+    font-size: 0.9375rem;
+    line-height: 1.72;
+  }
+
+  .legal-prose > section {
+    scroll-margin-top: 7rem;
+  }
+
+  .legal-prose > section + section {
+    margin-top: 2.5rem;
+  }
+
+  .legal-prose h2 {
+    font-size: 1.25rem;
+    font-weight: var(--font-weight-heading);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .legal-prose h3 {
+    margin-top: 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: var(--font-weight-heading);
+    line-height: 1.4;
+  }
+
+  .legal-prose p {
+    margin-top: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .legal-prose h2 + p,
+  .legal-prose h3 + p {
+    margin-top: 0.5rem;
+  }
+
+  .legal-prose ul,
+  .legal-prose ol {
+    margin-top: 0.875rem;
+    padding-left: 1.25rem;
+    color: var(--color-muted);
+  }
+
+  .legal-prose ul {
+    list-style: disc;
+  }
+
+  .legal-prose ol {
+    list-style: decimal;
+  }
+
+  .legal-prose li + li {
+    margin-top: 0.5rem;
+  }
+
+  .legal-prose li::marker {
+    color: var(--color-faint);
+  }
+
+  .legal-prose strong {
+    color: var(--color-ink);
+    font-weight: var(--font-weight-heading);
+  }
+
+  .legal-prose a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-hairline);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.15s ease;
+  }
+
+  .legal-prose a:hover {
+    text-decoration-color: var(--color-ink);
+  }
+
+  .legal-prose code {
+    border-radius: 0.25rem;
+    background-color: var(--color-canvas-soft);
+    padding: 0.1rem 0.3rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8125rem;
+    color: var(--color-ink);
+  }
+
+  .legal-prose hr {
+    margin-top: 2.5rem;
+    border: 0;
+    border-top: 1px solid var(--color-hairline-soft);
+  }
+
   .reveal {
     opacity: 1;
     transform: none;

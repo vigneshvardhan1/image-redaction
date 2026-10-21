@@ -1,0 +1,251 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+
+const updated = 'October 21, 2026';
+
+const toc = [
+  { id: 'acceptance', label: 'Acceptance' },
+  { id: 'the-service', label: 'The service' },
+  { id: 'your-content', label: 'Your content' },
+  { id: 'acceptable-use', label: 'Acceptable use' },
+  { id: 'no-professional-advice', label: 'No professional advice' },
+  { id: 'intellectual-property', label: 'Intellectual property' },
+  { id: 'third-parties', label: 'Third-party services' },
+  { id: 'changes', label: 'Changes' },
+  { id: 'disclaimer', label: 'Disclaimer' },
+  { id: 'liability', label: 'Limitation of liability' },
+  { id: 'indemnity', label: 'Indemnity' },
+  { id: 'governing-law', label: 'Governing law' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const highlights = [
+  { value: 'Free', label: 'No account or payment required' },
+  { value: 'Yours', label: 'You keep the rights to your images' },
+  { value: 'Best-effort', label: 'Verify the export before sharing' },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Terms & Conditions',
+  url: 'https://imageredaction.com/terms',
+  description:
+    'The rules for using Redact: free to use, your images stay yours, and the tool is best-effort.',
+  dateModified: '2026-10-21',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Redact',
+    url: 'https://imageredaction.com/',
+    email: 'hello@imageredaction.com',
+  },
+};
+---
+
+<LegalLayout
+  title="Terms & Conditions"
+  description="The rules for using Redact, in plain language: it is free to use, your images stay yours, and you are responsible for checking the result before you share it."
+  eyebrow="Legal"
+  updated={updated}
+  toc={toc}
+  highlights={highlights}
+  summary="Redact is a free, browser-based tool. You keep the rights to your images, you are responsible for how you use the output, and the redaction is best-effort — always check the exported file before you send it."
+  schema={schema}
+>
+  <section id="acceptance">
+    <h2>Acceptance of these terms</h2>
+    <p>
+      These Terms & Conditions (“terms”) govern your use of imageredaction.com and the
+      Redact editor (together, “the service”). By accessing or using the service, you
+      agree to these terms and to the{' '}
+      <a href="/privacy-policy">Privacy Policy</a>. If you do not agree, please do not
+      use the service.
+    </p>
+    <p>
+      If you use the service on behalf of an organisation, you confirm that you have
+      authority to bind that organisation to these terms. You must be old enough to
+      consent to using an online service where you live.
+    </p>
+  </section>
+
+  <section id="the-service">
+    <h2>The service</h2>
+    <p>
+      Redact is a free, browser-based tool for covering parts of images. It runs on your
+      device, requires no account, and does not upload your files. The current version
+      is provided free of charge. If paid features are introduced, their prices and
+      terms will be shown before any purchase.
+    </p>
+    <p>
+      We may add, change, suspend, or discontinue any part of the service at any time.
+      We do not guarantee that the service will always be available, error-free, or
+      compatible with every browser or file.
+    </p>
+  </section>
+
+  <section id="your-content">
+    <h2>Your content</h2>
+    <p>
+      You keep all rights to the images you use with Redact. Because the files are
+      processed locally, we do not receive, store, own, or license your images. We claim
+      no ownership over your content or your exports.
+    </p>
+    <p>
+      You are responsible for the content you process and share. You must have the
+      right to use and edit the image, and you must have permission to handle any
+      personal information it contains. Do not use the service to process content you
+      are not allowed to process.
+    </p>
+    <p>
+      You are also responsible for the final result. A redaction box only covers what it
+      covers, and an automated check is not a guarantee. Review the exported image
+      before you send it anywhere.
+    </p>
+  </section>
+
+  <section id="acceptable-use">
+    <h2>Acceptable use</h2>
+    <p>You agree not to use the service to:</p>
+    <ul>
+      <li>break any applicable law or regulation;</li>
+      <li>infringe someone else’s copyright, privacy, or other rights;</li>
+      <li>
+        harass, threaten, defraud, or deceive anyone, or to conceal evidence or evade a
+        lawful process;
+      </li>
+      <li>
+        interfere with the security, availability, or operation of the site, including
+        by attempting to gain unauthorised access or by automating requests in a way
+        that burdens the service;
+      </li>
+      <li>
+        misrepresent a redacted image as certified, compliant, or safe when it has not
+        been properly checked;
+      </li>
+      <li>distribute malware or use the site as part of an unlawful scheme.</li>
+    </ul>
+    <p>
+      We may restrict or block access if we reasonably believe these rules have been
+      broken, or if a request threatens the service or another person.
+    </p>
+  </section>
+
+  <section id="no-professional-advice">
+    <h2>No professional advice</h2>
+    <p>
+      Redact is a utility, not legal, compliance, privacy, or security advice. A
+      redaction produced with the tool may not satisfy a regulator, court, employer,
+      platform, or counterparty. Nothing on this site creates a professional
+      relationship.
+    </p>
+    <p>
+      Smart detection, OCR, and verification are best-effort. They can miss text,
+      faces, codes, and other details, and blur or pixelation can sometimes be partially
+      reconstructed. Use ink black for identity and financial details, and get
+      professional advice when the stakes require it.
+    </p>
+  </section>
+
+  <section id="intellectual-property">
+    <h2>Intellectual property</h2>
+    <p>
+      The site’s design, copy, and original code are owned by us or used with
+      permission. You may not copy, modify, or redistribute the site’s branding or
+      content except as allowed by law or with written permission.
+    </p>
+    <p>
+      Third-party components remain under their own licences. For example, Tesseract.js
+      is used under its open-source licence, and the Inter typeface is used under the
+      SIL Open Font License. Using the tool does not give you ownership of any part of
+      the service.
+    </p>
+  </section>
+
+  <section id="third-parties">
+    <h2>Third-party services</h2>
+    <p>
+      Smart detection loads the Tesseract.js library and language data from jsDelivr.
+      Those services have their own terms and privacy practices, and their availability
+      is outside our control. We are not responsible for third-party services or for
+      the content of external sites we link to.
+    </p>
+    <p>
+      Manual redaction, copy, and export do not depend on those third-party requests.
+    </p>
+  </section>
+
+  <section id="changes">
+    <h2>Changes to these terms</h2>
+    <p>
+      We may update these terms from time to time. The date near the top of this page
+      shows the latest version. Changes take effect when they are posted. Continuing to
+      use the service after an update means you accept the revised terms. If you do not
+      agree, stop using the service.
+    </p>
+  </section>
+
+  <section id="disclaimer">
+    <h2>Disclaimer of warranties</h2>
+    <p>
+      To the maximum extent permitted by law, the service is provided “as is” and “as
+      available”, without warranties of any kind, express or implied. That includes
+      implied warranties of merchantability, fitness for a particular purpose,
+      non-infringement, accuracy, and uninterrupted or error-free operation.
+    </p>
+    <p>
+      We do not warrant that detection will find every sensitive detail, that a
+      redaction cannot be reversed, or that the output will meet the requirements of any
+      organisation or law. You are responsible for verifying the result.
+    </p>
+  </section>
+
+  <section id="liability">
+    <h2>Limitation of liability</h2>
+    <p>
+      To the maximum extent permitted by law, we will not be liable for indirect,
+      incidental, special, consequential, or punitive damages, or for loss of data,
+      profits, goodwill, or business opportunity, arising from your use of, or inability
+      to use, the service.
+    </p>
+    <p>
+      Our total liability for any claim relating to the service will not exceed the
+      greater of the amount you paid us in the twelve months before the claim, or fifty
+      US dollars (USD 50). Some jurisdictions do not allow certain limitations, so parts
+      of this section may not apply to you.
+    </p>
+  </section>
+
+  <section id="indemnity">
+    <h2>Indemnity</h2>
+    <p>
+      You agree to indemnify and hold harmless Redact and its operator from claims,
+      damages, losses, and expenses (including reasonable legal fees) arising from your
+      use of the service, the content you process, or your breach of these terms.
+    </p>
+  </section>
+
+  <section id="governing-law">
+    <h2>Governing law</h2>
+    <p>
+      These terms are governed by the laws of India, without regard to conflict-of-law
+      principles. Subject to any consumer protection rights that cannot be waived,
+      disputes will be subject to the exclusive jurisdiction of the competent courts in
+      India.
+    </p>
+    <p>
+      If any part of these terms is found unenforceable, the remaining parts stay in
+      effect. These terms and the Privacy Policy are the entire agreement between you
+      and us about the service.
+    </p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>
+      Questions about these terms:{' '}
+      <a href="mailto:hello@imageredaction.com">hello@imageredaction.com</a>, or use the{' '}
+      <a href="/contact">contact page</a>. For information about how the site handles
+      data, read the <a href="/privacy-policy">Privacy Policy</a>.
+    </p>
+  </section>
+</LegalLayout>

@@ -1,0 +1,288 @@
+---
+import LegalLayout from '../layouts/LegalLayout.astro';
+
+const updated = 'October 21, 2026';
+
+const toc = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'who-we-are', label: 'Who we are' },
+  { id: 'what-we-collect', label: 'What we collect' },
+  { id: 'your-images', label: 'Your images' },
+  { id: 'cookies', label: 'Cookies and storage' },
+  { id: 'third-parties', label: 'Third-party requests' },
+  { id: 'hosting-logs', label: 'Hosting logs' },
+  { id: 'email', label: 'Email you send' },
+  { id: 'rights', label: 'Your rights' },
+  { id: 'children', label: 'Children' },
+  { id: 'security', label: 'Security' },
+  { id: 'changes', label: 'Changes' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const highlights = [
+  { value: '0', label: 'Images uploaded or stored' },
+  { value: '0', label: 'Analytics and tracking pixels' },
+  { value: '1', label: 'Functional theme cookie' },
+];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: 'Privacy Policy',
+  url: 'https://imageredaction.com/privacy-policy',
+  description:
+    'How Redact handles information: images stay in your browser, there is no analytics, and the only cookie stores your theme preference.',
+  dateModified: '2026-10-21',
+  publisher: {
+    '@type': 'Organization',
+    name: 'Redact',
+    url: 'https://imageredaction.com/',
+    email: 'hello@imageredaction.com',
+  },
+};
+---
+
+<LegalLayout
+  title="Privacy Policy"
+  description="What Redact does with information, in plain language: your image stays in your browser, there is no analytics, and the only cookie remembers your theme."
+  updated={updated}
+  toc={toc}
+  highlights={highlights}
+  summary="We do not collect your images, run analytics, or ask for an account. The only cookie this site sets remembers whether you chose the light or dark theme. The rest of this page explains the small number of requests the site does make."
+  schema={schema}
+>
+  <section id="overview">
+    <h2>Overview</h2>
+    <p>
+      Redact is a browser-based image redaction tool at imageredaction.com. This policy
+      explains what happens to information when you visit the site or use the editor.
+      It applies to this website and the editor. It does not apply to other sites we
+      link to.
+    </p>
+    <p>
+      Two sentences cover most of it: <strong>your image is processed in your
+      browser and is never uploaded</strong>, and we do not ask for an account, an
+      email address, or any other personal detail before you use the tool. The longer
+      version follows.
+    </p>
+  </section>
+
+  <section id="who-we-are">
+    <h2>Who we are</h2>
+    <p>
+      Redact (“we”, “us”, “our”) operates imageredaction.com. For any question about
+      this policy or about how the site handles information, email{' '}
+      <a href="mailto:hello@imageredaction.com">hello@imageredaction.com</a>. That is
+      also the contact for access, correction, and deletion requests.
+    </p>
+  </section>
+
+  <section id="what-we-collect">
+    <h2>What we collect</h2>
+    <p>
+      We do not collect personal information through the editor. There is no sign-up,
+      no login, no payment step, and no profile. We do not know who you are, what you
+      redact, or how often you use the tool.
+    </p>
+    <p>Information reaches us only in these narrow cases:</p>
+    <ul>
+      <li>
+        <strong>You choose to email us.</strong> We then receive your email address and
+        whatever you include in the message.
+      </li>
+      <li>
+        <strong>Your browser requests the site.</strong> Our hosting provider processes
+        standard technical data to deliver and secure the pages, as described under{' '}
+        <a href="#hosting-logs">hosting logs</a>.
+      </li>
+      <li>
+        <strong>You run Smart detect.</strong> The page asks a public CDN for the OCR
+        library and language data. That request does not include your image. See{' '}
+        <a href="#third-parties">third-party requests</a>.
+      </li>
+    </ul>
+    <p>
+      We do not use analytics, advertising pixels, session recording, or cross-site
+      trackers. We do not sell, rent, or share personal information.
+    </p>
+  </section>
+
+  <section id="your-images">
+    <h2>Your images and files</h2>
+    <p>
+      The file you choose is read by your browser and drawn to an in-memory canvas.
+      It is not sent to us or to any third party. There is no upload endpoint on this
+      site, so there is no copy of your image for us to store, review, log, or delete.
+    </p>
+    <p>
+      Redactions, undo history, and unsaved edits live in the current browser tab.
+      Closing or reloading the page clears them. We cannot recover them because we
+      never receive them.
+    </p>
+    <p>
+      When you export, your browser encodes a new image from the canvas and saves it
+      on your device. Re-encoding leaves the original EXIF, GPS coordinates, device
+      details, and file name behind. The redactions are baked into the pixels of the
+      new file.
+    </p>
+    <p>
+      You can confirm the claim yourself: open your browser’s developer tools, switch
+      to the Network tab, load an image, and draw a few boxes. Your image will not
+      appear in the request list. The{' '}
+      <a href="/privacy#verify">privacy page</a> walks through the same check.
+    </p>
+  </section>
+
+  <section id="cookies">
+    <h2>Cookies and local storage</h2>
+    <p>
+      The site can set one functional cookie, named <code>ir-theme</code>, when you use
+      the light/dark toggle. It stores either <code>light</code> or <code>dark</code> so
+      the page can apply your chosen theme before the first paint on your next visit.
+      When it is set, it lasts one year. The same value is also kept in local storage and
+      in the browser’s history entry, so the choice survives if one of those places is
+      blocked.
+    </p>
+    <p>
+      The cookie contains no personal data and is not used to identify you. Like any
+      cookie, it is included in requests to imageredaction.com, where the static host
+      may receive it as part of ordinary request handling. It is never used for
+      advertising or analytics.
+    </p>
+    <p>
+      There is no consent banner because there is nothing to opt in to. You can delete
+      the cookie and the local-storage entry at any time through your browser
+      settings; the site will work normally and will simply ask your operating system
+      for a theme again.
+    </p>
+  </section>
+
+  <section id="third-parties">
+    <h2>Third-party requests</h2>
+    <p>
+      One part of the editor is not served from our domain. The first time you run
+      Smart detect in a browser, the page loads Tesseract.js from jsDelivr, together
+      with the OCR engine and English language data that Tesseract requests. Those
+      files are necessary for the feature. They are not requested at all if you only
+      redact manually.
+    </p>
+    <p>
+      <strong>Your image is not part of those requests.</strong> Tesseract runs in a
+      Web Worker inside your browser and receives the image from the page, in memory,
+      not over the network.
+    </p>
+    <p>
+      jsDelivr is a content delivery network with its own privacy practices. Like any
+      CDN, it may see the requesting IP address, user agent, and requested URL, and it
+      may keep standard access logs. We do not control its logs or retention periods.
+      See jsDelivr’s own policy for details.
+    </p>
+    <p>
+      Everything else — the pages, styles, scripts, and the Inter font — is served
+      from this site. We do not load Google Fonts, embedded videos, social widgets, or
+      third-party analytics.
+    </p>
+  </section>
+
+  <section id="hosting-logs">
+    <h2>Hosting logs</h2>
+    <p>
+      imageredaction.com is delivered as a static site through a hosting provider and
+      its network. When your browser requests a page or file, the provider
+      necessarily processes technical data such as your IP address, user agent,
+      requested path, timestamp, and response status. That data is used to deliver the
+      site, keep it secure, and diagnose abuse.
+    </p>
+    <p>
+      We do not use these logs to build a profile or to identify individual visitors.
+      Retention is governed by the hosting provider’s standard practices. Your image
+      never appears in these logs because it is never requested from the server.
+    </p>
+  </section>
+
+  <section id="email">
+    <h2>Email you send us</h2>
+    <p>
+      If you use the <a href="/contact">contact form</a>, it does not submit data to a
+      server. It prepares a message and opens your own email app. Nothing is sent until
+      you press send there.
+    </p>
+    <p>
+      When you email us, we receive your email address, any name you include, and the
+      content of the message. We use it to reply to you and keep it only as long as
+      needed to handle the conversation. We do not add you to a mailing list, sell your
+      address, or use it for advertising.
+    </p>
+  </section>
+
+  <section id="rights">
+    <h2>Your rights</h2>
+    <p>
+      Depending on where you live, you may have the right to access, correct, delete,
+      restrict, or object to the processing of your personal data, and to complain to
+      a supervisory authority. Examples include the GDPR in the European Economic Area
+      and the United Kingdom, the Digital Personal Data Protection Act in India, and
+      the CCPA/CPRA in California.
+    </p>
+    <p>
+      Because the editor collects no personal data, there is usually nothing for us to
+      access or delete. If you have emailed us, you can ask us to delete that
+      correspondence, subject to any legal obligation to keep it.
+    </p>
+    <p>
+      We do not sell or share personal information for cross-context behavioural
+      advertising. To make a request, email{' '}
+      <a href="mailto:hello@imageredaction.com">hello@imageredaction.com</a> from the
+      address you used. We may ask for enough information to find the relevant
+      correspondence.
+    </p>
+  </section>
+
+  <section id="children">
+    <h2>Children</h2>
+    <p>
+      The site is not directed to children under 13, or under 16 where local law sets a
+      higher age. We do not knowingly collect personal information from children. If a
+      child has emailed us, a parent or guardian can contact us and we will delete the
+      correspondence.
+    </p>
+  </section>
+
+  <section id="security">
+    <h2>Security</h2>
+    <p>
+      Processing images locally removes a whole class of risk: there is no image store
+      to breach and no upload in transit. The site is served over HTTPS, and the code
+      that touches your image runs in your browser.
+    </p>
+    <p>
+      No system is perfect. If you find a security or privacy problem, email us with
+      enough detail to reproduce it. Please do not include a real image containing
+      sensitive data in the report; a synthetic sample is enough.
+    </p>
+  </section>
+
+  <section id="changes">
+    <h2>Changes to this policy</h2>
+    <p>
+      We may update this policy when the tool or the law changes. The date near the top
+      of this page shows the latest version. Material changes will be reflected here.
+      Continuing to use the site after an update means the revised policy applies.
+    </p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>
+      Questions, corrections, or data requests:{' '}
+      <a href="mailto:hello@imageredaction.com">hello@imageredaction.com</a>. For a
+      privacy issue with the editor, include your browser and the request you saw in
+      the Network tab — but never send a real image containing sensitive data.
+    </p>
+    <p>
+      If you are looking for a plain explanation of how local processing works, read
+      the <a href="/privacy">privacy notes</a>. If you want to know the rules for using
+      the site, read the <a href="/terms">terms and conditions</a>.
+    </p>
+  </section>
+</LegalLayout>

@@ -1,0 +1,42 @@
+---
+import ErrorPage from '../components/ErrorPage.astro';
+import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
+
+const links = [
+  { label: 'Home', href: '/', icon: 'arrow-right' },
+  { label: 'Open the editor', href: '/#editor', icon: 'image' },
+  { label: 'Guides', href: '/guides', icon: 'file' },
+  { label: 'Privacy notes', href: '/privacy', icon: 'shield' },
+  { label: 'Contact us', href: '/contact', icon: 'chat' },
+];
+---
+
+<ErrorPage
+  code="500"
+  pageTitle="Something went wrong — Redact"
+  description="This page could not be loaded. Nothing you were working on was uploaded — the editor runs entirely in your browser."
+  heading="This page hit a snag."
+  lead="Something failed while the page was being prepared. It is not you, and nothing you were working on left this tab — the editor never uploads your images. Reload to try again, or start somewhere that is still standing."
+  panelLabel="A way back"
+  panelBadge="Nothing left the tab"
+  panelIcon="lock"
+  navLabel="Recovery links"
+  links={links}
+  reload
+>
+  <Button
+    slot="actions"
+    size="lg"
+    iconRight="refresh"
+    dataAttrs={{ 'data-error-reload': '' }}
+  >
+    Try again
+  </Button>
+  <Button slot="actions" href="/" variant="outline" size="lg">Back home</Button>
+  <p class="mt-5 flex max-w-xl items-start gap-2 text-[11px] leading-relaxed text-muted">
+    <Icon name="info" size={12} class="mt-0.5 shrink-0" />
+    If this keeps happening, open a fresh tab and try a smaller file. The browser
+    console has the details worth sending to us.
+  </p>
+</ErrorPage>
