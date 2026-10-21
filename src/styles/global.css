@@ -29,6 +29,9 @@
   --color-raised: #ffffff;
   /* Chrome drawn on top of user images. Never inverts — it must stay legible. */
   --color-overlay-ink: #141414;
+  /* The ink fill a redaction is painted with. Never inverts — it must match
+     the pixels the renderer exports. */
+  --color-redact-ink: #141414;
   /* Editor backdrop behind the canvas. */
   --color-stage: #ededed;
   --color-stage-dot: rgba(20, 20, 20, 0.11);
@@ -285,7 +288,8 @@
     pointer-events: auto;
     transition:
       background-color 0.15s ease,
-      border-color 0.15s ease;
+      border-color 0.15s ease,
+      box-shadow 0.15s ease;
   }
 
   .suggestion:hover,
@@ -297,6 +301,18 @@
   .suggestion[aria-pressed="true"] {
     border-style: solid;
     background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+
+  /* Redactor only. Hovering a detected box paints the exact ink fill the
+     renderer will bake in, so the box previews the finished redaction before
+     anything is applied. The 2px ring mirrors the padding `applyFindings`
+     adds around every finding. The Unredactor reuses `.suggestion` for areas
+     it will repair, so the preview is scoped to `[data-redactor]`. */
+  [data-redactor] .suggestion:hover,
+  [data-redactor] .suggestion:focus-visible {
+    border-color: var(--color-redact-ink);
+    background: var(--color-redact-ink);
+    box-shadow: 0 0 0 2px var(--color-redact-ink);
   }
 
   .suggestion-tag {

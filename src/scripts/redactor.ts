@@ -438,8 +438,8 @@ function setup(editor: HTMLElement) {
     bannerSub.textContent = isVerify
       ? 'The re-scan found text that still matches a sensitive pattern. Add another box, then verify again.'
       : sensitiveCount > 0
-        ? 'OCR runs locally. Click a box to include or exclude it, then redact them all.'
-        : 'Nothing matched our sensitive patterns. Use All text to redact every line anyway.';
+        ? 'OCR runs locally. Hover a box to preview the ink, click to include or exclude it, then redact them all.'
+        : 'Nothing matched our sensitive patterns. Hover to preview, or use All text to redact every line anyway.';
 
     detectPrimary.textContent = `Redact ${selectedCount}`;
     detectPrimary.disabled = selectedCount === 0;
