@@ -66,4 +66,71 @@ export const faqs: FaqItem[] = [
   },
 ];
 
-export const homeFaqs = faqs.slice(0, 9);
+/**
+ * Homepage FAQ, ordered around the questions people actually search for.
+ * Keep the visible copy and the FAQPage JSON-LD generated from this array in
+ * sync — search engines expect structured data to match the page.
+ */
+export const homeFaqs: FaqItem[] = [
+  {
+    question: 'What redaction styles are available?',
+    answer:
+      'Redact has four image redaction styles: ink black, pixelate, blur, and emoji sticker. Ink black replaces the area with opaque pixels and is the safest choice for names, card numbers, IDs, addresses, QR codes, and anything financial. Pixelate and blur are softer options for faces and casual screenshots, while the emoji sticker paints an opaque plate and drops an emoji on top. All four work with rectangle or oval selections.',
+  },
+  {
+    question: 'Is this redaction truly permanent?',
+    answer:
+      'Yes — in the file you download. The export is a new, flattened image, so redactions are baked into the pixels rather than saved as a removable layer, mask, or metadata tag. The original image on your device is left untouched. For details that must never be recovered, use ink black instead of blur or pixelation, and check the edges before you share the file.',
+  },
+  {
+    question: 'Can someone undo the redaction?',
+    answer:
+      'Not in the exported image. The download contains no hidden layer, undo history, or original pixels, and canvas re-encoding removes EXIF and GPS metadata. Blur and pixelation deserve more caution: research has shown that lightly obscured text and faces can sometimes be partially reconstructed. Ink black removes the underlying pixels entirely, which is why it is the recommended style for identity and financial data.',
+  },
+  {
+    question: 'How can I redact an image?',
+    answer:
+      'Open the Redact editor and drop, paste, or choose an image. Run Smart detect to find likely sensitive text, or draw a rectangle or oval over anything it misses, then pick a redaction style and adjust the box edges. Use Verify to re-scan the flattened result, then download a PNG, JPG, or WebP. Everything runs in your browser, and the image is never uploaded.',
+  },
+  {
+    question: 'Can I undo a redaction after drawing it?',
+    answer:
+      'Yes, while you are still editing. Use the Undo button or Ctrl/Cmd + Z to step back, Redo to restore a change, or select a box and press Delete to remove it. The undo history exists only in the current browser tab and is cleared when you close or reload the page. After you export, the redaction is flattened into the new image and cannot be undone in that file.',
+  },
+  {
+    question: 'What image formats are supported?',
+    answer:
+      'You can redact PNG, JPG, WebP, GIF, BMP, and AVIF images up to 25 MB. Animated GIFs are flattened to their first frame, and very large images are scaled to a 5,200 px long edge so the editor stays responsive. Redacted images can be exported as PNG, JPG, or WebP, with no EXIF or GPS metadata.',
+  },
+  {
+    question: 'Will you have access to my image?',
+    answer:
+      'No. Your browser reads the image and draws it to a local canvas inside your tab. There is no upload endpoint, so the file is never sent to a server, stored, logged, or reviewed by us. Smart detection downloads an OCR engine and English model on first use, but your image is not part of that request. You can confirm both claims in your browser’s Network tab.',
+  },
+  {
+    question: 'Can I redact things other than faces?',
+    answer:
+      'Yes. You can cover anything visible in an image: faces, names, email addresses, phone numbers, card numbers, ID numbers, addresses, QR codes, barcodes, logos, account names, and more. Smart detection automatically suggests text that looks like emails, card numbers, phone numbers, government IDs, addresses, and dates. Faces, QR codes, barcodes, and logos still need a manual box.',
+  },
+  {
+    question: 'Does Redact use cookies or track me?',
+    answer:
+      'Only a functional one. Redact has no analytics, advertising pixels, or third-party trackers, and your image is never uploaded. The one cookie stores your light/dark theme preference, alongside a local-storage copy, so the page does not flash the wrong theme on your next visit. It contains no personal data, is never sent to a server, and can be cleared in your browser settings at any time.',
+  },
+];
+
+/** Build a schema.org FAQPage node from the same items rendered on the page. */
+export function buildFaqSchema(items: FaqItem[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}

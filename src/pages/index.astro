@@ -12,7 +12,7 @@ import GuideCard from '../components/GuideCard.astro';
 import Faq from '../components/Faq.astro';
 import CtaBand from '../components/CtaBand.astro';
 import ImageRedactionGuide from '../components/ImageRedactionGuide.astro';
-import { homeFaqs } from '../data/faq';
+import { buildFaqSchema, homeFaqs } from '../data/faq';
 import { guidesByDate } from '../data/guides';
 
 const useCases = [
@@ -140,18 +140,7 @@ const websiteSchema = {
     'Image redaction software for screenshots and photos. Detect and cover names, emails, card numbers, and addresses on your device, then export a metadata-free image.',
 };
 
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: homeFaqs.map((item) => ({
-    '@type': 'Question',
-    name: item.question,
-    acceptedAnswer: {
-      '@type': 'Answer',
-      text: item.answer,
-    },
-  })),
-};
+const faqSchema = buildFaqSchema(homeFaqs);
 ---
 
 <BaseLayout
@@ -514,14 +503,14 @@ const faqSchema = {
     </div>
   </section>
 
-  <section id="faq" class="container-page mt-20 scroll-mt-28 md:mt-28">
+  <section id="faq" class="container-page mt-20 scroll-mt-28 md:mt-28" aria-labelledby="faq-heading">
     <div class="grid gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
       <div class="self-start lg:sticky lg:top-28">
         <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
           <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
-          FAQ
+          Image redaction FAQ
         </p>
-        <h2 class="mt-4 text-h2">The questions people ask before trusting a redaction tool.</h2>
+        <h2 id="faq-heading" class="mt-4 text-h2">Frequently asked questions about image redaction.</h2>
         <p class="mt-4 max-w-md text-[15px] leading-relaxed text-muted">
           If something is missing, ask. The answer will be added here rather than
           buried in a support inbox.

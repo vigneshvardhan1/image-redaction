@@ -15,7 +15,7 @@ const { items, class: className = '' } = Astro.props;
     items.map((item) => (
       <details class="group rounded-tile bg-canvas-soft transition-colors open:bg-canvas-soft">
         <summary class="flex cursor-pointer list-none items-center justify-between gap-5 px-5 py-4 marker:hidden [&::-webkit-details-marker]:hidden">
-          <span class="text-[15px] font-heading leading-snug">{item.question}</span>
+          <h3 class="text-[15px] font-heading leading-snug">{item.question}</h3>
           <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas text-ink transition-transform duration-200 group-open:rotate-45">
             <Icon name="plus" size={14} />
           </span>

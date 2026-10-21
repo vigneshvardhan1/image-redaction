@@ -6,7 +6,7 @@ import Icon from '../components/Icon.astro';
 import SectionHead from '../components/SectionHead.astro';
 import Faq from '../components/Faq.astro';
 import CtaBand from '../components/CtaBand.astro';
-import { faqs } from '../data/faq';
+import { buildFaqSchema, faqs } from '../data/faq';
 
 const inBrowser = [
   {
@@ -63,11 +63,13 @@ const verifySteps = [
 ];
 
 const privacyFaqs = [faqs[0], faqs[1], faqs[3], faqs[5], faqs[8], faqs[9]];
+const privacyFaqSchema = buildFaqSchema(privacyFaqs);
 ---
 
 <BaseLayout
   title="Privacy — Redact"
   description="Your screenshot is never uploaded. See exactly what runs in your browser, the one disclosed CDN request used for optional OCR, and how to verify the claims yourself."
+  schema={privacyFaqSchema}
 >
   <PageHero
     eyebrow="Privacy"
@@ -85,7 +87,7 @@ const privacyFaqs = [faqs[0], faqs[1], faqs[3], faqs[5], faqs[8], faqs[9]];
           ['No image uploads', 'lock'],
           ['No account', 'shield'],
           ['No analytics', 'eye-off'],
-          ['No cookies', 'check'],
+          ['No tracking cookies', 'check'],
         ].map(([label, icon]) => (
           <div class="flex items-center gap-2.5 bg-canvas px-4 py-4">
             <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
