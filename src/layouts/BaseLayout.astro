@@ -8,21 +8,40 @@ import Splash from '../components/Splash.astro';
 interface Props {
   title?: string;
   description?: string;
+  keywords?: string[];
   noindex?: boolean;
   splash?: boolean;
   schema?: Record<string, unknown> | Record<string, unknown>[];
+  ogType?: 'website' | 'article';
+  ogImage?: string;
+  ogImageAlt?: string;
 }
 
 const {
-  title = 'Redact — Private screenshot redaction in your browser',
-  description = 'Redact names, emails, card numbers, and addresses in screenshots. On-device smart detection, four redaction styles, and metadata-free exports. Free, no account, no uploads.',
+  title = 'Image Redaction Tool — Free, Private, Online | Redact',
+  description = 'Free AI image redaction software for screenshots and photos. Hide names, emails, card numbers, and addresses on your device — no uploads, no account.',
+  keywords = [],
   noindex = false,
   splash = false,
   schema,
+  ogType = 'website',
+  ogImage = '/og.png',
+  ogImageAlt = 'Redact — a free image redaction tool for screenshots and photos',
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://imageredaction.com');
-const ogImage = new URL('/og.png', Astro.site ?? 'https://imageredaction.com');
+const site = Astro.site ?? new URL('https://imageredaction.com');
+const canonical = new URL(Astro.url.pathname, site);
+const ogImageUrl = new URL(ogImage, site);
+const ogImageExtension = ogImage.split('.').pop()?.toLowerCase();
+const ogImageType =
+  ogImageExtension === 'jpg' || ogImageExtension === 'jpeg'
+    ? 'image/jpeg'
+    : ogImageExtension === 'webp'
+      ? 'image/webp'
+      : 'image/png';
+const robots = noindex
+  ? 'noindex,nofollow'
+  : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 ---
 
@@ -34,27 +53,38 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
+    <meta name="robots" content={robots} />
+    <meta name="author" content="Redact" />
     <link rel="canonical" href={canonical} />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    {noindex && <meta name="robots" content="noindex,nofollow" />}
     <noscript><style>[data-splash] { display: none; }</style></noscript>
 
-    <meta property="og:type" content="website" />
+    <!-- Open Graph. Absolute image URLs, explicit dimensions, and alt text
+         keep link previews consistent across crawlers and social apps. -->
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Redact" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:secure_url" content={ogImageUrl} />
+    <meta property="og:image:type" content={ogImageType} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
+
+    <!-- X/Twitter card. -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <script is:inline>
       document.documentElement.classList.add('js');

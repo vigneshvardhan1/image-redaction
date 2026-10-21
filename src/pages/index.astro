@@ -11,6 +11,7 @@ import ComparisonTable from '../components/ComparisonTable.astro';
 import GuideCard from '../components/GuideCard.astro';
 import Faq from '../components/Faq.astro';
 import CtaBand from '../components/CtaBand.astro';
+import ImageRedactionGuide from '../components/ImageRedactionGuide.astro';
 import { homeFaqs } from '../data/faq';
 import { guidesByDate } from '../data/guides';
 
@@ -103,12 +104,16 @@ const appSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'Redact',
+  alternateName: 'Image Redaction Tool',
   url: 'https://imageredaction.com/',
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Any modern web browser',
   browserRequirements: 'Requires JavaScript. Smart detection downloads an OCR model on first use.',
+  inLanguage: 'en',
+  isAccessibleForFree: true,
   description:
     'Redact names, emails, card numbers, addresses, and other sensitive details from screenshots in your browser. On-device smart detection, four redaction styles, verification re-scan, and metadata-free exports.',
+  keywords: 'image redaction, image redaction software, image redaction tool, image redaction online, AI image redaction software',
   offers: {
     '@type': 'Offer',
     price: '0',
@@ -122,6 +127,17 @@ const appSchema = {
     'Verification re-scan',
     'Metadata-free PNG, JPG, and WebP exports',
   ],
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Redact',
+  alternateName: 'Image Redaction',
+  url: 'https://imageredaction.com/',
+  inLanguage: 'en',
+  description:
+    'Image redaction software for screenshots and photos. Detect and cover names, emails, card numbers, and addresses on your device, then export a metadata-free image.',
 };
 
 const faqSchema = {
@@ -138,15 +154,27 @@ const faqSchema = {
 };
 ---
 
-<BaseLayout description="Hide names, emails, card numbers, and addresses in screenshots. On-device smart detection, four redaction styles, and metadata-free exports. Free, no account, no uploads." schema={[appSchema, faqSchema]} splash>
+<BaseLayout
+  title="Image Redaction Tool — Free, Private, Online | Redact"
+  description="Free AI image redaction software for screenshots and photos. Hide names, emails, card numbers, and addresses on your device — no uploads, no account."
+  keywords={[
+    'image redaction',
+    'image redaction software',
+    'image redaction tool',
+    'image redaction online',
+    'AI image redaction software',
+  ]}
+  schema={[appSchema, websiteSchema, faqSchema]}
+  splash
+>
   <section class="container-page pb-8 pt-14 md:pt-20">
     <div class="mx-auto max-w-4xl text-center">
       <a
-        href="#detection"
+        href="#image-redaction"
         class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-3 py-1.5 text-[12px] leading-none transition-colors hover:bg-canvas-soft"
       >
         <Icon name="sparkles" size={13} class="text-muted" />
-        <span class="font-heading">Smart detection, on your device</span>
+        <span class="font-heading">Image redaction, on your device</span>
         <Icon name="arrow-right" size={12} class="text-muted" />
       </a>
 
@@ -155,8 +183,8 @@ const faqSchema = {
       </h1>
 
       <p class="mx-auto mt-6 max-w-2xl text-[19px] font-light leading-relaxed text-muted md:text-[21px]">
-        Hide names, emails, card numbers, and addresses in seconds. Smart detection
-        runs inside your browser, and every export leaves its metadata behind.
+        Image redaction in your browser: hide names, emails, card numbers, and addresses in
+        seconds. Smart detection runs on your device, and every export leaves its metadata behind.
       </p>
 
       <div class="mt-8 flex flex-col items-center justify-center gap-2 sm:flex-row">
@@ -468,6 +496,8 @@ const faqSchema = {
       <Button href="#editor" iconRight="arrow-right">Start redacting</Button>
     </div>
   </section>
+
+  <ImageRedactionGuide />
 
   <section id="guides" class="container-page mt-20 scroll-mt-28 md:mt-28">
     <SectionHead
