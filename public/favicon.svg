@@ -1,5 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="18" fill="#141414"/>
-  <rect x="12" y="20" width="40" height="24" rx="5" fill="none" stroke="#ffffff" stroke-width="2.5" opacity=".55"/>
-  <rect x="18" y="27" width="28" height="10" rx="3" fill="#ffffff"/>
+  <defs>
+    <clipPath id="tile">
+      <rect width="64" height="64" rx="19"/>
+    </clipPath>
+  </defs>
+  <rect width="64" height="64" rx="19" fill="#141414"/>
+  <g clip-path="url(#tile)">
+    <rect x="-16" y="27.2" width="96" height="9.6" rx="2" fill="#e7e5df" transform="rotate(36 32 32)"/>
+    <rect x="-16" y="27.2" width="96" height="9.6" rx="2" fill="#e7e5df" transform="rotate(-36 32 32)"/>
+  </g>
 </svg>

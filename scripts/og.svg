@@ -1,15 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <clipPath id="mark">
+      <rect x="72" y="54" width="44" height="44" rx="12"/>
+    </clipPath>
+  </defs>
   <rect width="1200" height="630" fill="#ffffff"/>
 
   <rect x="72" y="54" width="44" height="44" rx="12" fill="#141414"/>
-  <rect x="82" y="68" width="24" height="5" rx="2" fill="#ffffff" opacity="0.55"/>
-  <rect x="82" y="77" width="24" height="9" rx="2.5" fill="#ffffff"/>
-  <text x="130" y="84" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#141414">image redaction</text>
+  <g clip-path="url(#mark)">
+    <rect x="61" y="72.7" width="66" height="6.6" rx="1.4" fill="#e7e5df" transform="rotate(36 94 76)"/>
+    <rect x="61" y="72.7" width="66" height="6.6" rx="1.4" fill="#e7e5df" transform="rotate(-36 94 76)"/>
+  </g>
+  <text x="130" y="84" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#141414">redact</text>
 
   <text x="72" y="236" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700" fill="#141414">Share the screenshot.</text>
   <text x="72" y="312" font-family="Arial, Helvetica, sans-serif" font-size="68" font-weight="700" fill="#141414">Not the secrets.</text>
 
-  <text x="74" y="382" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#707070">Hide names, emails, card numbers, and addresses</text>
+  <text x="74" y="382" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#707070">Redact names, emails, card numbers, and addresses</text>
   <text x="74" y="414" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="400" fill="#707070">in your browser. Nothing is uploaded.</text>
 
   <rect x="72" y="464" width="128" height="38" rx="19" fill="#f3f3f3"/>

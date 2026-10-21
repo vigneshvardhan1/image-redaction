@@ -3,18 +3,21 @@ import '@fontsource-variable/inter';
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import Splash from '../components/Splash.astro';
 
 interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  splash?: boolean;
   schema?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
-  title = 'Image Redaction — Redact screenshots without uploading them',
-  description = 'Hide names, emails, card numbers, and addresses in screenshots. Smart detection, four redaction styles, and metadata stripping — all in your browser. Free, no account, no uploads.',
+  title = 'Redact — Private screenshot redaction in your browser',
+  description = 'Redact names, emails, card numbers, and addresses in screenshots. On-device smart detection, four redaction styles, and metadata-free exports. Free, no account, no uploads.',
   noindex = false,
+  splash = false,
   schema,
 } = Astro.props;
 
@@ -35,12 +38,13 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {noindex && <meta name="robots" content="noindex,nofollow" />}
+    <noscript><style>[data-splash] { display: none; }</style></noscript>
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Image Redaction" />
+    <meta property="og:site_name" content="Redact" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -56,25 +60,150 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
       document.documentElement.classList.add('js');
     </script>
 
-    {/* Applies the stored or system theme before the first paint. */}
+    {/* Owns the theme: applies it before the first paint, and handles the
+        toggle from the very first click. It lives here, inline, because a
+        bundled module is not attached yet while the intro is on screen —
+        a click in that window used to be swallowed.
+
+        The choice is kept in three places, and read back from all of them, so
+        a browser that blocks storage still remembers it across a refresh:
+        localStorage, a cookie, and the history entry. */}
     <script is:inline>
       (() => {
         const root = document.documentElement;
-        let stored = null;
-        try {
-          stored = localStorage.getItem('ir-theme');
-        } catch {
-          stored = null;
+        const KEY = 'ir-theme';
+
+        function readStored() {
+          try {
+            const value = localStorage.getItem(KEY);
+            if (value === 'light' || value === 'dark') return value;
+          } catch {
+            /* Storage blocked — try the next place. */
+          }
+          try {
+            const match = document.cookie.match(/(?:^|;\s*)ir-theme=(light|dark)/);
+            if (match) return match[1];
+          } catch {
+            /* Cookies blocked — try the next place. */
+          }
+          try {
+            const state = history.state;
+            if (state && (state.theme === 'light' || state.theme === 'dark')) {
+              return state.theme;
+            }
+          } catch {
+            /* History unavailable. */
+          }
+          return null;
         }
+
+        function persist(theme) {
+          let stored = false;
+          try {
+            localStorage.setItem(KEY, theme);
+            stored = localStorage.getItem(KEY) === theme;
+          } catch {
+            /* Storage blocked — the cookie and the history entry still carry it. */
+          }
+          try {
+            document.cookie = `${KEY}=${theme}; path=/; max-age=31536000; samesite=lax`;
+          } catch {
+            /* Cookies blocked. */
+          }
+          try {
+            const state = history.state && typeof history.state === 'object' ? history.state : {};
+            history.replaceState({ ...state, theme }, '', location.href);
+          } catch {
+            /* History unavailable. */
+          }
+          if (!stored) {
+            console.warn('[theme] this browser refused to store the choice; the session entry carries it.');
+          }
+        }
+
+        function apply(theme) {
+          const dark = theme === 'dark';
+          root.classList.toggle('dark', dark);
+          root.dataset.theme = theme;
+          root.style.colorScheme = dark ? 'dark' : 'light';
+
+          const meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', dark ? '#0c0c0d' : '#ffffff');
+
+          document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
+            button.title = dark ? 'Switch to light theme' : 'Switch to dark theme';
+          });
+        }
+
+        // ?theme=light or ?theme=dark forces a theme, for testing and for
+        // browsers that will not keep the choice at all.
+        const forced = new URLSearchParams(location.search).get('theme');
+
+        // Delegated, so it works before any module has loaded. Bound first,
+        // so nothing that follows can leave the page without a working
+        // toggle.
+        document.addEventListener('click', (event) => {
+          const target = event.target;
+          if (!target || !target.closest) return;
+          if (!target.closest('[data-theme-toggle]')) return;
+          const next = root.classList.contains('dark') ? 'light' : 'dark';
+          apply(next);
+          persist(next);
+          // A forced theme is a one-off instruction; once the visitor picks a
+          // side, it should stick.
+          if (forced) {
+            const url = new URL(location.href);
+            url.searchParams.delete('theme');
+            try {
+              history.replaceState(history.state, '', url);
+            } catch {
+              /* History unavailable. */
+            }
+          }
+        });
+
+        // Follow the operating system until the visitor picks a theme.
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+          if (readStored()) return;
+          apply(event.matches ? 'dark' : 'light');
+        });
+
+        const stored = forced === 'light' || forced === 'dark' ? forced : readStored();
         const dark =
           stored === 'dark' ||
           (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        root.classList.toggle('dark', dark);
-        root.style.colorScheme = dark ? 'dark' : 'light';
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', dark ? '#0c0c0d' : '#ffffff');
+        apply(dark ? 'dark' : 'light');
+
+        // The buttons do not exist yet at this point; label them once they do.
+        document.addEventListener('DOMContentLoaded', () => {
+          apply(root.classList.contains('dark') ? 'dark' : 'light');
+        });
       })();
     </script>
+
+    {/* Runs before first paint. Reduced motion skips the intro; the
+        ?intro=1 preview overrides that. */}
+    {
+      splash && (
+        <script is:inline>
+          (() => {
+            const root = document.documentElement;
+            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const force = new URLSearchParams(location.search).has('intro');
+            if (!force && reduce) {
+              root.classList.add('splash-skip');
+              return;
+            }
+            root.classList.add('splash-running');
+            root.classList.add('splash-locked');
+            window.setTimeout(() => {
+              root.classList.remove('splash-running');
+              root.classList.remove('splash-locked');
+            }, 2600);
+          })();
+        </script>
+      )
+    }
 
     {
       schemaItems.map((item) => (
@@ -83,6 +212,7 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     }
   </head>
   <body id="top" class="min-h-dvh bg-canvas text-ink antialiased">
+    {splash && <Splash />}
     <a
       href="#main"
       class="sr-only z-[100] rounded-full bg-ink px-4 py-2 text-sm text-on-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4"

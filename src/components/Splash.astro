@@ -1,0 +1,276 @@
+---
+/**
+ * One-time brand intro. The wordmark lands in the middle, two strips of
+ * masking tape slap across it, then the whole lockup shrinks and flies into
+ * the wordmark in the top left corner — the one in the nav — and hands over.
+ *
+ * The entrance is CSS. The flight is measured at runtime so it lands exactly
+ * on the nav wordmark whatever the viewport size, and the sheet never
+ * swallows a click: it is decoration, so it is click-through from the start.
+ */
+---
+
+<div class="splash" data-splash aria-hidden="true">
+  <div class="splash-lockup" data-splash-lockup>
+    <span class="splash-word" data-splash-word>redact</span>
+    <span class="splash-tapes" data-splash-tapes>
+      <span class="splash-tape splash-tape-a"></span>
+      <span class="splash-tape splash-tape-b"></span>
+    </span>
+  </div>
+</div>
+
+<style>
+  .splash {
+    position: fixed;
+    inset: 0;
+    /* Below the nav (z-50) on purpose: the header stays visible and usable
+       during the intro, so the theme toggle is never out of reach. */
+    z-index: 40;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background-color: var(--color-canvas);
+    /* The sheet is decoration only — it must never eat a click on the page
+       below it (the theme toggle in the nav lives under it). */
+    pointer-events: none;
+    --tape-bg: var(--color-tape);
+    --tape-edge: rgba(20, 20, 20, 0.14);
+    --tape-shadow: 0 2px 6px rgba(20, 20, 20, 0.16);
+    /* Safety net: if the script below never runs, the sheet still gets out of
+       the way instead of sitting on the page forever. */
+    animation: splash-timeout 200ms ease-out 2600ms forwards;
+  }
+
+  /* The script takes over as soon as it starts the flight. */
+  .splash.splash-flying {
+    animation: none;
+  }
+
+  :global(html.dark) .splash {
+    --tape-bg: #17171a;
+    --tape-edge: rgba(255, 255, 255, 0.16);
+    --tape-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+  }
+
+  .splash-lockup {
+    position: relative;
+    display: inline-block;
+    font-size: clamp(3.5rem, 13vw, 9rem);
+    line-height: 0.92;
+    animation: splash-word-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .splash-word {
+    display: block;
+    color: var(--color-ink);
+    font-weight: var(--font-weight-heading);
+    letter-spacing: -0.01em;
+    will-change: transform;
+  }
+
+  /* Holds the two strips so the flight can scale them as one piece. */
+  .splash-tapes {
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+  }
+
+  .splash-tape {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 116%;
+    height: 0.235em;
+    border-radius: 0.03em;
+    background-color: var(--tape-bg);
+    box-shadow:
+      var(--tape-shadow),
+      inset 0 0 0 1px var(--tape-edge);
+    pointer-events: none;
+  }
+
+  .splash-tape-a {
+    transform: translate(-50%, -50%) rotate(-33deg);
+    animation: splash-tape-a 320ms cubic-bezier(0.2, 0.9, 0.25, 1.05) 250ms both;
+  }
+
+  .splash-tape-b {
+    transform: translate(-50%, -50%) rotate(31deg);
+    animation: splash-tape-b 320ms cubic-bezier(0.2, 0.9, 0.25, 1.05) 390ms both;
+  }
+
+  @keyframes splash-word-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes splash-timeout {
+    to {
+      visibility: hidden;
+    }
+  }
+
+  @keyframes splash-tape-a {
+    from {
+      opacity: 0;
+      transform: translate(calc(-50% - 55vw), calc(-50% - 22vh)) rotate(-52deg) scaleX(0.7);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotate(-33deg) scaleX(1);
+    }
+  }
+
+  @keyframes splash-tape-b {
+    from {
+      opacity: 0;
+      transform: translate(calc(-50% + 55vw), calc(-50% - 22vh)) rotate(58deg) scaleX(0.7);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) rotate(31deg) scaleX(1);
+    }
+  }
+
+  /* Repeat visits (or reduced motion) skip the intro entirely. */
+  :global(html.splash-skip) .splash {
+    display: none;
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const splash = document.querySelector('[data-splash]');
+    if (!splash) return;
+
+    const word = document.querySelector('[data-splash-word]');
+    const tapes = document.querySelector('[data-splash-tapes]');
+    const root = document.documentElement;
+
+    // Freeze the sheet's own colours before anything can change them. If the
+    // visitor flips the theme while the intro is on screen, the nav changes
+    // but the sheet does not flash from dark to white underneath them.
+    const sheetStyle = getComputedStyle(splash);
+    splash.style.backgroundColor = sheetStyle.backgroundColor;
+    splash.style.setProperty('--tape-bg', sheetStyle.getPropertyValue('--tape-bg'));
+    if (word) word.style.color = getComputedStyle(word).color;
+
+    /** The intro starts when the first frame paints, not when this script runs. */
+    const INTRO_START = 900;
+    const FLIGHT_MS = 700;
+    const FADE_MS = 300;
+
+    function finish() {
+      splash.remove();
+      root.classList.remove('splash-running');
+      root.classList.remove('splash-locked');
+    }
+
+    /** Maps one element's box onto another's, whatever the viewport size. */
+    function flyTo(element, target, duration) {
+      if (!element || !target) return;
+      const from = element.getBoundingClientRect();
+      const to = target.getBoundingClientRect();
+      if (!from.width || !to.width) return;
+
+      const scale = to.width / from.width;
+      const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+      const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+
+      element.animate(
+        [
+          { transform: 'translate(0px, 0px) scale(1)' },
+          { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(' + scale + ')' },
+        ],
+        { duration, easing: 'cubic-bezier(0.5, 0, 0.2, 1)', fill: 'forwards' }
+      );
+    }
+
+    /** Milliseconds since the intro began, read off the entrance animation. */
+    function introElapsed() {
+      try {
+        const entrance = document
+          .getAnimations()
+          .find((animation) => animation.animationName === 'splash-word-in');
+        const startedAt =
+          entrance && typeof entrance.startTime === 'number' ? entrance.startTime : null;
+        if (startedAt === null) return null;
+        return document.timeline.currentTime - startedAt;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    async function run() {
+      if (root.classList.contains('splash-skip')) {
+        finish();
+        return;
+      }
+
+      // The script owns the sheet from here: the CSS safety net stands down.
+      splash.classList.add('splash-flying');
+
+      // Last resort: the sheet must never outlive the intro.
+      setTimeout(() => {
+        if (splash.isConnected) finish();
+      }, 4000);
+
+      // Measure against final font metrics, not the fallback — but never wait
+      // long for them: both boxes use the same font, so the ratio holds either
+      // way and the intro keeps to its schedule.
+      await Promise.race([
+        document.fonts.ready.catch(() => undefined),
+        new Promise((resolve) => setTimeout(resolve, 120)),
+      ]);
+      await new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve))
+      );
+
+      // The schedule is anchored to the entrance animation, so a slow start
+      // cannot stretch the intro.
+      const elapsed = introElapsed();
+      const wait = elapsed === null ? INTRO_START : Math.max(0, INTRO_START - elapsed);
+      if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+
+      const logoWord = document.querySelector('header [data-logo-word]');
+      const logoMark = document.querySelector('header [data-logo-mark]');
+
+      // The tape becomes the logo tile, the word becomes the logo word.
+      flyTo(tapes, logoMark, FLIGHT_MS - 60);
+      flyTo(word, logoWord, FLIGHT_MS);
+
+      // Hand over: the sheet fades out while the real wordmark fades back in,
+      // so the two never sit on top of each other.
+      const fade = splash.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: FADE_MS,
+        delay: FLIGHT_MS,
+        easing: 'ease-in',
+        fill: 'forwards',
+      });
+
+      root.classList.remove('splash-running');
+
+      setTimeout(() => {
+        fade.cancel();
+        splash.remove();
+        root.classList.remove('splash-locked');
+      }, FLIGHT_MS + FADE_MS + 40);
+    }
+
+    // The nav is still being parsed when this script runs, so wait for it.
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        run().catch(() => finish());
+      });
+    } else {
+      run().catch(() => finish());
+    }
+  })();
+</script>

@@ -34,6 +34,9 @@
   --color-stage-dot: rgba(20, 20, 20, 0.11);
   /* Warm backdrop behind the sample imagery. */
   --color-sample-tile: #e7e5df;
+  /* Masking tape: the one warm neutral, used by the brand mark and the intro. */
+  --color-tape: #e7e5df;
+  --color-tape-ink: #141414;
 
   --radius-tile: 1rem;
   --radius-card: 1.5rem;
@@ -74,6 +77,9 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     color-scheme: light;
+    /* Keep the gutter reserved, so locking the scroll for the intro does not
+       shift the page sideways when the lock is released. */
+    scrollbar-gutter: stable;
   }
 
   /* Dark palette. The ladder is inverted: ink becomes the light surface,
@@ -115,6 +121,23 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* The brand intro locks scrolling while it is on screen. */
+  html.splash-locked {
+    overflow: hidden;
+  }
+
+  /* While the intro is on screen the real wordmark steps aside, so the big
+     word can land on it without the two overlapping. */
+  header [data-logo-mark],
+  header [data-logo-word] {
+    transition: opacity 260ms ease;
+  }
+
+  html.splash-running header [data-logo-mark],
+  html.splash-running header [data-logo-word] {
+    opacity: 0;
   }
 
   h1,

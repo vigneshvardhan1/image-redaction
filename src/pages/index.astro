@@ -102,7 +102,7 @@ const steps = [
 const appSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
-  name: 'Image Redaction',
+  name: 'Redact',
   url: 'https://imageredaction.com/',
   applicationCategory: 'UtilitiesApplication',
   operatingSystem: 'Any modern web browser',
@@ -138,7 +138,7 @@ const faqSchema = {
 };
 ---
 
-<BaseLayout description="Hide names, emails, card numbers, and addresses in screenshots. On-device smart detection, four redaction styles, and metadata-free exports. Free, no account, no uploads." schema={[appSchema, faqSchema]}>
+<BaseLayout description="Hide names, emails, card numbers, and addresses in screenshots. On-device smart detection, four redaction styles, and metadata-free exports. Free, no account, no uploads." schema={[appSchema, faqSchema]} splash>
   <section class="container-page pb-8 pt-14 md:pt-20">
     <div class="mx-auto max-w-4xl text-center">
       <a
@@ -497,7 +497,7 @@ const faqSchema = {
           buried in a support inbox.
         </p>
         <a
-          href="mailto:hello@imageredaction.com?subject=Image%20Redaction%20question"
+          href="mailto:hello@imageredaction.com?subject=Redact%20question"
           class="mt-5 inline-flex items-center gap-1.5 text-[13px] font-heading text-ink hover:underline"
         >
           Ask a question

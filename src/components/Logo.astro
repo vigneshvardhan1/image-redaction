@@ -8,6 +8,7 @@ interface Props {
 const { variant = 'ink', size = 'md', href = '/' } = Astro.props;
 const markSize = size === 'sm' ? 26 : 30;
 const wordSize = size === 'sm' ? 'text-[15px]' : 'text-[17px]';
+const clipId = `logo-clip-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
 <a
@@ -16,25 +17,64 @@ const wordSize = size === 'sm' ? 'text-[15px]' : 'text-[17px]';
     'group inline-flex items-center gap-2.5 rounded-full font-heading',
     variant === 'light' ? 'text-on-ink' : 'text-ink',
   ]}
-  aria-label="Image Redaction home"
+  aria-label="Redact home"
 >
   <span
-    class:list={[
-      'grid place-items-center rounded-[9px]',
-      variant === 'light' ? 'bg-canvas text-ink' : 'bg-ink text-on-ink',
-    ]}
+    class:list={['logo-mark grid place-items-center', variant === 'light' && 'logo-mark-light']}
     style={`width:${markSize}px;height:${markSize}px`}
+    data-logo-mark
   >
-    <svg
-      width={markSize * 0.58}
-      height={markSize * 0.58}
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <rect x="2" y="6" width="20" height="12" rx="3" stroke="currentColor" stroke-width="1.6" opacity="0.5" />
-      <rect x="6" y="9.5" width="12" height="5" rx="1.5" fill="currentColor" />
+    <svg width={markSize} height={markSize} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <defs>
+        <clipPath id={clipId}>
+          <rect width="32" height="32" rx="9.6"></rect>
+        </clipPath>
+      </defs>
+      <rect width="32" height="32" rx="9.6" fill="var(--mark-tile)"></rect>
+      {/* Two strips of tape at mirrored angles. They share one height and one
+          centre line, and stay slim, so the cross reads as an X instead of
+          skewing into a bow tie at 26px. */}
+      <g clip-path={`url(#${clipId})`}>
+        <rect
+          x="-8"
+          y="13.6"
+          width="48"
+          height="4.8"
+          rx="1"
+          fill="var(--mark-tape)"
+          transform="rotate(36 16 16)"
+        ></rect>
+        <rect
+          x="-8"
+          y="13.6"
+          width="48"
+          height="4.8"
+          rx="1"
+          fill="var(--mark-tape)"
+          transform="rotate(-36 16 16)"
+        ></rect>
+      </g>
     </svg>
   </span>
-  <span class:list={['whitespace-nowrap leading-none', wordSize]}>image redaction</span>
+  <span class:list={['whitespace-nowrap leading-none', wordSize]} data-logo-word>redact</span>
 </a>
+
+<style>
+  .logo-mark {
+    --mark-tile: var(--color-ink);
+    --mark-tape: var(--color-tape);
+  }
+
+  /* On an ink surface (and in dark mode) the mark flips polarity. */
+  :global(html.dark) .logo-mark,
+  .logo-mark-light {
+    --mark-tile: var(--color-tape);
+    --mark-tape: var(--color-tape-ink);
+  }
+
+  /* The footer inverts with the theme, so its mark flips back on a light footer. */
+  :global(html.dark) .logo-mark-light {
+    --mark-tile: var(--color-tape-ink);
+    --mark-tape: var(--color-tape);
+  }
+</style>
