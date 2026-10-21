@@ -23,6 +23,13 @@ const DWELL = 300;
 const SWEEP = 620;
 /** The length of one style: settle, sweep out, sweep back. */
 const CYCLE = DWELL + SWEEP * 2;
+/**
+ * How long the visitor's hands stay off the handle before it travels back to
+ * the left on its own.
+ */
+const IDLE = 1000;
+/** How long the handle takes to travel home to the left. */
+const RETURN = 420;
 /** Half the drag grip, so the handle never gets clipped by the frame. */
 const GRIP = 22;
 /** Below this the original is not really visible, so its label stays hidden. */
@@ -111,11 +118,17 @@ function createTour(root: HTMLElement, render: Renderer): void {
   /** A keyboard visitor gets the tour held still while they read the tabs. */
   let held = false;
   /** rest → the handle sweeps out to the right → it sweeps back to the left. */
-  let phase: 'rest' | 'out' | 'back' = 'rest';
+  let phase: 'rest' | 'out' | 'back' | 'return' = 'rest';
   /** Time spent in the current sweep leg. Both legs count the same way. */
   let sweepElapsed = 0;
   /** Once the visitor grabs the handle, the tour stops moving it. */
   let userMoved = false;
+  /** The visitor is mid-drag: the handle belongs to them until they let go. */
+  let dragging = false;
+  /** Counts the quiet after the last interaction. */
+  let idleTimer = 0;
+  /** Where the handle sat when it was told to go home. */
+  let homeFrom = 0;
 
   const setProgress = (value: number) => {
     const progress = Math.min(1, Math.max(0, value));
@@ -207,15 +220,30 @@ function createTour(root: HTMLElement, render: Renderer): void {
     elapsed += delta;
     last = now;
 
-    if (phase === 'rest') {
+    if (phase === 'return') {
+      // The handle travels home to the left, then the tour picks the cycle up
+      // again on the far side of the return.
+      sweepElapsed += delta;
+      const t = Math.min(1, sweepElapsed / RETURN);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setHandle(homeFrom * (1 - eased));
+      if (t >= 1) {
+        userMoved = false;
+        phase = 'rest';
+        elapsed = 0;
+        sweepElapsed = 0;
+        setHandle(0);
+      }
+    } else if (userMoved) {
+      // A hand on the handle wins: nothing moves, and no style advances, until
+      // the visitor has been still for a second.
+      setProgress(0);
+      elapsed = 0;
+    } else if (phase === 'rest') {
       setProgress(Math.min(1, elapsed / CYCLE));
       if (elapsed >= DWELL) {
-        if (userMoved) {
-          setMode(index + 1);
-        } else {
-          phase = 'out';
-          sweepElapsed = 0;
-        }
+        phase = 'out';
+        sweepElapsed = 0;
       }
     } else if (phase === 'out') {
       setProgress(Math.min(1, elapsed / CYCLE));
@@ -254,8 +282,60 @@ function createTour(root: HTMLElement, render: Renderer): void {
     else stop();
   };
 
+  /** Drops the countdown that sends the handle home. */
+  const cancelIdle = () => {
+    if (!idleTimer) return;
+    window.clearTimeout(idleTimer);
+    idleTimer = 0;
+  };
+
+  /**
+   * Sends the handle home. It travels back to the left, and the tour picks the
+   * cycle up again on the far side of the return.
+   */
+  const sendHome = () => {
+    cancelIdle();
+    if (phase !== 'return') {
+      homeFrom = Number(range.value);
+      phase = 'return';
+      sweepElapsed = 0;
+      last = 0;
+    }
+    sync();
+  };
+
+  /**
+   * The visitor touched the handle, so the tour stops moving it and starts
+   * counting. A quiet second sends the handle back to the left and hands the
+   * cycle back to the animation.
+   */
+  const holdForVisitor = () => {
+    userMoved = true;
+    cancelIdle();
+    idleTimer = window.setTimeout(() => {
+      idleTimer = 0;
+      if (dragging) return;
+      sendHome();
+    }, IDLE);
+  };
+
+  /** Puts the handle back on the left and gives the style a full run. */
+  const resetCycle = () => {
+    userMoved = false;
+    cancelIdle();
+    phase = 'rest';
+    elapsed = 0;
+    sweepElapsed = 0;
+    last = 0;
+    setProgress(0);
+    setHandle(0);
+    sync();
+  };
+
   tabs.forEach((tab, tabIndex) => {
     tab.addEventListener('click', () => {
+      // Picking a style starts it clean, with the arrows back on the left.
+      resetCycle();
       setMode(tabIndex);
     });
   });
@@ -265,6 +345,7 @@ function createTour(root: HTMLElement, render: Renderer): void {
     const mode = (event as CustomEvent<{ mode?: string }>).detail?.mode;
     const target = tabs.findIndex((tab) => tab.dataset.tourTab === mode);
     if (target < 0) return;
+    resetCycle();
     setMode(target);
   });
 
@@ -292,30 +373,49 @@ function createTour(root: HTMLElement, render: Renderer): void {
     sync();
   });
 
+  // Any move of the handle — a drag or the arrow keys — is the visitor's.
   range.addEventListener('input', () => {
     userMoved = true;
     updateCompare();
+    holdForVisitor();
   });
 
   // A hand on the handle wins: the tour stops moving it.
   range.addEventListener('pointerdown', () => {
     userMoved = true;
+    dragging = true;
+    cancelIdle();
     phase = 'rest';
     elapsed = 0;
     sweepElapsed = 0;
     last = 0;
   });
 
+  // Letting go starts the countdown back to the left.
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    holdForVisitor();
+  };
+
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
+
+  // Taking the pointer off the sample counts as letting go as well.
+  root.addEventListener('pointerleave', () => {
+    if (dragging) return;
+    if (userMoved) holdForVisitor();
+  });
+
   // Pointing at the sample gives the current style a full run of the cycle,
   // with the arrows back on the left.
   root.addEventListener('pointerenter', () => {
-    if (userMoved) return;
-    phase = 'rest';
-    elapsed = 0;
-    sweepElapsed = 0;
-    last = 0;
-    setProgress(0);
-    setHandle(0);
+    if (dragging) return;
+    if (userMoved) {
+      sendHome();
+      return;
+    }
+    resetCycle();
   });
 
   reduceMotion.addEventListener('change', sync);
