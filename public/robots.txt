@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://imageredaction.com/sitemap-index.xml
+Sitemap: https://imageredaction.com/sitemap.xml
