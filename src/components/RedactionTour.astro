@@ -1,20 +1,24 @@
 ---
 import Icon from './Icon.astro';
-import { redactionModes } from '../data/redactionModes';
+import type { Locale } from '../i18n/config';
+import { getRedactionModes } from '../i18n/content/redactionModes';
+import { t } from '../i18n/ui';
 
 interface Props {
   class?: string;
+  locale?: Locale;
 }
 
-const { class: className = '' } = Astro.props;
-const initial = redactionModes[0];
+const { class: className = '', locale = 'en-US' } = Astro.props;
+const modes = getRedactionModes(locale);
+const initial = modes[0];
 ---
 
 <div class:list={['redaction-tour', className]} data-tour-root data-mode={initial.id}>
   <p class="mb-3 flex items-center gap-2 text-[11px] font-heading leading-none text-muted">
     <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
-    Style tour
-    <span class="font-body text-faint">· 4 ways to cover</span>
+    {t(locale, 'demo.styleTour')}
+    <span class="font-body text-faint">{t(locale, 'demo.fourWays')}</span>
   </p>
 
   <div class="overflow-hidden rounded-tile border border-hairline-soft bg-canvas">
@@ -38,11 +42,11 @@ const initial = redactionModes[0];
 
     <div
       role="tablist"
-      aria-label="Redaction style"
+      aria-label={t(locale, 'demo.styleTour')}
       class="grid grid-cols-2 gap-1 border-b border-hairline-soft bg-canvas-soft p-2 min-[360px]:grid-cols-4"
     >
       {
-        redactionModes.map((mode, index) => (
+        modes.map((mode, index) => (
           <button
             type="button"
             role="tab"
@@ -82,7 +86,7 @@ const initial = redactionModes[0];
         src="/samples/id.svg"
         width="1200"
         height="800"
-        alt="A sample student ID card showing a photo, name, date of birth, ID number, address, barcode, and QR code."
+        alt=""
         class="absolute inset-0 h-full w-full object-cover"
         decoding="async"
       />
@@ -116,10 +120,10 @@ const initial = redactionModes[0];
         data-tour-before-chip
         class="absolute left-3 top-3 z-20 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-heading text-white opacity-0 backdrop-blur-sm transition-opacity duration-150"
       >
-        Before
+        {t(locale, 'demo.before')}
       </span>
       <span class="absolute right-3 top-3 z-20 rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-heading text-white backdrop-blur-sm">
-        After
+        {t(locale, 'demo.after')}
       </span>
 
       <input
@@ -130,18 +134,18 @@ const initial = redactionModes[0];
         value="0"
         step="1"
         class="absolute inset-0 z-30 h-full w-full cursor-ew-resize touch-pan-y opacity-0"
-        aria-label="Compare the original image with the redacted version"
+        aria-label={t(locale, 'demo.compareAria')}
       />
     </div>
 
     <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t border-hairline-soft px-4 py-3 text-[10px] leading-none text-muted">
       <span class="inline-flex items-center gap-1.5">
         <Icon name="move" size={10} class="text-faint" />
-        Drag the handle to compare.
+        {t(locale, 'demo.dragHandle')}
       </span>
       <span class="inline-flex items-center gap-1.5 text-faint">
         <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
-        Flattened pixels, not a removable layer
+        {t(locale, 'demo.flattened')}
       </span>
     </div>
   </div>

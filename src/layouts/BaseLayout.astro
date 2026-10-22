@@ -4,6 +4,15 @@ import '../styles/global.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import Splash from '../components/Splash.astro';
+import type { Locale } from '../i18n/config';
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  absoluteLocalizedUrl,
+  localeConfig,
+  stripLocalePrefix,
+} from '../i18n/config';
+import { t } from '../i18n/ui';
 
 interface Props {
   title?: string;
@@ -16,6 +25,9 @@ interface Props {
   ogType?: 'website' | 'article';
   ogImage?: string;
   ogImageAlt?: string;
+  locale?: Locale;
+  /** Locales that publish this page. Drives hreflang and the language picker. */
+  availableLocales?: Locale[];
 }
 
 const {
@@ -29,6 +41,8 @@ const {
   ogType = 'website',
   ogImage = '/og.png',
   ogImageAlt = 'Redact — a free image redaction tool for screenshots and photos',
+  locale = DEFAULT_LOCALE,
+  availableLocales = LOCALES,
 } = Astro.props;
 
 const site = Astro.site ?? new URL('https://imageredaction.com');
@@ -45,10 +59,28 @@ const robots = noindex
   ? 'noindex,nofollow'
   : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1';
 const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+
+// The page's path without its locale prefix, so every alternate points at the
+// same page in another language rather than at a different section.
+const pathWithoutLocale = stripLocalePrefix(Astro.url.pathname);
+const publishedLocales = LOCALES.filter(
+  (code) => code === locale || availableLocales.includes(code),
+);
+const alternates = publishedLocales.map((code) => ({
+  code,
+  href: absoluteLocalizedUrl(site, code, pathWithoutLocale),
+  ogLocale: localeConfig[code].ogLocale,
+}));
+const defaultHref =
+  alternates.find((alternate) => alternate.code === DEFAULT_LOCALE)?.href ??
+  alternates[0]?.href ??
+  canonicalUrl.href;
+const currentLanguage = localeConfig[locale];
+const hasAlternates = alternates.length > 1;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale} dir={currentLanguage.dir}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -59,6 +91,16 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <meta name="robots" content={robots} />
     <meta name="author" content="Redact" />
     {canonical && <link rel="canonical" href={canonicalUrl} />}
+    {
+      canonical &&
+        hasAlternates &&
+        alternates.map((alternate) => (
+          <link rel="alternate" hreflang={alternate.code} href={alternate.href} />
+        ))
+    }
+    {canonical && hasAlternates && (
+      <link rel="alternate" hreflang="x-default" href={defaultHref} />
+    )}
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -68,7 +110,14 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 
     <!-- Open Graph. Absolute image URLs, explicit dimensions, and alt text
          keep link previews consistent across crawlers and social apps. -->
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={currentLanguage.ogLocale} />
+    {
+      alternates
+        .filter((alternate) => alternate.code !== locale)
+        .map((alternate) => (
+          <meta property="og:locale:alternate" content={alternate.ogLocale} />
+        ))
+    }
     <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content="Redact" />
     <meta property="og:title" content={title} />
@@ -163,7 +212,9 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
           if (meta) meta.setAttribute('content', dark ? '#0c0c0d' : '#ffffff');
 
           document.querySelectorAll('[data-theme-toggle]').forEach((button) => {
-            button.title = dark ? 'Switch to light theme' : 'Switch to dark theme';
+            button.title = dark
+              ? button.dataset.labelLight || 'Switch to light theme'
+              : button.dataset.labelDark || 'Switch to dark theme';
           });
         }
 
@@ -249,13 +300,13 @@ const schemaItems = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
       href="#main"
       class="sr-only z-[100] rounded-full bg-ink px-4 py-2 text-sm text-on-ink focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
     >
-      Skip to content
+      {t(locale, 'common.skipToContent')}
     </a>
-    <Nav />
+    <Nav locale={locale} availableLocales={publishedLocales} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer locale={locale} availableLocales={publishedLocales} />
 
     <script is:inline>
       (() => {

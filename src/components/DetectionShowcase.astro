@@ -1,15 +1,35 @@
 ---
 import Icon from './Icon.astro';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/ui';
 
-const boxes = [
-  { label: 'Name', style: 'left:12%;top:6.6%;width:16.7%;height:4%' },
-  { label: 'Email', style: 'left:7.5%;top:37.1%;width:33.5%;height:8.5%' },
-  { label: 'Phone', style: 'left:7.5%;top:46.1%;width:28.5%;height:8.5%' },
-  { label: 'Address', style: 'left:52.5%;top:55.5%;width:37%;height:8%' },
-  { label: 'Address', style: 'left:7.5%;top:64.6%;width:55.8%;height:9.25%' },
-  { label: 'Card', style: 'left:52.5%;top:75%;width:34%;height:8%' },
-  { label: 'Card', style: 'left:7.5%;top:83.9%;width:36.7%;height:8.5%' },
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en-US' } = Astro.props;
+
+const boxLabels: Record<Locale, string[]> = {
+  'en-US': ['Name', 'Email', 'Phone', 'Address', 'Address', 'Card', 'Card'],
+  'en-GB': ['Name', 'Email', 'Phone', 'Address', 'Address', 'Card', 'Card'],
+  'en-IN': ['Name', 'Email', 'Phone', 'Address', 'Address', 'Card', 'Card'],
+  'de-DE': ['Name', 'E-Mail', 'Telefon', 'Adresse', 'Adresse', 'Karte', 'Karte'],
+  'fr-FR': ['Nom', 'E-mail', 'Téléphone', 'Adresse', 'Adresse', 'Carte', 'Carte'],
+};
+
+const positions = [
+  'left:12%;top:6.6%;width:16.7%;height:4%',
+  'left:7.5%;top:37.1%;width:33.5%;height:8.5%',
+  'left:7.5%;top:46.1%;width:28.5%;height:8.5%',
+  'left:52.5%;top:55.5%;width:37%;height:8%',
+  'left:7.5%;top:64.6%;width:55.8%;height:9.25%',
+  'left:52.5%;top:75%;width:34%;height:8%',
+  'left:7.5%;top:83.9%;width:36.7%;height:8.5%',
 ];
+
+const labels = boxLabels[locale];
+const boxes = positions.map((style, index) => ({ label: labels[index], style }));
+const details = t(locale, 'demo.details').replace('{count}', String(boxes.length));
 ---
 
 <div class="overflow-hidden rounded-card border border-hairline-soft bg-canvas">
@@ -18,19 +38,21 @@ const boxes = [
       <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas-soft">
         <Icon name="chat" size={14} />
       </span>
-      <span class="whitespace-nowrap text-[11px] font-heading">Chat screenshot</span>
-      <span class="hidden whitespace-nowrap text-[10px] text-faint sm:inline">Sample scan</span>
+      <span class="whitespace-nowrap text-[11px] font-heading">{t(locale, 'demo.sampleTitle')}</span>
+      <span class="hidden whitespace-nowrap text-[10px] text-faint sm:inline">
+        {t(locale, 'demo.sampleScan')}
+      </span>
     </div>
     <span class="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-2.5 py-1 text-[10px] font-heading leading-none text-on-ink">
       <Icon name="sparkles" size={11} />
-      7 details
+      {details}
     </span>
   </div>
 
   <div
     class="relative aspect-[3/2] overflow-hidden bg-sample-tile"
     role="img"
-    aria-label="A sample chat screenshot with dashed detection boxes over a name, email address, phone number, two address lines, and two card detail lines."
+    aria-label={t(locale, 'demo.detectionAria')}
   >
     <img
       src="/samples/chat.svg"
@@ -58,6 +80,6 @@ const boxes = [
 
   <div class="flex items-start gap-2 border-t border-hairline-soft px-3.5 py-2.5 text-[10px] leading-relaxed text-muted">
     <Icon name="info" size={12} class="mt-0.5 shrink-0" />
-    <span>Illustrative result. OCR is best-effort — always review the boxes before you export.</span>
+    <span>{t(locale, 'demo.illustrative')}</span>
   </div>
 </div>

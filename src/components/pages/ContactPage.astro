@@ -1,0 +1,357 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../PageHero.astro';
+import Button from '../Button.astro';
+import Icon from '../Icon.astro';
+import SectionHead from '../SectionHead.astro';
+import type { Locale } from '../../i18n/config';
+import { LOCALES, localeConfig, localizePath } from '../../i18n/config';
+import { getContactContent } from '../../i18n/content/contact';
+
+interface Props {
+  locale: Locale;
+  availableLocales?: Locale[];
+}
+
+const { locale, availableLocales = LOCALES } = Astro.props;
+const content = getContactContent(locale);
+const { meta, hero, channels, form, before, answers, copy } = content;
+const emailAddress = 'hello@imageredaction.com';
+
+const channelValues: Record<Locale, string[]> = {
+  'en-US': [emailAddress, 'No chatbot', 'Reports welcome'],
+  'en-GB': [emailAddress, 'No chatbot', 'Reports welcome'],
+  'en-IN': [emailAddress, 'No chatbot', 'Reports welcome'],
+  'de-DE': [emailAddress, 'Kein Chatbot', 'Hinweise willkommen'],
+  'fr-FR': [emailAddress, 'Pas de chatbot', 'Signalements bienvenus'],
+};
+
+const [fallbackBefore, fallbackAfter] = form.fallback.split('{email}');
+
+const site = Astro.site ?? new URL('https://imageredaction.com');
+const contactHref = new URL(localizePath(locale, '/contact'), site).href;
+const homeHref = new URL(localizePath(locale, '/'), site).href;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: meta.title,
+  url: contactHref,
+  inLanguage: locale,
+  description: meta.description,
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Redact',
+    url: homeHref,
+    email: emailAddress,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'customer support',
+      email: emailAddress,
+      availableLanguage: localeConfig[locale].language,
+    },
+  },
+};
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  keywords={meta.keywords}
+  schema={schema}
+  ogImageAlt={meta.title}
+  locale={locale}
+  availableLocales={availableLocales}
+>
+  <PageHero eyebrow={hero.eyebrow} title={hero.title} lead={hero.lead}>
+    <Button slot="actions" href="#write" size="lg" iconRight="arrow-right">
+      {hero.primaryCta}
+    </Button>
+    <Button
+      slot="actions"
+      href={`mailto:${emailAddress}`}
+      variant="outline"
+      size="lg"
+      iconRight="arrow-up-right"
+    >
+      {hero.secondaryCta}
+    </Button>
+  </PageHero>
+
+  <section class="container-page">
+    <div class="grid gap-3 md:grid-cols-3">
+      {
+        channels.map((channel, index) => (
+          <div class="rounded-card border border-hairline-soft bg-canvas p-5">
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={channel.icon as any} size={16} />
+            </span>
+            <h2 class="mt-4 text-[16px] leading-tight">{channel.title}</h2>
+            <p class="mt-1.5 text-[12px] leading-relaxed text-muted">{channel.copy}</p>
+            <p class="mt-3 text-[12px] font-heading text-ink">{channelValues[locale][index]}</p>
+            {channel.icon === 'mail' && (
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <Button
+                  variant="soft"
+                  size="sm"
+                  iconLeft="copy"
+                  ariaLabel={copy.emailLabel}
+                  dataAttrs={{
+                    'data-copy-email': emailAddress,
+                    'data-label-copied': copy.copied,
+                    'data-label-failed': copy.failed,
+                  }}
+                >
+                  {copy.button}
+                </Button>
+                <span
+                  data-copy-status
+                  role="status"
+                  aria-live="polite"
+                  class="text-[11px] text-muted"
+                />
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="write" class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+      <div>
+        <SectionHead eyebrow={form.eyebrow} title={form.title} copy={form.copy} />
+
+        <ul class="mt-7 space-y-4 text-[13px] text-muted">
+          {
+            form.notes.map((note, index) => (
+              <li class="flex gap-3">
+                <span class="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas-soft">
+                  <Icon
+                    name={(['lock', 'image', 'clock'] as const)[index] ?? 'lock'}
+                    size={12}
+                  />
+                </span>
+                <span>{note}</span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="mt-7 rounded-tile bg-canvas-soft p-4 text-[12px] leading-relaxed text-muted">
+          {fallbackBefore}
+          <a
+            href={`mailto:${emailAddress}`}
+            class="font-heading text-ink underline decoration-hairline underline-offset-2 hover:decoration-ink"
+          >
+            {emailAddress}
+          </a>
+          {fallbackAfter}
+        </p>
+      </div>
+
+      <div class="rounded-panel border border-hairline-soft bg-canvas p-5 md:p-8">
+        <form
+          id="contact-form"
+          class="space-y-4"
+          novalidate
+          data-opening={form.opening}
+          data-sent-from={form.sentFrom}
+          data-name-label={form.name}
+          data-email-label={form.email}
+          data-required-error={form.requiredError}
+        >
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="text-[12px] font-heading text-ink">{form.name}</span>
+              <input
+                type="text"
+                name="name"
+                autocomplete="name"
+                placeholder={form.namePlaceholder}
+                class="design-field mt-2 h-11 w-full px-4 text-[14px]"
+              />
+            </label>
+            <label class="block">
+              <span class="text-[12px] font-heading text-ink">
+                {form.email} <span class="text-faint">{form.emailRequired}</span>
+              </span>
+              <input
+                type="email"
+                name="email"
+                required
+                autocomplete="email"
+                placeholder={form.emailPlaceholder}
+                class="design-field mt-2 h-11 w-full px-4 text-[14px]"
+              />
+            </label>
+          </div>
+
+          <label class="block">
+            <span class="text-[12px] font-heading text-ink">{form.topic}</span>
+            <select name="topic" class="design-field mt-2 h-11 w-full px-4 text-[14px]">
+              {form.topics.map((topic) => <option>{topic}</option>)}
+            </select>
+          </label>
+
+          <label class="block">
+            <span class="text-[12px] font-heading text-ink">
+              {form.message} <span class="text-faint">{form.messageRequired}</span>
+            </span>
+            <textarea
+              name="message"
+              rows="6"
+              required
+              placeholder={form.messagePlaceholder}
+              class="design-field mt-2 w-full px-4 py-3 text-[14px] leading-relaxed"
+            ></textarea>
+          </label>
+
+          <div class="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:justify-between">
+            <p class="max-w-xs text-[11px] leading-relaxed text-muted">
+              {form.privacyNote}
+            </p>
+            <Button type="submit" iconRight="arrow-up-right">{form.submit}</Button>
+          </div>
+
+          <p
+            data-form-status
+            role="status"
+            aria-live="polite"
+            class="min-h-[1em] text-[12px] leading-relaxed text-muted"
+          ></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead eyebrow={before.eyebrow} title={before.title} copy={before.copy} />
+    <div class="mt-8 grid gap-3 md:grid-cols-3">
+      {
+        before.items.map((item) => (
+          <article class="rounded-card border border-hairline-soft bg-canvas p-5">
+            <span class="grid h-8 w-8 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={item.icon as any} size={14} />
+            </span>
+            <h2 class="mt-4 text-[15px] leading-tight">{item.title}</h2>
+            <p class="mt-2 text-[12px] leading-relaxed text-muted">{item.copy}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="rounded-panel bg-canvas-soft p-6 md:p-10 lg:p-12">
+      <div class="grid gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+        <div>
+          <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+            {answers.eyebrow}
+          </p>
+          <h2 class="mt-4 text-h2">{answers.title}</h2>
+          <p class="mt-4 max-w-md text-[14px] leading-relaxed text-muted">{answers.copy}</p>
+          <div class="mt-6">
+            <Button href={localizePath(locale, '/#editor')} iconRight="arrow-right">
+              {answers.cta}
+            </Button>
+          </div>
+        </div>
+
+        <div class="grid gap-2 sm:grid-cols-2">
+          {
+            answers.links.map((link) => (
+              <a
+                href={link.href === '/terms' ? '/terms' : localizePath(locale, link.href)}
+                class="group flex min-h-11 flex-col rounded-tile bg-canvas p-4 transition-colors hover:bg-field"
+              >
+                <span class="flex items-center justify-between gap-3">
+                  <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
+                    <Icon name={link.icon as any} size={13} />
+                  </span>
+                  <Icon
+                    name="arrow-up-right"
+                    size={13}
+                    class="text-faint transition-colors group-hover:text-ink"
+                  />
+                </span>
+                <span class="mt-3 text-[13px] font-heading leading-tight">{link.title}</span>
+                <span class="mt-1 text-[11px] leading-relaxed text-muted">{link.copy}</span>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>('#contact-form');
+    const formStatus = document.querySelector<HTMLElement>('[data-form-status]');
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const data = new FormData(form);
+      const name = String(data.get('name') ?? '').trim();
+      const email = String(data.get('email') ?? '').trim();
+      const topic = String(data.get('topic') ?? '');
+      const message = String(data.get('message') ?? '').trim();
+
+      const nameLabel = form.dataset.nameLabel ?? 'Name';
+      const emailLabel = form.dataset.emailLabel ?? 'Email';
+      const sentFrom = form.dataset.sentFrom ?? 'Sent from the Redact contact page';
+
+      const subject = name ? `${topic} — ${name}` : topic;
+      const bodyLines: string[] = [];
+      if (name) bodyLines.push(`${nameLabel}: ${name}`);
+      bodyLines.push(`${emailLabel}: ${email}`, '', message, '', sentFrom);
+      const body = bodyLines.join('\n');
+
+      if (formStatus) formStatus.textContent = form.dataset.opening ?? 'Opening your email app…';
+
+      window.location.href = `mailto:hello@imageredaction.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    });
+
+    const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-email]');
+    const copyStatus = document.querySelector<HTMLElement>('[data-copy-status]');
+    const email = copyButton?.dataset.copyEmail ?? 'hello@imageredaction.com';
+
+    async function copyText(text: string) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch {
+        const field = document.createElement('textarea');
+        field.value = text;
+        field.setAttribute('readonly', '');
+        field.style.position = 'fixed';
+        field.style.opacity = '0';
+        document.body.appendChild(field);
+        field.select();
+        let copied = false;
+        try {
+          copied = document.execCommand('copy');
+        } catch {
+          copied = false;
+        }
+        field.remove();
+        return copied;
+      }
+    }
+
+    copyButton?.addEventListener('click', async () => {
+      const copied = await copyText(email);
+      if (!copyStatus) return;
+      copyStatus.textContent = copied
+        ? (copyButton.dataset.labelCopied ?? 'Copied')
+        : (copyButton.dataset.labelFailed ?? 'Copy failed — select the address instead.');
+      window.setTimeout(() => {
+        copyStatus.textContent = '';
+      }, 2500);
+    });
+  </script>
+</BaseLayout>

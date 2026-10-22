@@ -1,8 +1,76 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
+import type { Locale } from '../i18n/config';
+import { LOCALES, localeConfig, localizePath, stripLocalePrefix } from '../i18n/config';
+import { t } from '../i18n/ui';
 
+interface Props {
+  locale?: Locale;
+  availableLocales?: Locale[];
+}
+
+const { locale = 'en-US', availableLocales = LOCALES } = Astro.props;
 const year = new Date().getFullYear();
+const currentPath = stripLocalePrefix(Astro.url.pathname);
+
+const [taglineFirst, taglineSecond] = t(locale, 'footer.tagline').split('. ');
+
+const columns = [
+  {
+    title: t(locale, 'footer.product'),
+    links: [
+      { label: t(locale, 'footer.editor'), href: localizePath(locale, '/#editor') },
+      { label: t(locale, 'footer.features'), href: localizePath(locale, '/features') },
+      { label: t(locale, 'footer.compare'), href: localizePath(locale, '/#compare') },
+      { label: t(locale, 'footer.privacy'), href: localizePath(locale, '/privacy') },
+    ],
+  },
+  {
+    title: t(locale, 'footer.resources'),
+    links: [
+      { label: t(locale, 'footer.guides'), href: localizePath(locale, '/guides') },
+      { label: t(locale, 'footer.howItWorks'), href: localizePath(locale, '/#how-it-works') },
+      { label: t(locale, 'footer.faq'), href: localizePath(locale, '/#faq') },
+      {
+        label: t(locale, 'footer.shortcuts'),
+        href: localizePath(locale, '/features#shortcuts'),
+      },
+    ],
+  },
+  {
+    title: t(locale, 'footer.company'),
+    links: [
+      { label: t(locale, 'footer.about'), href: localizePath(locale, '/about') },
+      { label: t(locale, 'footer.contact'), href: localizePath(locale, '/contact') },
+      {
+        label: t(locale, 'footer.emailUs'),
+        href: 'mailto:hello@imageredaction.com',
+        external: true,
+      },
+    ],
+  },
+  {
+    title: t(locale, 'footer.legal'),
+    links: [
+      // Legal pages are published in English only and stay at the root URL.
+      { label: t(locale, 'footer.privacyPolicy'), href: '/privacy-policy' },
+      { label: t(locale, 'footer.terms'), href: '/terms' },
+      {
+        label: t(locale, 'footer.verify'),
+        href: localizePath(locale, '/privacy#verify'),
+      },
+    ],
+  },
+];
+
+const languageLinks = availableLocales
+  .filter((code) => code !== locale)
+  .map((code) => ({
+    code,
+    label: localeConfig[code].label,
+    href: localizePath(code, currentPath),
+  }));
 ---
 
 <footer class="mt-20 px-2 pb-2 md:mt-28 md:px-3 md:pb-3">
@@ -10,75 +78,77 @@ const year = new Date().getFullYear();
     <div class="container-page">
       <div class="grid gap-12 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
         <div class="max-w-xl">
-          <Logo variant="light" size="md" />
+          <Logo variant="light" size="md" href={localizePath(locale, '/')} />
           <p class="mt-6 text-[clamp(2rem,5vw,3.4rem)] font-heading leading-[1.02] text-on-ink">
-            Share the screenshot.<br />Not the secrets.
+            {taglineFirst}.<br />{taglineSecond}
           </p>
           <p class="mt-5 max-w-md text-[15px] leading-relaxed text-on-ink/55">
-            A browser-based redaction studio for screenshots, IDs, receipts, and anything else
-            you'd rather not hand over in full.
+            {t(locale, 'footer.description')}
           </p>
           <div class="mt-7 inline-flex items-center gap-2 rounded-full border border-on-ink/15 px-3 py-2 text-[12px] text-on-ink/65">
             <Icon name="lock" size={12} class="text-on-ink/50" />
-            Processing stays on your device
+            {t(locale, 'footer.processing')}
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-x-8 gap-y-10">
-          <div>
-            <h2 class="text-[12px] font-heading text-on-ink/40">Product</h2>
-            <ul class="mt-4 space-y-3 text-[14px]">
-              <li><a href="/#editor" class="text-on-ink/70 transition-colors hover:text-on-ink">Editor</a></li>
-              <li><a href="/features" class="text-on-ink/70 transition-colors hover:text-on-ink">Features</a></li>
-              <li><a href="/#compare" class="text-on-ink/70 transition-colors hover:text-on-ink">Compare</a></li>
-              <li><a href="/privacy" class="text-on-ink/70 transition-colors hover:text-on-ink">Privacy</a></li>
-            </ul>
-          </div>
-          <div>
-            <h2 class="text-[12px] font-heading text-on-ink/40">Resources</h2>
-            <ul class="mt-4 space-y-3 text-[14px]">
-              <li><a href="/guides" class="text-on-ink/70 transition-colors hover:text-on-ink">Guides</a></li>
-              <li><a href="/#how-it-works" class="text-on-ink/70 transition-colors hover:text-on-ink">How it works</a></li>
-              <li><a href="/#faq" class="text-on-ink/70 transition-colors hover:text-on-ink">FAQ</a></li>
-              <li><a href="/features#shortcuts" class="text-on-ink/70 transition-colors hover:text-on-ink">Shortcuts</a></li>
-            </ul>
-          </div>
-          <div>
-            <h2 class="text-[12px] font-heading text-on-ink/40">Company</h2>
-            <ul class="mt-4 space-y-3 text-[14px]">
-              <li><a href="/about" class="text-on-ink/70 transition-colors hover:text-on-ink">About</a></li>
-              <li><a href="/contact" class="text-on-ink/70 transition-colors hover:text-on-ink">Contact</a></li>
-              <li>
-                <a href="mailto:hello@imageredaction.com" class="inline-flex items-center gap-1.5 text-on-ink/70 transition-colors hover:text-on-ink">
-                  Email us
-                  <Icon name="arrow-up-right" size={13} />
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h2 class="text-[12px] font-heading text-on-ink/40">Legal</h2>
-            <ul class="mt-4 space-y-3 text-[14px]">
-              <li><a href="/privacy-policy" class="text-on-ink/70 transition-colors hover:text-on-ink">Privacy Policy</a></li>
-              <li><a href="/terms" class="text-on-ink/70 transition-colors hover:text-on-ink">Terms &amp; Conditions</a></li>
-              <li><a href="/privacy#verify" class="text-on-ink/70 transition-colors hover:text-on-ink">Verify our claims</a></li>
-            </ul>
-          </div>
+          {
+            columns.map((column) => (
+              <div>
+                <h2 class="text-[12px] font-heading text-on-ink/40">{column.title}</h2>
+                <ul class="mt-4 space-y-3 text-[14px]">
+                  {column.links.map((link) => (
+                    <li>
+                      <a
+                        href={link.href}
+                        class="inline-flex items-center gap-1.5 text-on-ink/70 transition-colors hover:text-on-ink"
+                      >
+                        {link.label}
+                        {'external' in link && link.external && (
+                          <Icon name="arrow-up-right" size={13} />
+                        )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
         </div>
       </div>
 
       <div class="mt-14 flex flex-col gap-4 border-t border-on-ink/10 pt-6 text-[12px] text-on-ink/40 md:mt-20 md:flex-row md:items-center md:justify-between">
         <p>© {year} Redact · imageredaction.com</p>
         <p class="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span>No tracking cookies.</span>
-          <span>No trackers.</span>
-          <span>No uploads.</span>
+          <span>{t(locale, 'footer.noTrackingCookies')}</span>
+          <span>{t(locale, 'footer.noTrackers')}</span>
+          <span>{t(locale, 'footer.noUploads')}</span>
           <a href="#" class="inline-flex items-center gap-1 text-on-ink/60 transition-colors hover:text-on-ink">
-            Back to top
+            {t(locale, 'footer.backToTop')}
             <Icon name="arrow-up-right" size={12} class="-rotate-45" />
           </a>
         </p>
       </div>
+
+      {
+        languageLinks.length > 0 && (
+          <div class="mt-4 border-t border-on-ink/10 pt-4">
+            <p class="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11px] text-on-ink/40">
+              <span class="font-heading">{t(locale, 'footer.languages')}:</span>
+              {languageLinks.map((link) => (
+                <a
+                  href={link.href}
+                  hreflang={link.code}
+                  lang={link.code}
+                  class="text-on-ink/60 underline decoration-on-ink/20 underline-offset-4 transition-colors hover:text-on-ink hover:decoration-on-ink/60"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </p>
+          </div>
+        )
+      }
     </div>
   </div>
 </footer>

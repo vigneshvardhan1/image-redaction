@@ -1,5 +1,7 @@
 ---
 import Button from './Button.astro';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/ui';
 
 interface Props {
   eyebrow?: string;
@@ -10,10 +12,12 @@ interface Props {
   secondary?: string;
   secondaryHref?: string;
   class?: string;
+  locale?: Locale;
+  note?: string;
 }
 
 const {
-  eyebrow = 'Ready when you are',
+  eyebrow: eyebrowProp,
   title = 'The safest screenshot is the one with less in it.',
   copy = 'Open the editor, drop an image, and take a minute to cover what should not travel with it. No account, no upload, no watermark.',
   cta = 'Redact an image',
@@ -21,7 +25,11 @@ const {
   secondary = 'Read the privacy notes',
   secondaryHref = '/privacy',
   class: className = '',
+  locale = 'en-US',
+  note = t(locale, 'ctaBand.note'),
 } = Astro.props;
+
+const eyebrow = eyebrowProp ?? t(locale, 'ctaBand.eyebrow');
 ---
 
 <section class:list={['container-page', className]}>
@@ -36,6 +44,6 @@ const {
       <Button href={href} size="lg" iconRight="arrow-right">{cta}</Button>
       <Button href={secondaryHref} variant="outline" size="lg">{secondary}</Button>
     </div>
-    <p class="mt-5 text-[11px] text-faint">Free · No account · Nothing uploaded</p>
+    <p class="mt-5 text-[11px] text-faint">{note}</p>
   </div>
 </section>

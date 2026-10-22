@@ -1,0 +1,279 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../PageHero.astro';
+import Button from '../Button.astro';
+import Icon from '../Icon.astro';
+import SectionHead from '../SectionHead.astro';
+import Faq from '../Faq.astro';
+import CtaBand from '../CtaBand.astro';
+import type { Locale } from '../../i18n/config';
+import { LOCALES, localizePath } from '../../i18n/config';
+import { getPrivacyContent } from '../../i18n/content/privacy';
+import { getPrivacyFaqs } from '../../i18n/content/faq';
+import { buildFaqSchema } from '../../data/faq';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  availableLocales?: Locale[];
+}
+
+const { locale, availableLocales = LOCALES } = Astro.props;
+const content = getPrivacyContent(locale);
+const { meta, hero, policyNotice, badges, flow, network, verify, cards, faq, cta } = content;
+const privacyFaqs = getPrivacyFaqs(locale);
+const privacyFaqSchema = { ...buildFaqSchema(privacyFaqs), inLanguage: locale };
+const badgeIcons = ['lock', 'shield', 'eye-off', 'check'] as const;
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  keywords={meta.keywords}
+  schema={privacyFaqSchema}
+  ogImageAlt={meta.title}
+  locale={locale}
+  availableLocales={availableLocales}
+>
+  <PageHero eyebrow={hero.eyebrow} title={hero.title} lead={hero.lead}>
+    <Button slot="actions" href={localizePath(locale, '/#editor')} size="lg" iconRight="arrow-right">
+      {hero.primaryCta}
+    </Button>
+    <Button slot="actions" href="#verify" variant="outline" size="lg">{hero.secondaryCta}</Button>
+  </PageHero>
+
+  <section class="container-page">
+    <div class="flex gap-3 rounded-tile border border-hairline-soft bg-canvas-soft px-4 py-3.5">
+      <Icon name="file" size={14} class="mt-0.5 shrink-0 text-muted" />
+      <div class="text-[12px] leading-relaxed text-muted">
+        <p>{policyNotice}</p>
+        <a
+          href="/privacy-policy"
+          class="mt-1 inline-flex font-heading text-ink underline decoration-hairline underline-offset-2 hover:decoration-ink"
+        >
+          {t(locale, 'footer.privacyPolicy')}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-3">
+    <div class="grid gap-px overflow-hidden rounded-card border border-hairline-soft bg-hairline-soft sm:grid-cols-2 lg:grid-cols-4">
+      {
+        badges.map((label, index) => (
+          <div class="flex items-center gap-2.5 bg-canvas px-4 py-4">
+            <span class="grid h-7 w-7 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={badgeIcons[index] ?? 'check'} size={13} />
+            </span>
+            <span class="text-[12px] font-heading">{label}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead eyebrow={flow.eyebrow} title={flow.title} copy={flow.copy} />
+
+    <div class="mt-8 grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
+      <div class="rounded-card border border-hairline-soft bg-canvas p-5 md:p-6">
+        <div class="flex items-center justify-between gap-3 border-b border-hairline-soft pb-4">
+          <h3 class="text-[15px] font-heading">{flow.localTitle}</h3>
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] text-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+            {flow.localBadge}
+          </span>
+        </div>
+        <ol class="mt-5 space-y-5">
+          {
+            flow.steps.map((step, index) => (
+              <li class="flex gap-3.5">
+                <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas-soft text-[11px] font-heading">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <p class="text-[14px] font-heading leading-tight">{step.title}</p>
+                  <p class="mt-1 text-[12px] leading-relaxed text-muted">{step.copy}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <div class="flex-1 rounded-card border border-dashed border-hairline bg-canvas-soft p-6">
+          <span class="grid h-10 w-10 place-items-center rounded-full bg-canvas">
+            <Icon name="wifi-off" size={18} />
+          </span>
+          <h3 class="mt-4 text-[18px] leading-tight">{flow.noServerTitle}</h3>
+          <p class="mt-2 text-[13px] leading-relaxed text-muted">{flow.noServerCopy}</p>
+        </div>
+        <div class="rounded-card border border-hairline-soft bg-canvas p-6">
+          <p class="text-[11px] font-heading text-muted">{flow.requestLabel}</p>
+          <code class="mt-3 block rounded-tile bg-canvas-soft p-4 font-mono text-[12px] leading-relaxed text-ink">
+            {flow.requestText}<br />
+            <span class="text-faint">{flow.requestResult}</span>
+          </code>
+          <p class="mt-3 text-[11px] leading-relaxed text-muted">{flow.requestNote}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead eyebrow={network.eyebrow} title={network.title} copy={network.copy} />
+
+    <div class="mt-8 overflow-hidden rounded-card border border-hairline-soft">
+      <div class="hidden md:block">
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[720px] border-collapse text-left">
+            <thead>
+              <tr class="border-b border-hairline-soft bg-canvas-soft">
+                <th scope="col" class="px-5 py-4 text-[11px] font-heading text-muted">
+                  {network.columns.request}
+                </th>
+                <th scope="col" class="px-5 py-4 text-[11px] font-heading text-muted">
+                  {network.columns.when}
+                </th>
+                <th scope="col" class="px-5 py-4 text-[11px] font-heading text-muted">
+                  {network.columns.contains}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                network.rows.map((row) => (
+                  <tr class="border-b border-hairline-soft last:border-b-0">
+                    <th scope="row" class="px-5 py-4 align-top text-[13px] font-heading text-ink">
+                      {row.request}
+                      {row.never && (
+                        <span class="ml-2 rounded-full bg-ink px-2 py-0.5 text-[9px] leading-none text-on-ink">
+                          {t(locale, 'footer.noUploads')}
+                        </span>
+                      )}
+                    </th>
+                    <td class="px-5 py-4 align-top text-[12px] text-muted">{row.when}</td>
+                    <td class="px-5 py-4 align-top text-[12px] leading-relaxed text-muted">
+                      {row.contains}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="md:hidden">
+        <div class="divide-y divide-hairline-soft">
+          {
+            network.rows.map((row) => (
+              <div class="p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <p class="text-[13px] font-heading leading-snug text-ink">{row.request}</p>
+                  {row.never && (
+                    <span class="shrink-0 rounded-full bg-ink px-2 py-0.5 text-[9px] leading-none text-on-ink">
+                      {t(locale, 'footer.noUploads')}
+                    </span>
+                  )}
+                </div>
+                <p class="mt-2 text-[11px] leading-snug text-muted">
+                  <span class="font-heading text-faint">{network.whenLabel} </span>
+                  {row.when}
+                </p>
+                <p class="mt-1.5 text-[12px] leading-relaxed text-muted">{row.contains}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 rounded-tile bg-canvas-soft p-4 md:p-5">
+      <div class="flex gap-3">
+        <span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-canvas">
+          <Icon name="info" size={14} />
+        </span>
+        <div>
+          <p class="text-[13px] font-heading leading-tight">{network.noteTitle}</p>
+          <p class="mt-1.5 max-w-3xl text-[12px] leading-relaxed text-muted">
+            {network.noteCopy}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="verify" class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <div class="rounded-panel bg-canvas-soft p-5 md:p-10 lg:p-12">
+      <div class="grid gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+        <div>
+          <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+            {verify.eyebrow}
+          </p>
+          <h2 class="mt-4 text-h2">{verify.title}</h2>
+          <p class="mt-4 text-[15px] leading-relaxed text-muted">{verify.copy}</p>
+          <div class="mt-6">
+            <Button
+              href={`mailto:hello@imageredaction.com?subject=${encodeURIComponent(verify.cta)}`}
+              variant="outline"
+              iconRight="arrow-up-right"
+            >
+              {verify.cta}
+            </Button>
+          </div>
+        </div>
+
+        <ol class="space-y-3">
+          {
+            verify.steps.map((step, index) => (
+              <li class="flex gap-3 rounded-tile bg-canvas p-4">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas-soft text-[10px] font-heading">
+                  {index + 1}
+                </span>
+                <p class="text-[12px] leading-relaxed text-ink">{step}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-3 md:grid-cols-3">
+      {
+        cards.map((card) => (
+          <div class="rounded-card border border-hairline-soft bg-canvas p-5">
+            <span class="grid h-8 w-8 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={card.icon as any} size={14} />
+            </span>
+            <h2 class="mt-4 text-[16px] leading-tight">{card.title}</h2>
+            <p class="mt-2 text-[12px] leading-relaxed text-muted">{card.copy}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead eyebrow={faq.eyebrow} title={faq.title} copy={faq.copy} />
+    <div class="mt-8">
+      <Faq items={privacyFaqs} />
+    </div>
+  </section>
+
+  <CtaBand
+    class="mt-20 md:mt-28"
+    eyebrow={cta.eyebrow}
+    title={cta.title}
+    copy={cta.copy}
+    cta={cta.primary}
+    href={localizePath(locale, '/#editor')}
+    secondary={cta.secondary}
+    secondaryHref={localizePath(locale, cta.secondaryHref ?? '/guides')}
+    locale={locale}
+  />
+</BaseLayout>

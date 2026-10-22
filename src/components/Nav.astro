@@ -3,20 +3,44 @@ import Logo from './Logo.astro';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import type { Locale } from '../i18n/config';
+import { LOCALES, localeConfig, localizePath, stripLocalePrefix } from '../i18n/config';
+import { t } from '../i18n/ui';
 
-const path = Astro.url.pathname;
+interface Props {
+  locale?: Locale;
+  /** Locales that publish the current page. Omit for "all locales". */
+  availableLocales?: Locale[];
+}
+
+const { locale = 'en-US', availableLocales = LOCALES } = Astro.props;
+
+const currentPath = stripLocalePrefix(Astro.url.pathname);
+const normalizedPath = currentPath.replace(/\/+$/, '') || '/';
+
 const links = [
-  { label: 'Editor', href: '/#editor', match: '/' },
-  { label: 'Features', href: '/features', match: '/features' },
-  { label: 'Privacy', href: '/privacy', match: '/privacy' },
-  { label: 'Guides', href: '/guides', match: '/guides' },
-  { label: 'FAQ', href: '/#faq', match: '/#faq' },
+  { label: t(locale, 'nav.editor'), href: localizePath(locale, '/#editor'), match: '/' },
+  { label: t(locale, 'nav.features'), href: localizePath(locale, '/features'), match: '/features' },
+  { label: t(locale, 'nav.privacy'), href: localizePath(locale, '/privacy'), match: '/privacy' },
+  { label: t(locale, 'nav.guides'), href: localizePath(locale, '/guides'), match: '/guides' },
+  { label: t(locale, 'nav.faq'), href: localizePath(locale, '/#faq'), match: '/#faq' },
 ];
 
 function isActive(link: (typeof links)[number]) {
-  if (link.match === '/') return path === '/';
-  return path.startsWith(link.match);
+  if (link.match === '/') return normalizedPath === '/';
+  if (link.match === '/#faq') return false;
+  return normalizedPath === link.match || normalizedPath.startsWith(`${link.match}/`);
 }
+
+const languageLinks = availableLocales.map((code) => ({
+  code,
+  label: localeConfig[code].label,
+  englishLabel: localeConfig[code].englishLabel,
+  href: localizePath(code, currentPath),
+  current: code === locale,
+}));
+
+const currentLanguage = localeConfig[locale];
 ---
 
 <header class="sticky top-0 z-50 pt-3 md:pt-5">
@@ -24,9 +48,9 @@ function isActive(link: (typeof links)[number]) {
     <div class="relative mx-auto max-w-[1080px]">
       <nav
         class="flex items-center justify-between gap-3 rounded-full bg-canvas-soft/92 py-2 pl-3 pr-2 backdrop-blur-xl md:pl-4"
-        aria-label="Primary"
+        aria-label={t(locale, 'nav.primary')}
       >
-        <Logo size="sm" />
+        <Logo size="sm" href={localizePath(locale, '/')} />
 
         <div class="hidden items-center gap-1 lg:flex">
           {
@@ -46,18 +70,75 @@ function isActive(link: (typeof links)[number]) {
         </div>
 
         <div class="flex items-center gap-1.5">
-          <ThemeToggle />
+          <ThemeToggle locale={locale} />
+
+          {
+            languageLinks.length > 1 && (
+              <details class="relative z-50" data-lang-picker>
+                <summary
+                  class="flex h-11 cursor-pointer list-none items-center gap-1.5 rounded-full px-2.5 text-[12px] font-heading leading-none text-muted transition-colors marker:hidden hover:text-ink [&::-webkit-details-marker]:hidden"
+                  aria-label={t(locale, 'nav.languageChoose')}
+                >
+                  <Icon name="globe" size={16} />
+                  <span class="hidden sm:inline">{currentLanguage.label}</span>
+                  <span class="sm:hidden">{currentLanguage.code.split('-')[0].toUpperCase()}</span>
+                  <Icon name="chevron-down" size={12} class="text-faint" />
+                </summary>
+                <div
+                  class="absolute right-0 top-[calc(100%+8px)] w-56 rounded-card border border-hairline-soft bg-canvas p-1.5"
+                >
+                  <p class="px-3 pb-1.5 pt-2 text-[10px] font-heading uppercase tracking-wide text-faint">
+                    {t(locale, 'nav.languageChoose')}
+                  </p>
+                  <ul>
+                    {
+                      languageLinks.map((link) => (
+                        <li>
+                          <a
+                            href={link.href}
+                            hreflang={link.code}
+                            lang={link.code}
+                            class:list={[
+                              'flex min-h-10 items-center justify-between gap-3 rounded-tile px-3 py-2 text-[13px] transition-colors hover:bg-canvas-soft',
+                              link.current ? 'font-heading text-ink' : 'text-muted',
+                            ]}
+                            aria-current={link.current ? 'true' : undefined}
+                          >
+                            <span>{link.label}</span>
+                            {link.current ? (
+                              <Icon name="check" size={13} />
+                            ) : (
+                              <span class="text-[10px] uppercase text-faint">
+                                {link.code.split('-')[1]}
+                              </span>
+                            )}
+                          </a>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </details>
+            )
+          }
+
           <span class="hidden sm:block">
-            <Button href="/#editor" size="md" iconRight="arrow-right">
-              Redact an image
+            <Button href={localizePath(locale, '/#editor')} size="md" iconRight="arrow-right">
+              {t(locale, 'nav.cta')}
             </Button>
           </span>
           <Button
             variant="ghost"
             size="sm"
             class="!h-11 !w-11 !px-0 lg:hidden"
-            ariaLabel="Open menu"
-            dataAttrs={{ 'data-menu-toggle': 'true', 'aria-expanded': 'false', 'aria-controls': 'mobile-menu' }}
+            ariaLabel={t(locale, 'nav.menuOpen')}
+            dataAttrs={{
+              'data-menu-toggle': 'true',
+              'aria-expanded': 'false',
+              'aria-controls': 'mobile-menu',
+              'data-label-open': t(locale, 'nav.menuOpen'),
+              'data-label-close': t(locale, 'nav.menuClose'),
+            }}
           >
             <Icon name="menu" size={18} />
           </Button>
@@ -85,8 +166,14 @@ function isActive(link: (typeof links)[number]) {
           }
         </div>
         <div class="mt-2 border-t border-hairline-soft p-1 pt-3">
-          <Button href="/#editor" size="md" iconRight="arrow-right" class="w-full" dataAttrs={{ 'data-menu-link': 'true' }}>
-            Redact an image
+          <Button
+            href={localizePath(locale, '/#editor')}
+            size="md"
+            iconRight="arrow-right"
+            class="w-full"
+            dataAttrs={{ 'data-menu-link': 'true' }}
+          >
+            {t(locale, 'nav.cta')}
           </Button>
         </div>
       </div>
@@ -97,12 +184,14 @@ function isActive(link: (typeof links)[number]) {
 <script>
   const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
   const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const labelOpen = toggle?.dataset.labelOpen ?? 'Open menu';
+  const labelClose = toggle?.dataset.labelClose ?? 'Close menu';
 
   function closeMenu() {
     if (!toggle || !menu) return;
     menu.hidden = true;
     toggle.setAttribute('aria-expanded', 'false');
-    toggle.setAttribute('aria-label', 'Open menu');
+    toggle.setAttribute('aria-label', labelOpen);
   }
 
   toggle?.addEventListener('click', () => {
@@ -110,7 +199,7 @@ function isActive(link: (typeof links)[number]) {
     const open = menu.hidden;
     menu.hidden = !open;
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    toggle.setAttribute('aria-label', open ? labelClose : labelOpen);
   });
 
   menu?.querySelectorAll('[data-menu-link]').forEach((link) => {
@@ -118,6 +207,19 @@ function isActive(link: (typeof links)[number]) {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closeMenu();
+    if (event.key === 'Escape') {
+      closeMenu();
+      document.querySelectorAll<HTMLDetailsElement>('[data-lang-picker]').forEach((picker) => {
+        picker.open = false;
+      });
+    }
+  });
+
+  // Close the language picker when clicking outside it or after a selection.
+  document.addEventListener('click', (event) => {
+    const target = event.target as Element | null;
+    document.querySelectorAll<HTMLDetailsElement>('[data-lang-picker]').forEach((picker) => {
+      if (!target || !picker.contains(target)) picker.open = false;
+    });
   });
 </script>

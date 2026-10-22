@@ -1,36 +1,21 @@
 ---
 import Button from './Button.astro';
 import Icon from './Icon.astro';
+import type { Locale } from '../i18n/config';
+import { localizePath } from '../i18n/config';
+import type { HomeContent } from '../i18n/content/types';
+import { t } from '../i18n/ui';
+import { hasGuide } from '../i18n/content/guides';
 
-const sections = [
-  { id: 'what-image-redaction-removes', label: 'What redaction removes' },
-  { id: 'why-screenshots-leak', label: 'Why screenshots leak' },
-  { id: 'ai-image-redaction-software', label: 'How the detection works' },
-  { id: 'image-redaction-online', label: 'Online, without an upload' },
-  { id: 'redaction-styles', label: 'Four styles, one to trust' },
-  { id: 'image-redaction-tool', label: 'What the tool should do' },
-  { id: 'pre-share-check', label: 'A short pre-share check' },
-];
+interface Props {
+  locale: Locale;
+  guide: HomeContent['guide'];
+}
 
+const { locale, guide } = Astro.props;
+const relatedLinks = guide.relatedLinks.filter((link) => hasGuide(locale, link.slug));
 const linkClass =
   'font-heading text-ink underline decoration-hairline underline-offset-4 transition-colors hover:decoration-ink';
-
-const principles = [
-  'Local by default: the file is decoded in the tab, with no upload endpoint.',
-  'Editable until export: boxes move, resize, undo, and redo; the download is flattened.',
-  'Verified output: a re-scan flags text that still reads as sensitive.',
-  'Clean files: fresh PNG, JPG, or WebP exports without the original metadata, plus a size panel that measures the real download.',
-  'No account, no watermark, no payment.',
-];
-
-const checks = [
-  'Look at all four corners, the header, the tabs, and any notification.',
-  'Use ink for identifiers and payment details; reserve blur and pixelate for context.',
-  'Zoom in and confirm that no text peeks out from behind an edge.',
-  'Run Verify, then open the exported file at full size.',
-  'Ask whether a crop would be safer than a redaction.',
-  'Send only the redacted version. Never follow it with the original.',
-];
 ---
 
 <section
@@ -42,20 +27,20 @@ const checks = [
     <div class="self-start lg:sticky lg:top-28">
       <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
         <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
-        Image redaction
+        {guide.eyebrow}
       </p>
       <h2 id="image-redaction-title" class="mt-4 text-h2">
-        Image redaction, from the pixels up.
+        {guide.title}
       </h2>
       <p class="mt-4 max-w-md text-[15px] leading-relaxed text-muted">
-        What a good tool removes, how on-device detection helps, and where each style stops.
+        {guide.lead}
       </p>
 
-      <nav aria-label="In this guide" class="mt-7 hidden lg:block">
-        <p class="text-[11px] font-heading text-muted">In this guide</p>
+      <nav aria-label={t(locale, 'guide.inThisGuide')} class="mt-7 hidden lg:block">
+        <p class="text-[11px] font-heading text-muted">{t(locale, 'guide.inThisGuide')}</p>
         <ol class="mt-3 space-y-2.5">
           {
-            sections.map((section, index) => (
+            guide.sections.map((section, index) => (
               <li class="flex gap-2.5">
                 <span class="mt-0.5 text-[10px] font-heading text-faint">
                   {String(index + 1).padStart(2, '0')}
@@ -64,7 +49,7 @@ const checks = [
                   href={`#${section.id}`}
                   class="text-[12px] leading-snug text-muted transition-colors hover:text-ink"
                 >
-                  {section.label}
+                  {section.navLabel}
                 </a>
               </li>
             ))
@@ -73,177 +58,61 @@ const checks = [
       </nav>
 
       <div class="mt-7 hidden lg:block">
-        <Button href="#editor" variant="soft" size="sm" iconRight="arrow-right">
-          Redact an image
+        <Button
+          href={localizePath(locale, '/#editor')}
+          variant="soft"
+          size="sm"
+          iconRight="arrow-right"
+        >
+          {guide.cta}
         </Button>
       </div>
     </div>
 
     <article class="max-w-2xl">
-      <p class="text-[18px] font-light leading-[1.6] text-ink">
-        Image redaction is the work of permanently removing or covering sensitive details in a
-        picture before it is shared. A good image redaction tool does three things: it finds the
-        information that matters, covers it in a way that cannot be peeled back, and leaves no
-        hidden data in the exported file. This page explains how image redaction works in this
-        editor, what the on-device detection can and cannot see, and the checks worth making
-        before an image leaves your hands.
-      </p>
+      <p class="text-[18px] font-light leading-[1.6] text-ink">{guide.intro}</p>
 
       <div class="mt-9">
-        <h3
-          id="what-image-redaction-removes"
-          class="mt-10 scroll-mt-28 text-[22px] leading-tight first:mt-0"
-        >
-          What image redaction actually removes
-        </h3>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          Redaction is not decoration. A black bar, a pixelated block, a blur, and a crop all
-          change an image, but only some of them remove the information underneath. The test is
-          simple: after export, the covered detail should not be readable, recoverable, or
-          inferable from what remains. If a name, email address, card number, ID number, address,
-          date of birth, barcode, or account handle can still be read — or reconstructed from the
-          pixels — the image is not redacted yet.
-        </p>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          That distinction matters because screenshots are full of combinations. A name on its own
-          may be public. The same name beside a postcode, an order number, and the last four digits
-          of a card is a package that can unlock an account or support a payment. Cover what
-          identifies a person, grants access, or proves a transaction, and treat any two of those
-          details together as more sensitive than either one alone.
-        </p>
+        {
+          guide.sections.map((section) => (
+            <div>
+              <h3 id={section.id} class="mt-10 scroll-mt-28 text-[22px] leading-tight first:mt-0">
+                {section.title}
+              </h3>
+              {section.paragraphs.map((paragraph) => (
+                <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">{paragraph}</p>
+              ))}
+              {section.bullets && section.bullets.length > 0 && (
+                <ul class="mt-5 space-y-2.5">
+                  {section.bullets.map((bullet) => (
+                    <li class="flex gap-2.5 text-[15px] leading-[1.65] text-ink-soft">
+                      <span class="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-ink" aria-hidden="true" />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))
+        }
 
-        <h3 id="why-screenshots-leak" class="mt-10 scroll-mt-28 text-[22px] leading-tight">
-          Why screenshots hide more than you think
-        </h3>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          A screenshot records the whole frame, not the part you meant to capture. Browser tabs,
-          the URL bar, notification banners, a signed-in account chip, an avatar, a workspace name,
-          a timestamp, and the file name in a window title all travel with the image. The detail you
-          noticed first is rarely the only one worth covering.
+        <p class="mt-8 text-[15.5px] leading-[1.75] text-ink-soft">
+          {t(locale, 'guide.eachHasOwnGuide')}
         </p>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          Image files can also carry metadata: EXIF fields, GPS coordinates, camera and device
-          details, and the original file name. Screenshots hold less of it than camera photos, but
-          assume anything the recipient does not need should not leave with the file. This editor
-          exports a newly encoded image from a canvas, so the original metadata stays behind.
-        </p>
-
-        <h3
-          id="ai-image-redaction-software"
-          class="mt-10 scroll-mt-28 text-[22px] leading-tight"
-        >
-          How AI image redaction software works here
-        </h3>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          The detection in this image redaction software is OCR plus pattern checks, not a
-          generative model guessing at faces. Tesseract reads the text already visible in the image
-          inside a Web Worker, then the editor looks for emails, Luhn-valid card numbers, phone
-          numbers, SSNs, Aadhaar numbers, PANs, GSTINs, IBANs, IP addresses, dates, address
-          keywords, and short capitalised lines that look like names. Every match arrives as a
-          suggestion you can keep or dismiss.
-        </p>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          AI image redaction software is useful as a first pass, not a final authority. The scan can
-          miss a face, a QR code, a barcode, a logo, or an unusual name, and it cannot know which
-          details are sensitive in your context. Use it to stop hunting line by line, then review
-          the frame yourself. All text mode covers every detected line when a busy screenshot makes
-          individual judgement calls feel like a gamble.
-        </p>
-
-        <h3 id="image-redaction-online" class="mt-10 scroll-mt-28 text-[22px] leading-tight">
-          Image redaction online, without the upload
-        </h3>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          Most image redaction online tools ask you to send the file to a server, wait for it to
-          come back, and trust that the copy was deleted. This one is built the other way around.
-          The browser decodes the image into a canvas in the current tab, keeps the pixels in
-          memory, and draws every redaction locally. There is no upload endpoint, so there is no
-          server copy to delete. The{' '}
-          <a href="/privacy" class={linkClass}>privacy page</a>{' '}
-          documents every request the site makes.
-        </p>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          One request worth knowing about is smart detection. On first use, the page downloads
-          Tesseract.js and an English language model. Your image is not part of that request.{' '}
-          <a href="#editor" class={linkClass}>Manual redaction</a>, undo, copy, and export work
-          without it, and once the page has loaded you can keep editing offline.
-        </p>
-
-        <h3 id="redaction-styles" class="mt-10 scroll-mt-28 text-[22px] leading-tight">
-          Four styles, and the one to trust
-        </h3>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          Ink black draws an opaque, flattened shape over the original pixels. There is no gradient
-          to reverse and no pattern to analyse, which is why it is the default for IDs, payment
-          details, addresses, and anything that grants access to an account. Pixelate replaces an
-          area with averaged colour blocks; it can look decisive while preserving the shape of
-          large letters. Blur is the softest option and the weakest guarantee, because lightly
-          blurred or pixelated text and faces can sometimes be{' '}
-          <a href="/guides/blur-vs-pixelate-vs-black-box" class={linkClass}>
-            partially reconstructed
-          </a>.
-        </p>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          The emoji sticker draws an opaque plate before the emoji, so it covers the area instead of
-          floating transparently over it. It suits a face in a casual group chat. Cropping is the
-          strongest redaction of all when the surrounding context is not needed: a crop cannot be
-          unblurred. For anything that identifies a person, moves money, or opens an account, reach
-          for ink or a crop. Save the softer effects for context you would not mind losing.
-        </p>
-
-        <h3 id="image-redaction-tool" class="mt-10 scroll-mt-28 text-[22px] leading-tight">
-          What a good image redaction tool should do
-        </h3>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          The feature list matters less than the boundary around it. A tool worth using should work
-          on the file locally, keep every box editable until you export, flatten the result into new
-          pixels, and verify its own output before you download. It should also be honest about
-          where detection stops instead of implying that a scan is a guarantee.
-        </p>
-        <p class="mt-5 text-[15.5px] leading-[1.75] text-ink-soft">
-          Those principles are the reason this editor works the way it does:
-        </p>
-        <ul class="mt-4 space-y-2.5">
+        <p class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px]">
           {
-            principles.map((principle) => (
-              <li class="flex gap-2.5 text-[15px] leading-[1.65] text-ink-soft">
-                <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-canvas-soft">
-                  <Icon name="check" size={11} />
-                </span>
-                <span>{principle}</span>
-              </li>
+            guide.relatedLinks.filter((link) => hasGuide(locale, link.slug)).map((link) => (
+              <a href={localizePath(locale, `/guides/${link.slug}`)} class={linkClass}>
+                {link.label}
+              </a>
             ))
           }
-        </ul>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          The useful question is not how many formats a tool lists. It is whether the file, the
-          pixels, and the metadata all end up where you expect.
         </p>
-
-        <h3 id="pre-share-check" class="mt-10 scroll-mt-28 text-[22px] leading-tight">
-          A short check before you send
-        </h3>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          Before the image leaves your hands, make one slow pass over the whole frame. These checks
-          catch most of the expensive mistakes:
-        </p>
-        <ul class="mt-5 space-y-2.5">
-          {
-            checks.map((check) => (
-              <li class="flex gap-2.5 text-[15px] leading-[1.65] text-ink-soft">
-                <span class="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-ink" aria-hidden="true" />
-                <span>{check}</span>
-              </li>
-            ))
-          }
-        </ul>
-        <p class="mt-4 text-[15.5px] leading-[1.75] text-ink-soft">
-          <a href="/guides/redact-a-receipt" class={linkClass}>Receipts</a>,{' '}
-          <a href="/guides/redact-an-id-card" class={linkClass}>IDs</a>,{' '}
-          <a href="/guides/work-screenshot-checklist" class={linkClass}>work dashboards</a>, and{' '}
-          <a href="/guides/how-to-redact-a-screenshot" class={linkClass}>chat screenshots</a>{' '}
-          each have their own guide. The short version is always the same: cover what identifies,
-          verify what remains, and send the smallest image that still makes your point.
+        <p class="mt-4 flex items-start gap-2 text-[15px] leading-[1.65] text-ink-soft">
+          <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-canvas-soft">
+            <Icon name="check" size={11} />
+          </span>
+          <span>{guide.closing}</span>
         </p>
       </div>
     </article>

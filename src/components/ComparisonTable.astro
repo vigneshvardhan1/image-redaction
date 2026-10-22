@@ -1,38 +1,47 @@
 ---
 import Icon from './Icon.astro';
-import { comparisonRows } from '../data/comparison';
+import type { Locale } from '../i18n/config';
+import { getComparisonContent } from '../i18n/content/comparison';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en-US' } = Astro.props;
+const content = getComparisonContent(locale);
+const { rows, columns, mobileColumns, vs, caption, footnote, verify } = content;
 ---
 
 <div class="overflow-hidden rounded-card border border-hairline-soft bg-canvas">
   <div class="hidden lg:block">
     <table class="w-full min-w-[780px] border-collapse text-left">
       <caption class="sr-only">
-        How Redact compares with typical web tools and desktop apps
+        {caption}
       </caption>
       <thead>
         <tr class="border-b border-hairline-soft">
           <th scope="col" class="w-[32%] px-5 py-4 text-[11px] font-heading text-muted">
-            Capability
+            {columns.capability}
           </th>
           <th scope="col" class="border-x border-hairline-soft bg-canvas-soft px-5 py-4">
             <span class="flex items-center gap-2 text-[12px] font-heading text-ink">
               Redact
               <span class="rounded-full bg-ink px-2 py-0.5 text-[9px] font-heading leading-none text-on-ink">
-                This site
+                {columns.ours}
               </span>
             </span>
           </th>
           <th scope="col" class="px-5 py-4 text-[12px] font-heading text-muted">
-            Typical web tool
+            {columns.web}
           </th>
           <th scope="col" class="px-5 py-4 text-[12px] font-heading text-muted">
-            Desktop app
+            {columns.desktop}
           </th>
         </tr>
       </thead>
       <tbody>
         {
-          comparisonRows.map((row) => (
+          rows.map((row) => (
             <tr class="border-b border-hairline-soft last:border-b-0">
               <th scope="row" class="px-5 py-3.5 align-top text-[13px] font-body text-ink">
                 {row.feature}
@@ -61,30 +70,32 @@ import { comparisonRows } from '../data/comparison';
     <div class="flex items-center justify-between gap-3 border-b border-hairline-soft bg-canvas-soft px-4 py-3">
       <span class="flex items-center gap-2 text-[11px] font-heading">
         Redact
-        <span class="rounded-full bg-ink px-2 py-0.5 text-[9px] leading-none text-on-ink">This site</span>
+        <span class="rounded-full bg-ink px-2 py-0.5 text-[9px] leading-none text-on-ink">
+          {mobileColumns.ours}
+        </span>
       </span>
-      <span class="text-[10px] text-muted">vs. typical tools</span>
+      <span class="text-[10px] text-muted">{vs}</span>
     </div>
     <div class="divide-y divide-hairline-soft">
       {
-        comparisonRows.map((row) => (
+        rows.map((row) => (
           <div class="p-4">
             <p class="text-[13px] font-heading leading-snug">{row.feature}</p>
             {row.note && <p class="mt-1 text-[10px] leading-snug text-faint">{row.note}</p>}
             <div class="mt-3 grid grid-cols-3 gap-1.5">
               <div class="rounded-[10px] bg-canvas-soft p-2.5">
-                <p class="text-[9px] font-heading text-muted">This site</p>
+                <p class="text-[9px] font-heading text-muted">{mobileColumns.ours}</p>
                 <p class="mt-1 flex items-start gap-1 text-[11px] font-heading leading-tight text-ink">
                   <Icon name="check" size={11} class="mt-0.5 shrink-0" />
                   {row.ours}
                 </p>
               </div>
               <div class="p-2.5">
-                <p class="text-[9px] text-faint">Web tool</p>
+                <p class="text-[9px] text-faint">{mobileColumns.web}</p>
                 <p class="mt-1 text-[11px] leading-tight text-muted">{row.web}</p>
               </div>
               <div class="p-2.5">
-                <p class="text-[9px] text-faint">Desktop</p>
+                <p class="text-[9px] text-faint">{mobileColumns.desktop}</p>
                 <p class="mt-1 text-[11px] leading-tight text-muted">{row.desktop}</p>
               </div>
             </div>
@@ -96,9 +107,9 @@ import { comparisonRows } from '../data/comparison';
 </div>
 
 <div class="mt-3 flex flex-col gap-1 px-1 text-[11px] leading-relaxed text-faint sm:flex-row sm:items-center sm:justify-between">
-  <p>Categories, not specific products. Features vary by tool, plan, and version.</p>
+  <p>{footnote}</p>
   <p class="inline-flex items-center gap-1.5">
     <Icon name="info" size={12} />
-    Verify anything that matters before you rely on it.
+    {verify}
   </p>
 </div>

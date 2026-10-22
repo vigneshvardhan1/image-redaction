@@ -1,5 +1,13 @@
 ---
 import Icon from './Icon.astro';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en-US' } = Astro.props;
 ---
 
 {/*
@@ -10,11 +18,13 @@ import Icon from './Icon.astro';
 <button
   type="button"
   data-theme-toggle
+  data-label-dark={t(locale, 'theme.switchToDark')}
+  data-label-light={t(locale, 'theme.switchToLight')}
   class="theme-toggle"
-  title="Switch colour theme"
+  title={t(locale, 'theme.title')}
 >
   <Icon name="moon" size={18} class="theme-icon-moon" />
   <Icon name="sun" size={18} class="theme-icon-sun" />
-  <span class="sr-only theme-label-light">Switch to dark theme</span>
-  <span class="sr-only theme-label-dark">Switch to light theme</span>
+  <span class="sr-only theme-label-light">{t(locale, 'theme.switchToDark')}</span>
+  <span class="sr-only theme-label-dark">{t(locale, 'theme.switchToLight')}</span>
 </button>

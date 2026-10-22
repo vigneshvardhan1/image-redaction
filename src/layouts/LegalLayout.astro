@@ -37,7 +37,13 @@ const {
 } = Astro.props;
 ---
 
-<BaseLayout title={`${title} — Redact`} description={description} schema={schema}>
+<BaseLayout
+  title={`${title} — Redact`}
+  description={description}
+  schema={schema}
+  locale="en-US"
+  availableLocales={['en-US']}
+>
   <PageHero eyebrow={eyebrow} title={title} lead={description} />
 
   <section class="container-page">

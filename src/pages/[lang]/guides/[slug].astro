@@ -1,0 +1,30 @@
+---
+import GuidePage from '../../../components/pages/GuidePage.astro';
+import type { Guide } from '../../../data/guides';
+import type { Locale } from '../../../i18n/config';
+import { LOCALIZED_LOCALES } from '../../../i18n/config';
+import { getGuideLocales, getGuides } from '../../../i18n/content/guides';
+
+export function getStaticPaths() {
+  return LOCALIZED_LOCALES.flatMap((locale) =>
+    getGuides(locale).map((guide) => ({
+      params: { lang: locale, slug: guide.slug },
+      props: {
+        guide,
+        locale,
+        availableLocales: getGuideLocales(guide.slug),
+      },
+    })),
+  );
+}
+
+interface Props {
+  guide: Guide;
+  locale: Locale;
+  availableLocales: Locale[];
+}
+
+const { guide, locale, availableLocales } = Astro.props;
+---
+
+<GuidePage guide={guide} locale={locale} availableLocales={availableLocales} />

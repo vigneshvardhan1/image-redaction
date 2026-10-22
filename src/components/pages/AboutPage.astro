@@ -1,0 +1,197 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHero from '../PageHero.astro';
+import Button from '../Button.astro';
+import Icon from '../Icon.astro';
+import SectionHead from '../SectionHead.astro';
+import CtaBand from '../CtaBand.astro';
+import type { Locale } from '../../i18n/config';
+import { LOCALES, localizePath } from '../../i18n/config';
+import { getAboutContent } from '../../i18n/content/about';
+
+interface Props {
+  locale: Locale;
+  availableLocales?: Locale[];
+}
+
+const { locale, availableLocales = LOCALES } = Astro.props;
+const content = getAboutContent(locale);
+const { meta, hero, stats, why, principles, how, stack, limits, cta } = content;
+
+const site = Astro.site ?? new URL('https://imageredaction.com');
+const aboutHref = new URL(localizePath(locale, '/about'), site).href;
+const homeHref = new URL(localizePath(locale, '/'), site).href;
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: meta.title,
+  url: aboutHref,
+  inLanguage: locale,
+  description: meta.description,
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Redact',
+    url: homeHref,
+    email: 'hello@imageredaction.com',
+    description: meta.description,
+  },
+};
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  keywords={meta.keywords}
+  schema={schema}
+  ogImageAlt={meta.title}
+  locale={locale}
+  availableLocales={availableLocales}
+>
+  <PageHero eyebrow={hero.eyebrow} title={hero.title} lead={hero.lead}>
+    <Button slot="actions" href={localizePath(locale, '/#editor')} size="lg" iconRight="arrow-right">
+      {hero.primaryCta}
+    </Button>
+    <Button slot="actions" href={localizePath(locale, '/contact')} variant="outline" size="lg">
+      {hero.secondaryCta}
+    </Button>
+  </PageHero>
+
+  <section class="container-page">
+    <div class="grid gap-px overflow-hidden rounded-card border border-hairline-soft bg-hairline-soft sm:grid-cols-2 lg:grid-cols-4">
+      {
+        stats.map((stat) => (
+          <div class="bg-canvas px-5 py-5">
+            <p class="text-[28px] font-heading leading-none">{stat.value}</p>
+            <p class="mt-2 text-[11px] leading-snug text-muted">{stat.label}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      <div>
+        <SectionHead eyebrow={why.eyebrow} title={why.title} />
+      </div>
+      <div class="max-w-2xl space-y-4 text-[15px] leading-relaxed text-muted md:text-[16px]">
+        {why.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        <p class="font-heading text-ink">{why.emphasis}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead eyebrow={principles.eyebrow} title={principles.title} copy={principles.copy} />
+    <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        principles.items.map((principle) => (
+          <article class="rounded-card border border-hairline-soft bg-canvas p-5">
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={principle.icon as any} size={16} />
+            </span>
+            <h2 class="mt-4 text-[17px] leading-tight">{principle.title}</h2>
+            <p class="mt-2 text-[13px] leading-relaxed text-muted">{principle.copy}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="rounded-panel bg-canvas-soft p-6 md:p-10 lg:p-12">
+      <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
+        <div>
+          <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+            <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+            {how.eyebrow}
+          </p>
+          <h2 class="mt-4 text-h2">{how.title}</h2>
+          <p class="mt-4 text-[14px] leading-relaxed text-muted">{how.copy}</p>
+          <div class="mt-6">
+            <Button href={localizePath(locale, '/privacy')} variant="outline" iconRight="arrow-right">
+              {how.cta}
+            </Button>
+          </div>
+        </div>
+
+        <ol class="space-y-3">
+          {
+            how.steps.map((step) => (
+              <li class="flex gap-4 rounded-tile bg-canvas p-4 md:p-5">
+                <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-canvas-soft">
+                  <Icon name={step.icon as any} size={15} />
+                </span>
+                <div>
+                  <p class="text-[11px] font-heading leading-none text-faint">{step.number}</p>
+                  <p class="mt-1.5 text-[15px] font-heading leading-tight">{step.title}</p>
+                  <p class="mt-1.5 text-[12px] leading-relaxed text-muted">{step.copy}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          {stack.eyebrow}
+        </p>
+        <h2 class="mt-4 text-h2">{stack.title}</h2>
+        <p class="mt-4 max-w-lg text-[15px] leading-relaxed text-muted">{stack.copy}</p>
+        <p class="mt-4 max-w-lg text-[12px] leading-relaxed text-faint">{stack.note}</p>
+      </div>
+
+      <dl class="grid gap-3 sm:grid-cols-2">
+        {
+          stack.items.map((item) => (
+            <div class="rounded-card border border-hairline-soft bg-canvas p-5">
+              <dt class="text-[14px] font-heading leading-tight">{item.label}</dt>
+              <dd class="mt-1.5 text-[12px] leading-relaxed text-muted">{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <div class="grid gap-9 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+      <div>
+        <SectionHead eyebrow={limits.eyebrow} title={limits.title} />
+      </div>
+      <div class="grid gap-3 sm:grid-cols-2">
+        {
+          limits.items.map((item) => (
+            <div class="rounded-tile bg-canvas-soft p-5">
+              <h3 class="text-[15px] leading-tight">{item.title}</h3>
+              <p class="mt-2 text-[12px] leading-relaxed text-muted">{item.copy}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+    <p class="mt-5 flex items-start gap-2 text-[11px] leading-relaxed text-muted">
+      <Icon name="info" size={12} class="mt-0.5 shrink-0" />
+      {limits.footnote}
+    </p>
+  </section>
+
+  <CtaBand
+    class="mt-20 md:mt-28"
+    eyebrow={cta.eyebrow}
+    title={cta.title}
+    copy={cta.copy}
+    cta={cta.primary}
+    href={localizePath(locale, '/#editor')}
+    secondary={cta.secondary}
+    secondaryHref={localizePath(locale, cta.secondaryHref ?? '/contact')}
+    locale={locale}
+  />
+</BaseLayout>

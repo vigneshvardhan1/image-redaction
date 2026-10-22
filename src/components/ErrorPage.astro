@@ -37,7 +37,14 @@ const {
 } = Astro.props;
 ---
 
-<BaseLayout title={pageTitle} description={description} noindex canonical={false}>
+<BaseLayout
+  title={pageTitle}
+  description={description}
+  noindex
+  canonical={false}
+  locale="en-US"
+  availableLocales={['en-US']}
+>
   <section class="container-page py-20 md:py-28">
     <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
       <div>
