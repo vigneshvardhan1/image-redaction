@@ -129,7 +129,7 @@ export const homeEnUS: HomeContent = {
     primaryCta: 'Try smart detection',
     secondaryCta: 'Read the redaction guide',
     footnote:
-      'First use downloads the OCR engine and English model. Your file is not part of that request.',
+      'First use downloads the OCR engine, English model, and face model. Your file is not part of those requests.',
   },
   styles: {
     eyebrow: 'Redaction styles',
@@ -156,7 +156,7 @@ export const homeEnUS: HomeContent = {
       {
         icon: 'globe',
         title: 'The extra requests are disclosed',
-        copy: 'Smart detection downloads Tesseract.js and an English model on first use, and opening a PDF loads the self-hosted PDF engine. Your file is never part of either request.',
+        copy: 'Smart detection downloads Tesseract.js and an English model on first use, Detect faces downloads a small MediaPipe model, and opening a PDF loads the self-hosted PDF engine. Your file is never part of those requests.',
       },
     ],
   },
@@ -221,8 +221,8 @@ export const homeEnUS: HomeContent = {
         navLabel: 'How the detection works',
         title: 'How AI image redaction software works here',
         paragraphs: [
-          'The detection in this image redaction software is OCR plus pattern checks, not a generative model guessing at faces. Tesseract reads the text already visible in the image inside a Web Worker, then the editor looks for emails, Luhn-valid card numbers, phone numbers, SSNs, Aadhaar numbers, PANs, GSTINs, IBANs, IP addresses, dates, address keywords, and short capitalized lines that look like names. Every match arrives as a suggestion you can keep or dismiss.',
-          'AI image redaction software is useful as a first pass, not a final authority. The scan can miss a face, a QR code, a barcode, a logo, or an unusual name, and it cannot know which details are sensitive in your context. Use it to stop hunting line by line, then review the frame yourself. All text mode covers every detected line when a busy screenshot makes individual judgment calls feel like a gamble.',
+          'Text detection in this image redaction software is OCR plus pattern checks, not a generative model inventing details. Tesseract reads the text already visible in the image inside a Web Worker, then the editor looks for emails, Luhn-valid card numbers, phone numbers, SSNs, Aadhaar numbers, PANs, GSTINs, IBANs, IP addresses, dates, address keywords, and short capitalized lines that look like names. Detect faces adds a separate on-device BlazeFace model that proposes boxes around faces in photos. Every match arrives as a suggestion you can keep or dismiss.',
+          'AI image redaction software is useful as a first pass, not a final authority. The scan can miss a small face, a QR code, a barcode, a logo, or an unusual name, and it cannot know which details are sensitive in your context. Use it to stop hunting line by line, then review the frame yourself. All text mode covers every detected line when a busy screenshot makes individual judgment calls feel like a gamble.',
         ],
       },
       {
@@ -231,7 +231,7 @@ export const homeEnUS: HomeContent = {
         title: 'Image redaction online, without the upload',
         paragraphs: [
           'Most image redaction online tools ask you to send the file to a server, wait for it to come back, and trust that the copy was deleted. This one is built the other way around. The browser decodes the image into a canvas in the current tab, keeps the pixels in memory, and draws every redaction locally. There is no upload endpoint, so there is no server copy to delete. The privacy page documents every request the site makes.',
-          'One request worth knowing about is smart detection. On first use, the page downloads Tesseract.js and an English language model. Your image is not part of that request. Manual redaction, undo, copy, and export work without it, and once the page has loaded you can keep editing offline.',
+          'One set of requests worth knowing about is smart detection. On first use, the page downloads Tesseract.js, an English language model, and the MediaPipe face model. Your image is not part of those requests. Manual redaction, undo, copy, and export work without them, and once the page has loaded you can keep editing offline.',
         ],
       },
       {

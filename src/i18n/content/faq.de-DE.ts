@@ -19,7 +19,12 @@ export const faqsDeDE: FaqItem[] = [
   {
     question: 'Wie kann ich ein Bild schwärzen?',
     answer:
-      'Öffnen Sie den Redact-Editor und ziehen Sie ein Bild hinein, fügen Sie es ein oder wählen Sie eines aus. Starten Sie die intelligente Erkennung, um wahrscheinlich sensible Texte zu finden, oder zeichnen Sie ein Rechteck oder Oval über alles, was sie übersieht; wählen Sie dann einen Stil zum Schwärzen und passen Sie die Ränder des Rahmens an. Nutzen Sie die Überprüfung, um das abgeflachte Ergebnis erneut zu scannen, und laden Sie dann ein PNG, JPG oder WebP herunter. Alles läuft in Ihrem Browser, und das Bild wird nie hochgeladen.',
+      'Öffnen Sie den Redact-Editor und ziehen Sie ein Bild hinein, fügen Sie es ein oder wählen Sie eines aus. Starten Sie die intelligente Erkennung, um wahrscheinlich sensible Texte zu finden, oder „Gesichter erkennen“, um Gesichter vorzuschlagen; zeichnen Sie dann ein Rechteck oder Oval über alles, was die Scans übersehen, wählen Sie einen Stil zum Schwärzen und passen Sie die Ränder des Rahmens an. Nutzen Sie die Überprüfung, um das abgeflachte Ergebnis erneut zu scannen, und laden Sie dann ein PNG, JPG oder WebP herunter. Alles läuft in Ihrem Browser, und das Bild wird nie hochgeladen.',
+  },
+  {
+    question: 'Erkennt es Gesichter?',
+    answer:
+      'Ja. „Gesichter erkennen“ führt MediaPipes BlazeFace-Modell in Ihrem Browser aus und schlägt einen etwas größeren Rahmen um jedes gefundene Gesicht vor. Nichts wird hochgeladen, das Modell wird einmal heruntergeladen. Am besten funktioniert es bei klaren, frontalen Gesichtern auf Fotos; kleine, abgewandte, stark verdeckte oder gezeichnete Gesichter können übersehen werden. Prüfen Sie die Rahmen deshalb immer. Ihr aktueller Schwärzungsstil wird beim Übernehmen angewendet.',
   },
   {
     question: 'Kann ich eine Schwärzung nach dem Zeichnen rückgängig machen?',
@@ -34,12 +39,12 @@ export const faqsDeDE: FaqItem[] = [
   {
     question: 'Hat Redact Zugriff auf mein Bild?',
     answer:
-      'Nein. Ihr Browser liest das Bild und zeichnet es in Ihrem Tab auf einen lokalen Canvas. Es gibt keinen Upload-Endpunkt, die Datei wird also nie an einen Server gesendet, gespeichert, protokolliert oder von uns geprüft. Die intelligente Erkennung lädt beim ersten Einsatz eine OCR-Engine und ein englisches Modell herunter, aber Ihr Bild ist nicht Teil dieser Anfrage. Beides können Sie im Netzwerk-Tab Ihres Browsers bestätigen.',
+      'Nein. Ihr Browser liest das Bild und zeichnet es in Ihrem Tab auf einen lokalen Canvas. Es gibt keinen Upload-Endpunkt, die Datei wird also nie an einen Server gesendet, gespeichert, protokolliert oder von uns geprüft. Die intelligente Erkennung lädt beim ersten Einsatz eine OCR-Engine, ein englisches Modell und ein Gesichtsmodell herunter, aber Ihr Bild ist nicht Teil dieser Anfrage. Beides können Sie im Netzwerk-Tab Ihres Browsers bestätigen.',
   },
   {
     question: 'Kann ich auch andere Dinge als Gesichter schwärzen?',
     answer:
-      'Ja. Sie können alles abdecken, was in einem Bild sichtbar ist: Gesichter, Namen, E-Mail-Adressen, Telefonnummern, Kartennummern, Ausweisnummern, Adressen, QR-Codes, Barcodes, Logos, Kontonamen und mehr. Die intelligente Erkennung schlägt automatisch Texte vor, die wie E-Mails, Kartennummern, Telefonnummern, amtliche Ausweise, Adressen und Daten aussehen. Gesichter, QR-Codes, Barcodes und Logos brauchen weiterhin einen manuellen Rahmen.',
+      'Ja. Sie können alles abdecken, was in einem Bild sichtbar ist: Gesichter, Namen, E-Mail-Adressen, Telefonnummern, Kartennummern, Ausweisnummern, Adressen, QR-Codes, Barcodes, Logos, Kontonamen und mehr. Die intelligente Erkennung schlägt automatisch Texte vor, die wie E-Mails, Kartennummern, Telefonnummern, amtliche Ausweise, Adressen und Daten aussehen, und „Gesichter erkennen“ schlägt Gesichter vor. QR-Codes, Barcodes, MRZ-Zeilen und Logos brauchen weiterhin einen manuellen Rahmen.',
   },
   {
     question: 'Verwendet Redact Cookies oder verfolgt es mich?',
@@ -52,7 +57,7 @@ export const privacyFaqsDeDE: FaqItem[] = [
   {
     question: 'Werden meine Bilder wirklich nie hochgeladen?',
     answer:
-      'Richtig. Ihr Browser liest die Datei, zeichnet sie auf einen lokalen Canvas und hält sie im Arbeitsspeicher. Es gibt keinen Upload-Endpunkt — Sie können den Netzwerk-Tab beobachten, während Sie arbeiten. Die intelligente Erkennung lädt beim ersten Einsatz eine OCR-Engine und ein englisches Textmodell herunter, aber das Bild selbst bleibt im Tab.',
+      'Richtig. Ihr Browser liest die Datei, zeichnet sie auf einen lokalen Canvas und hält sie im Arbeitsspeicher. Es gibt keinen Upload-Endpunkt — Sie können den Netzwerk-Tab beobachten, während Sie arbeiten. Die intelligente Erkennung lädt beim ersten Einsatz eine OCR-Engine, ein englisches Textmodell und ein Gesichtsmodell herunter, aber das Bild selbst bleibt im Tab.',
   },
   {
     question: 'Ist es kostenlos? Brauche ich ein Konto?',
@@ -62,12 +67,12 @@ export const privacyFaqsDeDE: FaqItem[] = [
   {
     question: 'Wie funktioniert die intelligente Erkennung?',
     answer:
-      'Sie führt Tesseract OCR in einem Web Worker in Ihrem Browser aus und wendet dann Musterprüfungen an: E-Mails, Luhn-gültige Kartennummern, SSNs, Aadhaar-Nummern, PANs, GSTINs, IBANs, Telefonnummern, IP-Adressen, Daten, Adressstichwörter und wahrscheinliche Namen. Jeder Fund ist ein Vorschlag, den Sie einbeziehen oder ausschließen können. OCR liefert bestmögliche Ergebnisse, prüfen Sie daher die Rahmen und nutzen Sie die Überprüfung.',
+      'Sie führt Tesseract OCR in einem Web Worker in Ihrem Browser aus und wendet dann Musterprüfungen an: E-Mails, Luhn-gültige Kartennummern, SSNs, Aadhaar-Nummern, PANs, GSTINs, IBANs, Telefonnummern, IP-Adressen, Daten, Adressstichwörter und wahrscheinliche Namen. „Gesichter erkennen“ nutzt MediaPipes BlazeFace-Modell, ebenfalls auf dem Gerät. Jeder Fund ist ein Vorschlag, den Sie einbeziehen oder ausschließen können. Beide Detektoren liefern bestmögliche Ergebnisse, prüfen Sie daher die Rahmen und nutzen Sie die Überprüfung.',
   },
   {
     question: 'Funktioniert es offline?',
     answer:
-      'Der Editor schon. Sobald die Seite geöffnet ist, können Sie ohne Netzwerkverbindung weiter schwärzen. Die intelligente Erkennung benötigt beim ersten Einsatz die OCR-Engine und das englische Modell; Ihr Browser kann sie zwischenspeichern, aber verlassen Sie sich bei einem ersten Offline-Lauf nicht darauf. Manuelles Schwärzen, Kopieren und Exportieren funktionieren alle offline.',
+      'Der Editor schon. Sobald die Seite geöffnet ist, können Sie ohne Netzwerkverbindung weiter schwärzen. Die intelligente Erkennung benötigt beim ersten Einsatz die OCR-Engine, das englische Modell und das Gesichtsmodell; Ihr Browser kann sie zwischenspeichern, aber verlassen Sie sich bei einem ersten Offline-Lauf nicht darauf. Manuelles Schwärzen, Kopieren und Exportieren funktionieren alle offline.',
   },
   {
     question: 'Werden EXIF- und GPS-Daten entfernt?',

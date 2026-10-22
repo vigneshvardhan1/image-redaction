@@ -26,7 +26,7 @@ export const aboutDeDE: AboutContent = {
     paragraphs: [
       'Screenshots sind heute das Mittel der Wahl, um Arbeit zu erklären — ein Support-Thread, ein Beleg, ein Ausweis, ein Dashboard, ein Chat mit Lieferadresse. Das Detail, das den Screenshot nützlich macht, ist oft genau das Detail, das nicht mit ihm reisen sollte.',
       'Die meisten Tools zum Schwärzen verlangen zuerst den Upload genau der Datei, die Sie schützen möchten. Das war nie richtig. Ein Tool, das sensible Details entfernt, sollte sie nicht zuerst einsammeln — und das Versprechen, die Kopie morgen zu löschen, ist heute trotzdem eine Kopie.',
-      'Redact dreht die Reihenfolge um. Ihr Browser dekodiert das Bild — oder rendert jede PDF-Seite —, zeichnet es auf einen lokalen Canvas und bäckt die Schwärzungen in eine neue Datei ein. Es gibt keinen Upload-Endpunkt. Die intelligente Erkennung lädt eine OCR-Engine und ein englisches Modell herunter, die PDF-Engine wird selbst gehostet, aber Ihre Datei ist nicht Teil dieser Anfragen.',
+      'Redact dreht die Reihenfolge um. Ihr Browser dekodiert das Bild — oder rendert jede PDF-Seite —, zeichnet es auf einen lokalen Canvas und bäckt die Schwärzungen in eine neue Datei ein. Es gibt keinen Upload-Endpunkt. Die intelligente Erkennung lädt eine OCR-Engine, ein englisches Modell und ein Gesichtsmodell herunter, die PDF-Engine wird selbst gehostet, aber Ihre Datei ist nicht Teil dieser Anfragen.',
     ],
     emphasis:
       'Wir sind nicht gegen die Cloud. Wir sind gegen den unnötigen Schritt dazwischen. Wenn der Browser die Aufgabe erledigen kann, ist der sicherste Ort für die Datei der Ort, an dem sie bereits ist.',
@@ -44,7 +44,7 @@ export const aboutDeDE: AboutContent = {
       {
         icon: 'alert',
         title: 'Ehrlich über Grenzen',
-        copy: 'Gesichter, QR-Codes und ungewöhnliche Namen brauchen weiterhin einen manuellen Rahmen. Ein sauberer Prüfscan ist ein Nachweis, keine Garantie.',
+        copy: 'Die Gesichtserkennung ist bestmöglich; QR-Codes, Barcodes und ungewöhnliche Namen brauchen weiterhin einen manuellen Rahmen. Ein sauberer Prüfscan ist ein Nachweis, keine Garantie.',
       },
       {
         icon: 'chat',
@@ -71,7 +71,7 @@ export const aboutDeDE: AboutContent = {
   how: {
     eyebrow: 'So funktioniert es',
     title: 'Drei Schritte, keiner davon ein Server.',
-    copy: 'Der gesamte Ablauf passt in einen Tab. Die einzigen optionalen Downloads sind die OCR-Engine für die intelligente Erkennung und die PDF-Engine für PDFs.',
+    copy: 'Der gesamte Ablauf passt in einen Tab. Die einzigen optionalen Downloads sind die OCR- und Gesichtsmodelle für die Erkennung und die PDF-Engine für PDFs.',
     cta: 'Datenfluss ansehen',
     steps: [
       {
@@ -83,7 +83,7 @@ export const aboutDeDE: AboutContent = {
       {
         number: '02',
         title: 'Abdecken, was zählt',
-        copy: 'Die intelligente Erkennung schlägt auf der aktuellen Seite wahrscheinliche personenbezogene Daten vor. Zeichnen Sie über Gesichter, Codes und alles, was der Scan übersieht. Tintenschwarz ist die Voreinstellung.',
+        copy: 'Die intelligente Erkennung schlägt auf der aktuellen Seite wahrscheinliche personenbezogene Daten vor, „Gesichter erkennen“ schlägt Gesichter vor. Zeichnen Sie über alles, was die Scans übersehen. Tintenschwarz ist die Voreinstellung.',
         icon: 'square',
       },
       {
@@ -98,11 +98,12 @@ export const aboutDeDE: AboutContent = {
     eyebrow: 'Unter der Haube',
     title: 'Kleiner Stack. Kein versteckter Dienst.',
     copy: 'Die Website besteht aus statischem HTML, CSS und JavaScript. Es gibt kein Backend, das Dateien empfängt, kein Analyse-SDK und keinen Werbecode. Die Komponenten, die die Arbeit erledigen, sind gewöhnliche Web-APIs und Open-Source-Software.',
-    note: 'Intelligente Erkennung und PDF-Unterstützung sind die Funktionen, die nach dem Laden der Seite zusätzlichen Code abrufen. Sie laden Tesseract.js, Sprachdaten und die selbst gehostete PDF-Engine; Ihre Datei bleibt im Tab.',
+    note: 'Intelligente Erkennung und PDF-Unterstützung sind die Funktionen, die nach dem Laden der Seite zusätzlichen Code abrufen. Sie laden Tesseract.js, Sprachdaten, das MediaPipe-Gesichtsmodell und die selbst gehostete PDF-Engine; Ihre Datei bleibt im Tab.',
     items: [
       { label: 'Astro', value: 'Statische Seiten und Komponenten' },
       { label: 'Canvas API', value: 'Lokales Dekodieren, Schwärzen und Exportieren' },
       { label: 'Tesseract.js', value: 'Optionales OCR in einem Web Worker' },
+      { label: 'MediaPipe', value: 'Optionale Gesichtserkennung im Tab' },
       { label: 'PDF.js', value: 'Selbst gehostetes lokales PDF-Rendering' },
       { label: 'pdf-lib', value: 'Zusammenbau der abgeflachten PDF im Tab' },
       { label: 'Inter', value: 'Selbst gehostete Schrift, von dieser Website ausgeliefert' },

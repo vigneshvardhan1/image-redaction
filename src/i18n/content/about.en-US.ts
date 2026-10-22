@@ -26,7 +26,7 @@ export const aboutEnUS: AboutContent = {
     paragraphs: [
       'Screenshots are how work gets explained now — a support thread, a receipt, an ID, a dashboard, a chat with a delivery address in it. The detail that makes the screenshot useful is often the same detail that should not travel with it.',
       'Most redaction tools start by asking you to upload the exact file you are trying to protect. That never sat right. A tool that removes sensitive details should not collect them first, and a promise to delete the copy tomorrow is still a copy today.',
-      'Redact flips the order. Your browser decodes the image — or renders each PDF page — draws it to a local canvas, and bakes the redactions into a new file. There is no upload endpoint. Smart detection downloads an OCR engine and an English model, and the PDF engine is self-hosted, but your file is not part of those requests.',
+      'Redact flips the order. Your browser decodes the image — or renders each PDF page — draws it to a local canvas, and bakes the redactions into a new file. There is no upload endpoint. Smart detection downloads an OCR engine, an English model, and a face model, and the PDF engine is self-hosted, but your file is not part of those requests.',
     ],
     emphasis:
       'We are not anti-cloud. We are against the unnecessary step in the middle. When the browser can do the job, the safest place for the file is the place it already is.',
@@ -44,7 +44,7 @@ export const aboutEnUS: AboutContent = {
       {
         icon: 'alert',
         title: 'Honest about limits',
-        copy: 'Faces, QR codes, and unusual names still need a manual box. A clean verification scan is evidence, not a guarantee.',
+        copy: 'Face detection is best-effort; QR codes, barcodes, and unusual names still need a manual box. A clean verification scan is evidence, not a guarantee.',
       },
       {
         icon: 'chat',
@@ -71,7 +71,7 @@ export const aboutEnUS: AboutContent = {
   how: {
     eyebrow: 'How it works',
     title: 'Three steps, none of them a server.',
-    copy: 'The whole workflow fits in one tab. The only optional downloads are the OCR engine used by Smart detect and the PDF engine used for PDFs.',
+    copy: 'The whole workflow fits in one tab. The only optional downloads are the OCR and face models used by detection and the PDF engine used for PDFs.',
     cta: 'See the data flow',
     steps: [
       {
@@ -83,7 +83,7 @@ export const aboutEnUS: AboutContent = {
       {
         number: '02',
         title: 'Cover what matters',
-        copy: 'Smart detect suggests likely PII on the current page. Draw over faces, codes, and anything the scan misses. Ink is the default.',
+        copy: 'Smart detect suggests likely PII and Detect faces suggests faces on the current page. Draw over anything the scans miss. Ink is the default.',
         icon: 'square',
       },
       {
@@ -98,11 +98,12 @@ export const aboutEnUS: AboutContent = {
     eyebrow: 'Under the hood',
     title: 'Small stack. No hidden service.',
     copy: 'The site is static HTML, CSS, and JavaScript. There is no backend that receives files, no analytics SDK, and no advertising code. The pieces that do the work are ordinary web APIs and open-source software.',
-    note: 'Smart detection and PDF support are the features that fetch extra code after the page loads. They load Tesseract.js, language data, and the self-hosted PDF engine; your file stays in the tab.',
+    note: 'Smart detection and PDF support are the features that fetch extra code after the page loads. They load Tesseract.js, language data, MediaPipe’s face model, and the self-hosted PDF engine; your file stays in the tab.',
     items: [
       { label: 'Astro', value: 'Static pages and components' },
       { label: 'Canvas API', value: 'Local decoding, redaction, and export' },
       { label: 'Tesseract.js', value: 'Optional OCR in a Web Worker' },
+      { label: 'MediaPipe', value: 'Optional face detection in the tab' },
       { label: 'PDF.js', value: 'Self-hosted local PDF rendering' },
       { label: 'pdf-lib', value: 'Flattened PDF assembly in the tab' },
       { label: 'Inter', value: 'Self-hosted type, served from this site' },

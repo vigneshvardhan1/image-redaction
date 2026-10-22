@@ -1,5 +1,6 @@
 import { renderScene, type Mode, type Shape, type ShapeKind } from './render';
 import { scanCanvas, type Finding } from './detect';
+import { detectFaces } from './face-detect';
 import {
   PDF_EDIT_MAX_EDGE,
   PDF_EXPORT_MAX_EDGE,
@@ -66,6 +67,7 @@ function setup(editor: HTMLElement) {
   const copyBtn = query<HTMLButtonElement>('[data-action="copy"]');
   const verifyBtn = query<HTMLButtonElement>('[data-action="verify"]');
   const scanBtn = query<HTMLButtonElement>('[data-action="scan"]');
+  const facesBtn = query<HTMLButtonElement>('[data-action="faces"]');
   const formatSelect = query<HTMLSelectElement>('[data-format]');
   const deleteSelectedBtn = query<HTMLButtonElement>('[data-delete-selected]');
   const sizePanel = query<HTMLElement>('[data-size-panel]');
@@ -207,7 +209,7 @@ function setup(editor: HTMLElement) {
     if (!active) {
       busyProgress.style.width = '4%';
       busyNote.textContent =
-        'OCR runs in your browser. The English model downloads once — your file is never sent.';
+        'Detection runs in your browser. Models download once — your file is never sent.';
     }
   }
 
@@ -310,6 +312,7 @@ function setup(editor: HTMLElement) {
     undoBtn.disabled = historyIndex <= 0;
     redoBtn.disabled = historyIndex >= history.length - 1;
     scanBtn.disabled = !hasDoc || busy;
+    facesBtn.disabled = !hasDoc || busy;
     updateSizeButton();
     updatePageChrome();
     if (shapes.length === 0) {
@@ -539,6 +542,10 @@ function setup(editor: HTMLElement) {
     return `${count} sensitive detail${count === 1 ? '' : 's'} found`;
   }
 
+  function findingLabel(finding: Finding): string {
+    return finding.kind === 'Face' ? finding.text : `${finding.kind}: ${finding.text}`;
+  }
+
   function renderSuggestions(): void {
     suggestions.replaceChildren();
     findings.forEach((finding, index) => {
@@ -552,9 +559,9 @@ function setup(editor: HTMLElement) {
       button.setAttribute('aria-pressed', String(findingSelected[index]));
       button.setAttribute(
         'aria-label',
-        `${findingSelected[index] ? 'Exclude' : 'Include'} ${finding.kind}: ${finding.text}`
+        `${findingSelected[index] ? 'Exclude' : 'Include'} ${findingLabel(finding)}`
       );
-      button.title = `${finding.kind}: ${finding.text}`;
+      button.title = findingLabel(finding);
 
       const tag = document.createElement('span');
       tag.className = 'suggestion-tag';
@@ -566,7 +573,7 @@ function setup(editor: HTMLElement) {
         button.setAttribute('aria-pressed', String(findingSelected[index]));
         button.setAttribute(
           'aria-label',
-          `${findingSelected[index] ? 'Exclude' : 'Include'} ${finding.kind}: ${finding.text}`
+          `${findingSelected[index] ? 'Exclude' : 'Include'} ${findingLabel(finding)}`
         );
         updateBanner();
       });
@@ -583,27 +590,33 @@ function setup(editor: HTMLElement) {
     const sensitiveCount = findings.filter((finding) => finding.sensitive).length;
     const selectedCount = findingSelected.filter(Boolean).length;
     const isVerify = banner.dataset.mode === 'verify';
+    const isFaces = banner.dataset.mode === 'faces';
 
     bannerTitle.textContent = isVerify
       ? 'Some details are still readable'
-      : sensitiveCount > 0
-        ? statusLabel(sensitiveCount)
-        : `${findings.length} text block${findings.length === 1 ? '' : 's'} found`;
+      : isFaces
+        ? `${findings.length} face${findings.length === 1 ? '' : 's'} found`
+        : sensitiveCount > 0
+          ? statusLabel(sensitiveCount)
+          : `${findings.length} text block${findings.length === 1 ? '' : 's'} found`;
 
     bannerSub.textContent = isVerify
       ? 'The re-scan found text that still matches a sensitive pattern. Add another box, then verify again.'
-      : sensitiveCount > 0
-        ? 'OCR runs locally. Hover a box to preview the ink, click to include or exclude it, then redact them all.'
-        : 'Nothing matched our sensitive patterns. Hover to preview, or use All text to redact every line anyway.';
+      : isFaces
+        ? 'Face detection runs locally. Hover a box to preview it, click to include or exclude it, then redact them all.'
+        : sensitiveCount > 0
+          ? 'OCR runs locally. Hover a box to preview the ink, click to include or exclude it, then redact them all.'
+          : 'Nothing matched our sensitive patterns. Hover to preview, or use All text to redact every line anyway.';
 
     detectPrimary.textContent = `Redact ${selectedCount}`;
     detectPrimary.disabled = selectedCount === 0;
-    detectAll.hidden = isVerify;
+    detectAll.hidden = isVerify || isFaces;
     detectAll.textContent = `All text (${findings.length})`;
     banner.hidden = false;
   }
 
   function applyFindings(which: 'selected' | 'all'): void {
+    const isFaces = banner.dataset.mode === 'faces';
     const chosen =
       which === 'all'
         ? findings
@@ -613,12 +626,13 @@ function setup(editor: HTMLElement) {
     const added = addShapes(
       chosen.map((finding) => ({
         id: nextId++,
-        mode: 'ink' as Mode,
-        kind: 'rect' as ShapeKind,
+        mode: isFaces ? mode : ('ink' as Mode),
+        kind: isFaces ? shapeKind : ('rect' as ShapeKind),
         x: Math.max(0, finding.x - 2),
         y: Math.max(0, finding.y - 2),
         w: Math.min(baseCanvas.width - Math.max(0, finding.x - 2), finding.w + 4),
         h: Math.min(baseCanvas.height - Math.max(0, finding.y - 2), finding.h + 4),
+        emoji: isFaces && mode === 'emoji' ? emoji : undefined,
       }))
     );
 
@@ -712,6 +726,62 @@ function setup(editor: HTMLElement) {
     } finally {
       setBusy(false);
       scanBtn.disabled = false;
+      refreshChrome();
+    }
+  }
+
+  async function runFaceScan(): Promise<void> {
+    if (!hasDoc || busy) return;
+
+    setCompare(false);
+    setBusy(
+      true,
+      'Loading the face model…',
+      8,
+      'Face detection runs in your browser. The model downloads once — your file is never sent.'
+    );
+    scanBtn.disabled = true;
+    facesBtn.disabled = true;
+
+    try {
+      const snapshot = document.createElement('canvas');
+      renderScene({
+        canvas: snapshot,
+        source: baseCanvas,
+        width: baseCanvas.width,
+        height: baseCanvas.height,
+        shapes,
+        background: '#ffffff',
+      });
+
+      const result = await detectFaces(snapshot, (label, progress) => {
+        setBusy(true, label, progress);
+      });
+
+      if (result.length === 0) {
+        removeFindingUI();
+        toast('No faces found. Try a clearer photo, or draw a box manually.');
+        return;
+      }
+
+      findings = result;
+      findingSelected = result.map(() => true);
+      selectedId = null;
+      selection.hidden = true;
+      banner.dataset.mode = 'faces';
+      renderSuggestions();
+      updateBanner();
+
+      toast(
+        `${result.length} face${result.length === 1 ? '' : 's'} found. Review the boxes before you redact them.`
+      );
+    } catch (error) {
+      console.error(error);
+      toast('Face detection could not load. Check your connection, or draw boxes manually.');
+    } finally {
+      setBusy(false);
+      scanBtn.disabled = false;
+      facesBtn.disabled = false;
       refreshChrome();
     }
   }
@@ -1558,6 +1628,7 @@ function setup(editor: HTMLElement) {
   clearBtn.addEventListener('click', clearAll);
   compareBtn.addEventListener('click', () => setCompare(!compare));
   scanBtn.addEventListener('click', () => void runScan('scan'));
+  facesBtn.addEventListener('click', () => void runFaceScan());
   verifyBtn.addEventListener('click', () => void runScan('verify'));
   downloadBtn.addEventListener('click', () => void download());
   copyBtn.addEventListener('click', () => void copyImage());
@@ -1858,6 +1929,9 @@ function setup(editor: HTMLElement) {
         break;
       case 'c':
         setCompare(!compare);
+        break;
+      case 'f':
+        void runFaceScan();
         break;
       default:
         break;

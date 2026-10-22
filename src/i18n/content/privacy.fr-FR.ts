@@ -86,6 +86,16 @@ export const privacyFrFR: PrivacyContent = {
         contains: 'WebAssembly et les données de langue demandées par Tesseract.js. Aucune donnée de fichier.',
       },
       {
+        request: 'Détecteur de visages MediaPipe',
+        when: 'À la première utilisation de « Détecter les visages »',
+        contains: 'La bibliothèque de détection de visages et le runtime WebAssembly depuis jsDelivr. Aucune donnée de fichier.',
+      },
+      {
+        request: 'Modèle BlazeFace',
+        when: 'Première détection de visages dans un navigateur',
+        contains: 'Un petit modèle de détection de visages depuis Google Cloud Storage. Aucune donnée de fichier.',
+      },
+      {
         request: 'Moteur PDF et ressources',
         when: 'À la première ouverture d’un PDF',
         contains: 'Le worker PDF.js, les polices et les modules WebAssembly auto-hébergés. Aucune donnée de fichier.',
@@ -100,7 +110,7 @@ export const privacyFrFR: PrivacyContent = {
     whenLabel: 'Quand :',
     noteTitle: 'Ce que « en local » signifie ici',
     noteCopy:
-      'Le moteur OCR et la prise en charge des PDF sont du code téléchargé, et la reconnaissance comme le rendu s’exécutent dans votre navigateur. Votre fichier n’est pas envoyé avec ces requêtes. L’hébergeur statique et le CDN peuvent conserver des journaux d’accès ordinaires pour les requêtes qui ont effectivement lieu, comme le fait tout site web ou CDN. Ces journaux contiennent l’URL de la requête, pas votre fichier.',
+      'Le moteur OCR, le détecteur de visages et la prise en charge des PDF sont du code téléchargé, et la reconnaissance, la détection et le rendu s’exécutent dans votre navigateur. Votre fichier n’est pas envoyé avec ces requêtes. L’hébergeur statique, le CDN et Google Cloud Storage peuvent conserver des journaux d’accès ordinaires pour les requêtes qui ont effectivement lieu, comme le fait tout site web ou CDN. Ces journaux contiennent l’URL de la requête, pas votre fichier.',
   },
   verify: {
     eyebrow: 'Vérifiez par vous-même',
@@ -110,7 +120,7 @@ export const privacyFrFR: PrivacyContent = {
     steps: [
       'Ouvrez les outils de développement de votre navigateur et passez à l’onglet réseau. Videz la liste.',
       'Chargez une image ou un PDF et dessinez quelques cadres. Observez la liste des requêtes : aucune requête d’envoi n’apparaît.',
-      'Lancez la détection intelligente ou ouvrez un PDF. Vous verrez des requêtes pour le moteur OCR ou PDF. Votre fichier n’en fait pas partie.',
+      'Lancez la détection intelligente, « Détecter les visages » ou ouvrez un PDF. Vous verrez des requêtes pour le moteur OCR, le détecteur de visages ou le moteur PDF. Votre fichier n’en fait pas partie.',
       'Déconnectez-vous d’Internet. Le caviardage manuel, la copie et le téléchargement fonctionnent encore, car les pixels sont déjà en local.',
       'Ouvrez les propriétés du fichier téléchargé. Vous n’y trouverez aucun champ de métadonnées lié à l’appareil photo, au GPS ou à l’appareil.',
     ],

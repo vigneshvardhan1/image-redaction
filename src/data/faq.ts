@@ -7,7 +7,7 @@ export const faqs: FaqItem[] = [
   {
     question: 'Are my images really never uploaded?',
     answer:
-      'Correct. Your browser reads the file, draws it to a local canvas, and keeps it in memory. There is no upload endpoint — you can watch the network tab while you work. Smart detection downloads an OCR engine and an English text model on first use, but the image itself stays in the tab.',
+      'Correct. Your browser reads the file, draws it to a local canvas, and keeps it in memory. There is no upload endpoint — you can watch the network tab while you work. Smart detection downloads an OCR engine, an English text model, and a face model on first use, but the image itself stays in the tab.',
   },
   {
     question: 'Is it free? Do I need an account?',
@@ -22,7 +22,7 @@ export const faqs: FaqItem[] = [
   {
     question: 'How does smart detection work?',
     answer:
-      'It runs Tesseract OCR in a Web Worker inside your browser, then applies pattern checks: emails, Luhn-valid card numbers, SSNs, Aadhaar numbers, PANs, GSTINs, IBANs, phone numbers, IP addresses, dates, address keywords, and likely names. Every finding is a suggestion you can include or exclude. OCR is best-effort, so review the boxes and use Verify.',
+      'Text detection runs Tesseract OCR in a Web Worker inside your browser, then applies pattern checks: emails, Luhn-valid card numbers, SSNs, Aadhaar numbers, PANs, GSTINs, IBANs, phone numbers, IP addresses, dates, address keywords, and likely names. Detect faces uses MediaPipe’s BlazeFace model, also on-device, to propose boxes around faces. Every finding is a suggestion you can include or exclude. Both detectors are best-effort, so review the boxes and use Verify.',
   },
   {
     question: 'What is All text mode for?',
@@ -32,7 +32,7 @@ export const faqs: FaqItem[] = [
   {
     question: 'Does it work offline?',
     answer:
-      'The editor does. Once the page is open, you can keep redacting without a network connection. Smart detection needs the OCR engine and English model on first use; your browser may cache them, but do not rely on that for a first offline run. Manual redactions, copy, and export all work offline.',
+      'The editor does. Once the page is open, you can keep redacting without a network connection. Smart detection needs the OCR engine, English model, and face model on first use; your browser may cache them, but do not rely on that for a first offline run. Manual redactions, copy, and export all work offline.',
   },
   {
     question: 'Can blur or pixelation be reversed?',
@@ -57,7 +57,7 @@ export const faqs: FaqItem[] = [
   {
     question: 'Can it detect faces, QR codes, or every name?',
     answer:
-      'Not yet. Faces, QR codes, barcodes, and logos still need manual boxes. Names are detected with a best-effort pattern for short, capitalised lines, so unusual names, lowercase handles, and stylised text can slip through. Verify and a final visual pass are part of the workflow.',
+      'Often, yes — Detect faces runs an on-device face model and proposes a padded box around each face it finds. It is best-effort: small, turned-away, partly hidden, or illustrated faces can be missed, so review every box. QR codes, barcodes, MRZs, and logos still need manual boxes. Names use a best-effort pattern for short, capitalised lines, so unusual names, lowercase handles, and stylised text can slip through. Verify and a final visual pass are part of the workflow.',
   },
   {
     question: 'Can I redact more than one image at a time?',
@@ -67,7 +67,7 @@ export const faqs: FaqItem[] = [
   {
     question: 'Can I redact a PDF?',
     answer:
-      'Yes. Drop or choose a PDF up to 50 MB and 100 pages. Every page opens in the same editor with its own redaction history, and Smart detect and Verify run on the page you are viewing. On export, each page is re-rendered as an image into a new PDF, so the original text layer, links, form fields, and metadata are removed. The exported PDF is not searchable or selectable.',
+      'Yes. Drop or choose a PDF up to 50 MB and 100 pages. Every page opens in the same editor with its own redaction history, and Smart detect, Detect faces, and Verify run on the page you are viewing. On export, each page is re-rendered as an image into a new PDF, so the original text layer, links, form fields, and metadata are removed. The exported PDF is not searchable or selectable.',
   },
 ];
 
@@ -95,7 +95,12 @@ export const homeFaqs: FaqItem[] = [
   {
     question: 'How can I redact an image?',
     answer:
-      'Open the Redact editor and drop, paste, or choose an image. Run Smart detect to find likely sensitive text, or draw a rectangle or oval over anything it misses, then pick a redaction style and adjust the box edges. Use Verify to re-scan the flattened result, then download a PNG, JPG, or WebP. Everything runs in your browser, and the image is never uploaded.',
+      'Open the Redact editor and drop, paste, or choose an image. Run Smart detect to find likely sensitive text, or Detect faces to box every face on the page — then draw a rectangle or oval over anything they miss. Pick a redaction style and adjust the box edges. Use Verify to re-scan the flattened result, then download a PNG, JPG, or WebP. Everything runs in your browser, and the image is never uploaded.',
+  },
+  {
+    question: 'Does it detect faces?',
+    answer:
+      'Yes. Detect faces runs MediaPipe’s BlazeFace model inside your browser and suggests a padded box around each face. Nothing is uploaded, and the model is fetched once. It works best on clear, front-facing faces in photos; small, turned-away, heavily covered, or illustrated faces can be missed, so review the boxes. Your current redaction style is applied when you accept them.',
   },
   {
     question: 'Can I undo a redaction after drawing it?',
@@ -110,17 +115,17 @@ export const homeFaqs: FaqItem[] = [
   {
     question: 'Can I redact a PDF, not just an image?',
     answer:
-      'Yes. Open a PDF up to 50 MB and 100 pages, scroll through the page stack, and redact each one. Smart detection and Verify work on the page you are viewing. Export rebuilds every page as an image inside a new PDF, so the text layer, links, form fields, and metadata do not survive. That also means the exported PDF is not searchable.',
+      'Yes. Open a PDF up to 50 MB and 100 pages, scroll through the page stack, and redact each one. Smart detection, Detect faces, and Verify work on the page you are viewing. Export rebuilds every page as an image inside a new PDF, so the text layer, links, form fields, and metadata do not survive. That also means the exported PDF is not searchable.',
   },
   {
     question: 'Will you have access to my image?',
     answer:
-      'No. Your browser reads the image and draws it to a local canvas inside your tab. There is no upload endpoint, so the file is never sent to a server, stored, logged, or reviewed by us. Smart detection downloads an OCR engine and English model on first use, but your image is not part of that request. You can confirm both claims in your browser’s Network tab.',
+      'No. Your browser reads the image and draws it to a local canvas inside your tab. There is no upload endpoint, so the file is never sent to a server, stored, logged, or reviewed by us. Smart detection downloads an OCR engine, an English model, and a face model on first use, but your image is not part of that request. You can confirm both claims in your browser’s Network tab.',
   },
   {
     question: 'Can I redact things other than faces?',
     answer:
-      'Yes. You can cover anything visible in an image: faces, names, email addresses, phone numbers, card numbers, ID numbers, addresses, QR codes, barcodes, logos, account names, and more. Smart detection automatically suggests text that looks like emails, card numbers, phone numbers, government IDs, addresses, and dates. Faces, QR codes, barcodes, and logos still need a manual box.',
+      'Yes. You can cover anything visible in an image: faces, names, email addresses, phone numbers, card numbers, ID numbers, addresses, QR codes, barcodes, logos, account names, and more. Smart detection automatically suggests text that looks like emails, card numbers, phone numbers, government IDs, addresses, and dates, and Detect faces suggests faces. QR codes, barcodes, MRZs, and logos still need a manual box.',
   },
   {
     question: 'Does Redact use cookies or track me?',

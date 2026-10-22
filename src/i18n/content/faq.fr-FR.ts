@@ -19,7 +19,12 @@ export const faqsFrFR: FaqItem[] = [
   {
     question: 'Comment caviarder une image ?',
     answer:
-      'Ouvrez l’éditeur Redact et déposez, collez ou choisissez une image. Lancez la détection intelligente pour trouver le texte probablement sensible, ou dessinez un rectangle ou un ovale sur tout ce qu’elle manque, puis choisissez un style de caviardage et ajustez les bords du cadre. Utilisez la vérification pour réanalyser le résultat aplati, puis téléchargez un PNG, un JPG ou un WebP. Tout s’exécute dans votre navigateur, et l’image n’est jamais envoyée.',
+      'Ouvrez l’éditeur Redact et déposez, collez ou choisissez une image. Lancez la détection intelligente pour trouver le texte probablement sensible, ou « Détecter les visages » pour proposer des visages, puis dessinez un rectangle ou un ovale sur tout ce que les analyses manquent. Choisissez un style de caviardage et ajustez les bords du cadre. Utilisez la vérification pour réanalyser le résultat aplati, puis téléchargez un PNG, un JPG ou un WebP. Tout s’exécute dans votre navigateur, et l’image n’est jamais envoyée.',
+  },
+  {
+    question: 'Détecte-t-il les visages ?',
+    answer:
+      'Oui. « Détecter les visages » exécute le modèle BlazeFace de MediaPipe dans votre navigateur et propose une zone légèrement agrandie autour de chaque visage trouvé. Rien n’est envoyé, et le modèle est téléchargé une fois. Il fonctionne mieux sur des visages nets et de face, sur des photos ; les visages petits, détournés, fortement masqués ou dessinés peuvent être manqués, alors vérifiez toujours les zones. Votre style de caviardage actuel est appliqué lorsque vous acceptez les suggestions.',
   },
   {
     question: 'Puis-je annuler un caviardage après l’avoir dessiné ?',
@@ -39,7 +44,7 @@ export const faqsFrFR: FaqItem[] = [
   {
     question: 'Puis-je caviarder autre chose que des visages ?',
     answer:
-      'Oui. Vous pouvez couvrir tout ce qui est visible dans une image : visages, noms, adresses e-mail, numéros de téléphone, numéros de carte, numéros de pièce d’identité, adresses, QR codes, codes-barres, logos, noms de compte et bien plus encore. La détection intelligente suggère automatiquement le texte qui ressemble à des e-mails, des numéros de carte, des numéros de téléphone, des pièces d’identité officielles, des adresses et des dates. Les visages, les QR codes, les codes-barres et les logos nécessitent encore un cadre manuel.',
+      'Oui. Vous pouvez couvrir tout ce qui est visible dans une image : visages, noms, adresses e-mail, numéros de téléphone, numéros de carte, numéros de pièce d’identité, adresses, QR codes, codes-barres, logos, noms de compte et bien plus encore. La détection intelligente suggère automatiquement le texte qui ressemble à des e-mails, des numéros de carte, des numéros de téléphone, des pièces d’identité officielles, des adresses et des dates, et « Détecter les visages » suggère les visages. Les QR codes, codes-barres, zones MRZ et logos nécessitent encore un cadre manuel.',
   },
   {
     question: 'Redact utilise-t-il des cookies ou me suit-il ?',
@@ -52,7 +57,7 @@ export const privacyFaqsFrFR: FaqItem[] = [
   {
     question: 'Mes images ne sont-elles vraiment jamais envoyées ?',
     answer:
-      'C’est exact. Votre navigateur lit le fichier, le dessine sur un canvas local et le garde en mémoire. Il n’existe aucun point d’envoi — vous pouvez observer l’onglet réseau pendant que vous travaillez. La détection intelligente télécharge un moteur OCR et un modèle de texte anglais au premier usage, mais l’image elle-même reste dans l’onglet.',
+      'C’est exact. Votre navigateur lit le fichier, le dessine sur un canvas local et le garde en mémoire. Il n’existe aucun point d’envoi — vous pouvez observer l’onglet réseau pendant que vous travaillez. La détection intelligente télécharge un moteur OCR, un modèle de texte anglais et un modèle de visages au premier usage, mais l’image elle-même reste dans l’onglet.',
   },
   {
     question: 'Est-ce gratuit ? Ai-je besoin d’un compte ?',
@@ -62,12 +67,12 @@ export const privacyFaqsFrFR: FaqItem[] = [
   {
     question: 'Comment fonctionne la détection intelligente ?',
     answer:
-      'Elle exécute l’OCR Tesseract dans un Web Worker au sein de votre navigateur, puis applique des contrôles de motifs : e-mails, numéros de carte valides au regard de Luhn, SSN, numéros Aadhaar, PAN, GSTIN, IBAN, numéros de téléphone, adresses IP, dates, mots-clés d’adresse et noms probables. Chaque résultat est une suggestion que vous pouvez inclure ou exclure. L’OCR fait au mieux : vérifiez donc les cadres et utilisez la vérification.',
+      'Elle exécute l’OCR Tesseract dans un Web Worker au sein de votre navigateur, puis applique des contrôles de motifs : e-mails, numéros de carte valides au regard de Luhn, SSN, numéros Aadhaar, PAN, GSTIN, IBAN, numéros de téléphone, adresses IP, dates, mots-clés d’adresse et noms probables. « Détecter les visages » utilise le modèle BlazeFace de MediaPipe, également sur l’appareil. Chaque résultat est une suggestion que vous pouvez inclure ou exclure. Les deux détecteurs font au mieux : vérifiez donc les cadres et utilisez la vérification.',
   },
   {
     question: 'Fonctionne-t-il hors ligne ?',
     answer:
-      'L’éditeur, oui. Une fois la page ouverte, vous pouvez continuer à caviarder sans connexion réseau. La détection intelligente a besoin du moteur OCR et du modèle anglais au premier usage ; votre navigateur peut les mettre en cache, mais ne comptez pas sur lui pour une première utilisation hors ligne. Le caviardage manuel, la copie et l’export fonctionnent tous hors ligne.',
+      'L’éditeur, oui. Une fois la page ouverte, vous pouvez continuer à caviarder sans connexion réseau. La détection intelligente a besoin du moteur OCR, du modèle anglais et du modèle de visages au premier usage ; votre navigateur peut les mettre en cache, mais ne comptez pas sur lui pour une première utilisation hors ligne. Le caviardage manuel, la copie et l’export fonctionnent tous hors ligne.',
   },
   {
     question: 'Les données EXIF et GPS sont-elles supprimées ?',

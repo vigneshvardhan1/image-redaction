@@ -129,7 +129,7 @@ export const homeDeDE: HomeContent = {
     primaryCta: 'Intelligente Erkennung ausprobieren',
     secondaryCta: 'Anleitung zum Schwärzen lesen',
     footnote:
-      'Bei der ersten Nutzung werden die OCR-Engine und ein englisches Modell heruntergeladen. Das Bild ist nicht Teil dieser Anfrage.',
+      'Bei der ersten Nutzung werden die OCR-Engine, ein englisches Modell und ein Gesichtsmodell heruntergeladen. Ihr Bild ist nicht Teil dieser Anfragen.',
   },
   styles: {
     eyebrow: 'Schwärzungsstile',
@@ -155,8 +155,8 @@ export const homeDeDE: HomeContent = {
       },
       {
         icon: 'globe',
-        title: 'Die eine Anfrage wird offengelegt',
-        copy: 'Die intelligente Erkennung lädt bei der ersten Nutzung Tesseract.js und ein englisches Modell herunter. Ihr Bild ist nie Teil dieser Anfrage. Manuelles Schwärzen funktioniert auch ohne.',
+        title: 'Die zusätzlichen Anfragen werden offengelegt',
+        copy: 'Die intelligente Erkennung lädt bei der ersten Nutzung Tesseract.js und ein englisches Modell herunter, „Gesichter erkennen“ ein kleines MediaPipe-Modell. Ihr Bild ist nie Teil dieser Anfragen. Manuelles Schwärzen funktioniert auch ohne.',
       },
     ],
   },
@@ -221,8 +221,8 @@ export const homeDeDE: HomeContent = {
         navLabel: 'Wie die Erkennung arbeitet',
         title: 'Wie KI-Software zum Schwärzen von Bildern hier arbeitet',
         paragraphs: [
-          'Die Erkennung in dieser Software zum Schwärzen von Bildern ist OCR plus Musterprüfung, kein generatives Modell, das Gesichter errät. Tesseract liest in einem Web Worker den Text, der im Bild bereits sichtbar ist; danach sucht der Editor nach E-Mails, Luhn-gültigen Kartennummern, Telefonnummern, SSNs, Aadhaar-Nummern, PANs, GSTINs, IBANs, IP-Adressen, Datumsangaben, Adress-Schlüsselwörtern und kurzen großgeschriebenen Zeilen, die wie Namen aussehen. Jeder Treffer erscheint als Vorschlag, den Sie behalten oder verwerfen können.',
-          'KI-Software zum Schwärzen ist als erster Durchlauf nützlich, nicht als letzte Instanz. Der Scan kann ein Gesicht, einen QR-Code, einen Barcode, ein Logo oder einen ungewöhnlichen Namen übersehen, und er kann nicht wissen, welche Details in Ihrem Kontext sensibel sind. Nutzen Sie ihn, um nicht Zeile für Zeile suchen zu müssen, und prüfen Sie den ganzen Ausschnitt danach selbst. Der Modus „Alle Texte“ deckt jede erkannte Zeile ab, wenn ein unruhiger Screenshot jede Einzelentscheidung wie ein Glücksspiel wirken lässt.',
+          'Die Texterkennung in dieser Software zum Schwärzen von Bildern ist OCR plus Musterprüfung, kein generatives Modell, das Details erfindet. Tesseract liest in einem Web Worker den Text, der im Bild bereits sichtbar ist; danach sucht der Editor nach E-Mails, Luhn-gültigen Kartennummern, Telefonnummern, SSNs, Aadhaar-Nummern, PANs, GSTINs, IBANs, IP-Adressen, Datumsangaben, Adress-Schlüsselwörtern und kurzen großgeschriebenen Zeilen, die wie Namen aussehen. „Gesichter erkennen“ ergänzt ein eigenes BlazeFace-Modell auf dem Gerät, das Rahmen um Gesichter in Fotos vorschlägt. Jeder Treffer erscheint als Vorschlag, den Sie behalten oder verwerfen können.',
+          'KI-Software zum Schwärzen ist als erster Durchlauf nützlich, nicht als letzte Instanz. Der Scan kann ein kleines Gesicht, einen QR-Code, einen Barcode, ein Logo oder einen ungewöhnlichen Namen übersehen, und er kann nicht wissen, welche Details in Ihrem Kontext sensibel sind. Nutzen Sie ihn, um nicht Zeile für Zeile suchen zu müssen, und prüfen Sie den ganzen Ausschnitt danach selbst. Der Modus „Alle Texte“ deckt jede erkannte Zeile ab, wenn ein unruhiger Screenshot jede Einzelentscheidung wie ein Glücksspiel wirken lässt.',
         ],
       },
       {
@@ -231,7 +231,7 @@ export const homeDeDE: HomeContent = {
         title: 'Bilder online schwärzen, ohne Upload',
         paragraphs: [
           'Die meisten Online-Werkzeuge zum Schwärzen von Bildern verlangen, dass Sie die Datei an einen Server senden, auf die Rückkehr warten und darauf vertrauen, dass die Kopie gelöscht wurde. Dieses Werkzeug ist umgekehrt gebaut. Der Browser dekodiert das Bild im aktuellen Tab in ein Canvas, hält die Pixel im Speicher und zeichnet jede Schwärzung lokal. Es gibt keinen Upload-Endpunkt und damit auch keine Serverkopie, die gelöscht werden müsste. Die Datenschutzseite dokumentiert jede Anfrage, die die Website stellt.',
-          'Eine Anfrage ist erwähnenswert: die intelligente Erkennung. Bei der ersten Nutzung lädt die Seite Tesseract.js und ein englisches Sprachmodell herunter. Ihr Bild ist nicht Teil dieser Anfrage. Manuelles Schwärzen, Rückgängig, Kopieren und Export funktionieren auch ohne. Sobald die Seite geladen ist, können Sie offline weiterarbeiten.',
+          'Eine Gruppe von Anfragen ist erwähnenswert: die Detektoren. Bei der ersten Nutzung lädt die Seite Tesseract.js, ein englisches Sprachmodell und das MediaPipe-Gesichtsmodell herunter. Ihr Bild ist nicht Teil dieser Anfragen. Manuelles Schwärzen, Rückgängig, Kopieren und Export funktionieren auch ohne. Sobald die Seite geladen ist, können Sie offline weiterarbeiten.',
         ],
       },
       {

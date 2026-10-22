@@ -55,16 +55,20 @@ export const featuresEnUS: FeaturesContent = {
   ],
   detection: {
     eyebrow: 'Detection',
-    title: 'Find the text before you share it.',
-    copy: 'Smart detection reads the screenshot or the current PDF page with Tesseract OCR in a Web Worker, then checks each line against patterns for common identifiers. The file is passed to the worker inside the page; it is never part of a network request.',
+    title: 'Find the text and faces before you share it.',
+    copy: 'Smart detection reads the screenshot or the current PDF page with Tesseract OCR in a Web Worker, then checks each line against patterns for common identifiers. Detect faces runs a small MediaPipe face model in the same tab. Neither detector sends your file anywhere; the models are downloaded once.',
     cards: [
       {
         title: 'What it looks for',
-        copy: 'Emails, Luhn-valid cards, SSNs, Aadhaar, PAN, GSTIN, IBAN, phone numbers, IP addresses, dates, address keywords, and likely names.',
+        copy: 'Emails, Luhn-valid cards, SSNs, Aadhaar, PAN, GSTIN, IBAN, phone numbers, IP addresses, dates, address keywords, and likely names — plus faces in photos and ID cards.',
       },
       {
         title: 'What you control',
-        copy: 'Every box is included by default only when it matches. Click any box to exclude it, or use All text to cover every line.',
+        copy: 'Every box is included by default only when it matches. Click any box to exclude it, use All text to cover every line, or apply your current style to the face suggestions.',
+      },
+      {
+        title: 'Faces, on-device',
+        copy: 'Detect faces proposes a padded box around each face it finds. Review the suggestions, then redact them with ink, pixelate, blur, or an emoji sticker.',
       },
     ],
     cta: 'Try it on a sample',
@@ -164,6 +168,7 @@ export const featuresEnUS: FeaturesContent = {
       { keys: 'P', action: 'Pixelate' },
       { keys: 'L', action: 'Blur' },
       { keys: 'E', action: 'Emoji sticker' },
+      { keys: 'F', action: 'Detect faces' },
       { keys: 'R', action: 'Rectangle selection' },
       { keys: 'O', action: 'Oval selection' },
       { keys: 'C', action: 'Compare with the original' },
@@ -179,9 +184,9 @@ export const featuresEnUS: FeaturesContent = {
     copy: 'A redaction tool should be clear about its blind spots. These are the ones worth knowing before you rely on the output.',
     items: [
       {
-        title: 'Faces and machine codes are manual',
-        copy: 'Faces, QR codes, barcodes, MRZs, and logos are not detected yet. Draw a box over each one — and check both sides of an ID.',
-        badge: 'Manual',
+        title: 'Small faces and machine codes',
+        copy: 'Face detection is best-effort: small, turned-away, partially covered, or illustrated faces can be missed. QR codes, barcodes, MRZs, and logos are not detected. Draw a box over each one — and check both sides of an ID.',
+        badge: 'Best-effort',
       },
       {
         title: 'Names are best-effort',

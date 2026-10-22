@@ -54,16 +54,20 @@ export const featuresFrFR: FeaturesContent = {
   ],
   detection: {
     eyebrow: 'Détection',
-    title: 'Trouvez le texte avant de le partager.',
-    copy: 'La détection intelligente lit la capture d’écran avec l’OCR Tesseract dans un Web Worker, puis compare chaque ligne à des motifs d’identifiants courants. L’image est transmise au worker à l’intérieur de la page ; elle ne fait jamais partie d’une requête réseau.',
+    title: 'Trouvez le texte et les visages avant de partager.',
+    copy: 'La détection intelligente lit la capture d’écran ou la page PDF affichée avec l’OCR Tesseract dans un Web Worker, puis compare chaque ligne à des motifs d’identifiants courants. « Détecter les visages » exécute un petit modèle MediaPipe dans le même onglet. Aucun des deux détecteurs n’envoie votre fichier ; les modèles sont téléchargés une fois.',
     cards: [
       {
         title: 'Ce qu’elle recherche',
-        copy: 'E-mails, numéros de carte valides selon l’algorithme de Luhn, SSN, Aadhaar, PAN, GSTIN, IBAN, numéros de téléphone, adresses IP, dates, mots-clés d’adresse et noms probables.',
+        copy: 'E-mails, numéros de carte valides selon l’algorithme de Luhn, SSN, Aadhaar, PAN, GSTIN, IBAN, numéros de téléphone, adresses IP, dates, mots-clés d’adresse et noms probables — ainsi que les visages dans les photos et les pièces d’identité.',
       },
       {
         title: 'Ce que vous contrôlez',
-        copy: 'Une zone n’est incluse par défaut que si elle correspond. Cliquez sur une zone pour l’exclure, ou utilisez Tout le texte pour couvrir chaque ligne.',
+        copy: 'Une zone n’est incluse par défaut que si elle correspond. Cliquez sur une zone pour l’exclure, utilisez Tout le texte pour couvrir chaque ligne, ou appliquez votre style actuel aux suggestions de visages.',
+      },
+      {
+        title: 'Visages, sur l’appareil',
+        copy: '« Détecter les visages » propose une zone légèrement agrandie autour de chaque visage trouvé. Vérifiez les suggestions, puis caviardez-les avec l’encre, la pixellisation, le flou ou un autocollant emoji.',
       },
     ],
     cta: 'Essayer sur un exemple',
@@ -163,6 +167,7 @@ export const featuresFrFR: FeaturesContent = {
       { keys: 'P', action: 'Pixellisation' },
       { keys: 'L', action: 'Flou' },
       { keys: 'E', action: 'Autocollant emoji' },
+      { keys: 'F', action: 'Détecter les visages' },
       { keys: 'R', action: 'Sélection rectangulaire' },
       { keys: 'O', action: 'Sélection ovale' },
       { keys: 'C', action: 'Comparer avec l’original' },
@@ -178,9 +183,9 @@ export const featuresFrFR: FeaturesContent = {
     copy: 'Un outil de caviardage doit être clair sur ses angles morts. Voici ceux qu’il vaut mieux connaître avant de se fier au résultat.',
     items: [
       {
-        title: 'Visages et codes machine : manuel',
-        copy: 'Les visages, QR codes, codes-barres, zones MRZ et logos ne sont pas détectés. Dessinez une zone sur chacun — et vérifiez les deux faces d’une pièce d’identité.',
-        badge: 'Manuel',
+        title: 'Petits visages et codes machine',
+        copy: 'La détection des visages est fournie au mieux : les visages petits, détournés, partiellement masqués ou dessinés peuvent être manqués. Les QR codes, codes-barres, zones MRZ et logos ne sont pas détectés. Dessinez une zone sur chacun — et vérifiez les deux faces d’une pièce d’identité.',
+        badge: 'Au mieux',
       },
       {
         title: 'Les noms : au mieux',

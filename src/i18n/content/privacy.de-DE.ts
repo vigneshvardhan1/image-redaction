@@ -80,6 +80,16 @@ export const privacyDeDE: PrivacyContent = {
         contains: 'Von Tesseract.js angeforderte WebAssembly- und Sprachdaten. Keine Dateidaten.',
       },
       {
+        request: 'MediaPipe-Gesichtserkennung',
+        when: 'Beim ersten Ausführen von „Gesichter erkennen“',
+        contains: 'Die Gesichtserkennungsbibliothek und WebAssembly-Laufzeit von jsDelivr. Keine Dateidaten.',
+      },
+      {
+        request: 'BlazeFace-Modell',
+        when: 'Bei der ersten Gesichtserkennung in einem Browser',
+        contains: 'Ein kleines Gesichtserkennungsmodell von Google Cloud Storage. Keine Dateidaten.',
+      },
+      {
         request: 'PDF-Engine und Assets',
         when: 'Beim ersten Öffnen einer PDF',
         contains: 'Der selbst gehostete PDF.js-Worker, Schriften und WebAssembly-Module. Keine Dateidaten.',
@@ -94,7 +104,7 @@ export const privacyDeDE: PrivacyContent = {
     whenLabel: 'Wann:',
     noteTitle: 'Was „auf dem Gerät“ hier bedeutet',
     noteCopy:
-      'Die OCR-Engine und die PDF-Unterstützung sind heruntergeladener Code, und Erkennung wie Rendering laufen in Ihrem Browser. Ihre Datei wird nicht mit diesen Anfragen gesendet. Der statische Host und das CDN können für die tatsächlich stattfindenden Anfragen gewöhnliche Zugriffsprotokolle führen, wie jede Website und jedes CDN. Diese Protokolle enthalten die Anfrage-URL, nicht Ihre Datei.',
+      'Die OCR-Engine, die Gesichtserkennung und die PDF-Unterstützung sind heruntergeladener Code, und Texterkennung, Gesichtserkennung und Rendering laufen in Ihrem Browser. Ihre Datei wird nicht mit diesen Anfragen gesendet. Der statische Host, das CDN und Google Cloud Storage können für die tatsächlich stattfindenden Anfragen gewöhnliche Zugriffsprotokolle führen, wie jede Website und jedes CDN. Diese Protokolle enthalten die Anfrage-URL, nicht Ihre Datei.',
   },
   verify: {
     eyebrow: 'Selbst überprüfen',
@@ -104,7 +114,7 @@ export const privacyDeDE: PrivacyContent = {
     steps: [
       'Öffnen Sie die Entwicklertools Ihres Browsers und wechseln Sie zum Netzwerk-Tab. Leeren Sie die Liste.',
       'Laden Sie ein Bild oder eine PDF und zeichnen Sie ein paar Rahmen. Beobachten Sie die Anfrageliste: Es erscheint keine Upload-Anfrage.',
-      'Starten Sie die intelligente Erkennung oder öffnen Sie eine PDF. Sie sehen Anfragen für die OCR- oder PDF-Engine. Ihre Datei ist nicht dabei.',
+      'Starten Sie die intelligente Erkennung, „Gesichter erkennen“ oder öffnen Sie eine PDF. Sie sehen Anfragen für die OCR-, Gesichts- oder PDF-Engine. Ihre Datei ist nicht dabei.',
       'Trennen Sie die Internetverbindung. Manuelles Schwärzen, Kopieren und Herunterladen funktionieren weiterhin, weil die Pixel bereits lokal sind.',
       'Öffnen Sie die Eigenschaften der heruntergeladenen Datei. Sie finden kein Kamera-, GPS- oder Gerätemetadatenfeld.',
     ],

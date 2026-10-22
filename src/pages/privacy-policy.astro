@@ -160,22 +160,24 @@ const schema = {
   <section id="third-parties">
     <h2>Third-party requests</h2>
     <p>
-      One part of the editor is not served from our domain. The first time you run
+      Detection is not served from our domain. The first time you run
       Smart detect in a browser, the page loads Tesseract.js from jsDelivr, together
-      with the OCR engine and English language data that Tesseract requests. Those
-      files are necessary for the feature. They are not requested at all if you only
-      redact manually.
+      with the OCR engine and English language data that Tesseract requests. The first
+      time you run Detect faces, it loads MediaPipe’s vision library and WebAssembly
+      runtime from jsDelivr, then a small BlazeFace model from Google Cloud Storage.
+      Those files are necessary for the features. They are not requested at all if you
+      only redact manually.
     </p>
     <p>
       <strong>Your image is not part of those requests.</strong> Tesseract runs in a
-      Web Worker inside your browser and receives the image from the page, in memory,
-      not over the network.
+      Web Worker and MediaPipe runs in WebAssembly, both inside your browser. They
+      receive the image from the page, in memory, not over the network.
     </p>
     <p>
-      jsDelivr is a content delivery network with its own privacy practices. Like any
-      CDN, it may see the requesting IP address, user agent, and requested URL, and it
-      may keep standard access logs. We do not control its logs or retention periods.
-      See jsDelivr’s own policy for details.
+      jsDelivr and Google Cloud Storage are third-party services with their own
+      privacy practices. Like any CDN, they may see the requesting IP address, user
+      agent, and requested URL, and they may keep standard access logs. We do not
+      control their logs or retention periods. See their own policies for details.
     </p>
     <p>
       Everything else — the pages, styles, scripts, and the Inter font — is served

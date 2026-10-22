@@ -31,7 +31,7 @@ export const aboutFrFR: AboutContent = {
     paragraphs: [
       'Les captures d’écran sont devenues la façon d’expliquer le travail : un fil de support, un reçu, une pièce d’identité, un tableau de bord, une conversation contenant une adresse de livraison. Le détail qui rend la capture utile est souvent celui qui ne devrait pas voyager avec elle.',
       'La plupart des outils de caviardage commencent par vous demander d’envoyer le fichier exact que vous cherchez à protéger. Cela n’a jamais paru juste. Un outil qui supprime des détails sensibles ne devrait pas les collecter d’abord, et une promesse de supprimer la copie demain reste une copie aujourd’hui.',
-      'Redact inverse l’ordre. Votre navigateur décode l’image — ou rend chaque page PDF —, la dessine sur un canvas local et intègre les caviardages dans un nouveau fichier. Il n’existe aucun point d’envoi. La détection intelligente télécharge un moteur OCR et un modèle de langue anglaise, et le moteur PDF est auto-hébergé, mais votre fichier ne fait pas partie de ces requêtes.',
+      'Redact inverse l’ordre. Votre navigateur décode l’image — ou rend chaque page PDF —, la dessine sur un canvas local et intègre les caviardages dans un nouveau fichier. Il n’existe aucun point d’envoi. La détection intelligente télécharge un moteur OCR, un modèle de langue anglaise et un modèle de visages, et le moteur PDF est auto-hébergé, mais votre fichier ne fait pas partie de ces requêtes.',
     ],
     emphasis:
       'Nous ne sommes pas contre le cloud. Nous sommes contre l’étape inutile au milieu. Quand le navigateur peut faire le travail, l’endroit le plus sûr pour le fichier est celui où il se trouve déjà.',
@@ -49,7 +49,7 @@ export const aboutFrFR: AboutContent = {
       {
         icon: 'alert',
         title: 'Honnête sur les limites',
-        copy: 'Les visages, les QR codes et les noms inhabituels nécessitent encore un cadre manuel. Une analyse de vérification propre est une preuve, pas une garantie.',
+        copy: 'La détection des visages est fournie au mieux ; les QR codes, codes-barres et noms inhabituels nécessitent encore un cadre manuel. Une analyse de vérification propre est une preuve, pas une garantie.',
       },
       {
         icon: 'chat',
@@ -76,7 +76,7 @@ export const aboutFrFR: AboutContent = {
   how: {
     eyebrow: 'Comment ça marche',
     title: 'Trois étapes, aucune sur un serveur.',
-    copy: 'L’ensemble du flux de travail tient dans un seul onglet. Les seuls téléchargements facultatifs sont le moteur OCR utilisé par la détection intelligente et le moteur PDF utilisé pour les PDF.',
+    copy: 'L’ensemble du flux de travail tient dans un seul onglet. Les seuls téléchargements facultatifs sont les modèles OCR et de visages utilisés par la détection, et le moteur PDF utilisé pour les PDF.',
     cta: 'Voir le flux de données',
     steps: [
       {
@@ -88,7 +88,7 @@ export const aboutFrFR: AboutContent = {
       {
         number: '02',
         title: 'Couvrir ce qui compte',
-        copy: 'La détection intelligente suggère les données personnelles probables sur la page affichée. Dessinez sur les visages, les codes et tout ce que l’analyse manque. L’encre est le style par défaut.',
+        copy: 'La détection intelligente suggère les données personnelles probables sur la page affichée, et « Détecter les visages » suggère les visages. Dessinez sur tout ce que les analyses manquent. L’encre est le style par défaut.',
         icon: 'square',
       },
       {
@@ -103,11 +103,12 @@ export const aboutFrFR: AboutContent = {
     eyebrow: 'Sous le capot',
     title: 'Une architecture légère. Aucun service caché.',
     copy: 'Le site est en HTML, CSS et JavaScript statiques. Il n’y a aucun backend qui reçoit des fichiers, aucun SDK d’analyse d’audience et aucun code publicitaire. Les éléments qui font le travail sont des API web ordinaires et des logiciels open source.',
-    note: 'La détection intelligente et la prise en charge des PDF sont les fonctionnalités qui récupèrent du code après le chargement de la page. Elles chargent Tesseract.js, des données de langue et le moteur PDF auto-hébergé ; votre fichier reste dans l’onglet.',
+    note: 'La détection intelligente et la prise en charge des PDF sont les fonctionnalités qui récupèrent du code après le chargement de la page. Elles chargent Tesseract.js, des données de langue, le modèle de visages MediaPipe et le moteur PDF auto-hébergé ; votre fichier reste dans l’onglet.',
     items: [
       { label: 'Astro', value: 'Pages et composants statiques' },
       { label: 'Canvas API', value: 'Décodage, caviardage et export en local' },
       { label: 'Tesseract.js', value: 'OCR facultatif dans un Web Worker' },
+      { label: 'MediaPipe', value: 'Détection de visages facultative dans l’onglet' },
       { label: 'PDF.js', value: 'Rendu PDF local auto-hébergé' },
       { label: 'pdf-lib', value: 'Assemblage du PDF aplati dans l’onglet' },
       { label: 'Inter', value: 'Police auto-hébergée, servie depuis ce site' },

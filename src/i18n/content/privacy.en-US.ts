@@ -80,6 +80,16 @@ export const privacyEnUS: PrivacyContent = {
         contains: 'WebAssembly and language data requested by Tesseract.js. No file data.',
       },
       {
+        request: 'MediaPipe face detector',
+        when: 'First time you run Detect faces',
+        contains: 'The face detection library and WebAssembly runtime from jsDelivr. No file data.',
+      },
+      {
+        request: 'BlazeFace model',
+        when: 'First Detect faces in a browser',
+        contains: 'A small face-detection model from Google Cloud Storage. No file data.',
+      },
+      {
         request: 'PDF engine and assets',
         when: 'First time you open a PDF',
         contains: 'The self-hosted PDF.js worker, fonts, and WebAssembly modules. No file data.',
@@ -94,7 +104,7 @@ export const privacyEnUS: PrivacyContent = {
     whenLabel: 'When:',
     noteTitle: 'What “on-device” means here',
     noteCopy:
-      'The OCR engine and PDF support are downloaded code, and all recognition and rendering run inside your browser. Your file is not sent with those requests. The static host and the CDN may keep ordinary access logs for the requests that do happen, as any website or CDN does. Those logs contain the request URL, not your file.',
+      'The OCR engine, face detector, and PDF support are downloaded code, and all recognition, detection, and rendering run inside your browser. Your file is not sent with those requests. The static host, the CDN, and Google Cloud Storage may keep ordinary access logs for the requests that do happen, as any website or CDN does. Those logs contain the request URL, not your file.',
   },
   verify: {
     eyebrow: 'Verify it yourself',
@@ -104,7 +114,7 @@ export const privacyEnUS: PrivacyContent = {
     steps: [
       'Open your browser’s developer tools and switch to the Network tab. Clear the list.',
       'Load an image or PDF and draw a few boxes. Watch the request list: no upload request appears.',
-      'Run Smart detect or open a PDF. You will see requests for the OCR or PDF engine. Your file is not among them.',
+      'Run Smart detect or Detect faces, or open a PDF. You will see requests for the OCR, face, or PDF engine. Your file is not among them.',
       'Disconnect from the internet. Manual redaction, copy, and download still work because the pixels are already local.',
       'Open the downloaded file’s properties. There is no camera, GPS, or device metadata field to find.',
     ],

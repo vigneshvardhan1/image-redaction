@@ -129,7 +129,7 @@ export const homeFrFR: HomeContent = {
     primaryCta: 'Essayer la détection intelligente',
     secondaryCta: 'Lire le guide du caviardage',
     footnote:
-      'Au premier usage, le moteur OCR et le modèle anglais sont téléchargés. L’image ne fait pas partie de cette requête.',
+      'Au premier usage, le moteur OCR, le modèle anglais et le modèle de visages sont téléchargés. L’image ne fait pas partie de ces requêtes.',
   },
   styles: {
     eyebrow: 'Styles de caviardage',
@@ -155,8 +155,8 @@ export const homeFrFR: HomeContent = {
       },
       {
         icon: 'globe',
-        title: 'La seule requête est divulguée',
-        copy: 'La détection intelligente télécharge Tesseract.js et un modèle anglais au premier usage. Votre image ne fait jamais partie de cette requête. Le caviardage manuel fonctionne sans elle.',
+        title: 'Les requêtes supplémentaires sont divulguées',
+        copy: 'La détection intelligente télécharge Tesseract.js et un modèle anglais au premier usage, et « Détecter les visages » un petit modèle MediaPipe. Votre image ne fait jamais partie de ces requêtes. Le caviardage manuel fonctionne sans elles.',
       },
     ],
   },
@@ -221,8 +221,8 @@ export const homeFrFR: HomeContent = {
         navLabel: 'Comment marche la détection',
         title: 'Comment fonctionne ici le logiciel de caviardage par IA',
         paragraphs: [
-          'La détection de ce logiciel de caviardage repose sur de l’OCR et des contrôles de motifs, pas sur un modèle génératif qui devine les visages. Tesseract lit le texte déjà visible dans l’image au sein d’un Web Worker, puis l’éditeur recherche des e-mails, des numéros de carte valides selon l’algorithme de Luhn, des numéros de téléphone, des SSN, des numéros Aadhaar, des PAN, des GSTIN, des IBAN, des adresses IP, des dates, des mots-clés d’adresse et de courtes lignes en majuscules qui ressemblent à des noms. Chaque correspondance arrive sous forme de suggestion que vous pouvez conserver ou écarter.',
-          'Un logiciel de caviardage par IA est utile en première passe, pas comme autorité finale. L’analyse peut manquer un visage, un QR code, un code-barres, un logo ou un nom inhabituel, et elle ne peut pas savoir quels détails sont sensibles dans votre contexte. Servez-vous-en pour arrêter de chercher ligne par ligne, puis relisez le cadre vous-même. Le mode Tout le texte couvre chaque ligne détectée lorsqu’une capture chargée rend les décisions au cas par cas trop risquées.',
+          'La détection de texte de ce logiciel de caviardage repose sur de l’OCR et des contrôles de motifs, pas sur un modèle génératif qui invente des détails. Tesseract lit le texte déjà visible dans l’image au sein d’un Web Worker, puis l’éditeur recherche des e-mails, des numéros de carte valides selon l’algorithme de Luhn, des numéros de téléphone, des SSN, des numéros Aadhaar, des PAN, des GSTIN, des IBAN, des adresses IP, des dates, des mots-clés d’adresse et de courtes lignes en majuscules qui ressemblent à des noms. « Détecter les visages » ajoute un modèle BlazeFace distinct, sur l’appareil, qui propose des zones autour des visages sur les photos. Chaque correspondance arrive sous forme de suggestion que vous pouvez conserver ou écarter.',
+          'Un logiciel de caviardage par IA est utile en première passe, pas comme autorité finale. L’analyse peut manquer un petit visage, un QR code, un code-barres, un logo ou un nom inhabituel, et elle ne peut pas savoir quels détails sont sensibles dans votre contexte. Servez-vous-en pour arrêter de chercher ligne par ligne, puis relisez le cadre vous-même. Le mode Tout le texte couvre chaque ligne détectée lorsqu’une capture chargée rend les décisions au cas par cas trop risquées.',
         ],
       },
       {
@@ -231,7 +231,7 @@ export const homeFrFR: HomeContent = {
         title: 'Le caviardage d’images en ligne, sans l’envoi',
         paragraphs: [
           'La plupart des outils de caviardage d’images en ligne vous demandent d’envoyer le fichier à un serveur, d’attendre son retour et de croire que la copie a été supprimée. Celui-ci est construit dans l’autre sens. Le navigateur décode l’image dans un canvas de l’onglet courant, garde les pixels en mémoire et dessine chaque caviardage localement. Il n’y a pas de point d’envoi, donc pas de copie serveur à supprimer. La page Confidentialité documente chaque requête effectuée par le site.',
-          'Une requête mérite d’être connue : la détection intelligente. Au premier usage, la page télécharge Tesseract.js et un modèle de langue anglaise. Votre image ne fait pas partie de cette requête. Le caviardage manuel, l’annulation, la copie et l’export fonctionnent sans elle, et une fois la page chargée, vous pouvez continuer à retoucher hors ligne.',
+          'Un ensemble de requêtes mérite d’être connu : les détecteurs. Au premier usage, la page télécharge Tesseract.js, un modèle de langue anglaise et le modèle de visages MediaPipe. Votre image ne fait pas partie de ces requêtes. Le caviardage manuel, l’annulation, la copie et l’export fonctionnent sans eux, et une fois la page chargée, vous pouvez continuer à retoucher hors ligne.',
         ],
       },
       {

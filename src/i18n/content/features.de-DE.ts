@@ -54,16 +54,20 @@ export const featuresDeDE: FeaturesContent = {
   ],
   detection: {
     eyebrow: 'Erkennung',
-    title: 'Finden Sie den Text, bevor Sie ihn teilen.',
-    copy: 'Die intelligente Erkennung liest den Screenshot mit Tesseract-OCR in einem Web Worker und prüft dann jede Zeile gegen Muster für gängige Identifikatoren. Das Bild wird innerhalb der Seite an den Worker übergeben; es ist nie Teil einer Netzwerkanfrage.',
+    title: 'Finden Sie Text und Gesichter, bevor Sie teilen.',
+    copy: 'Die intelligente Erkennung liest den Screenshot oder die aktuelle PDF-Seite mit Tesseract-OCR in einem Web Worker und prüft jede Zeile gegen Muster für gängige Identifikatoren. „Gesichter erkennen“ führt ein kleines MediaPipe-Modell im selben Tab aus. Beide Detektoren senden Ihre Datei nirgendwohin; die Modelle werden einmal heruntergeladen.',
     cards: [
       {
         title: 'Wonach gesucht wird',
-        copy: 'E-Mails, Luhn-gültige Kartennummern, SSNs, Aadhaar, PAN, GSTIN, IBAN, Telefonnummern, IP-Adressen, Datumsangaben, Adress-Schlüsselwörter und wahrscheinliche Namen.',
+        copy: 'E-Mails, Luhn-gültige Kartennummern, SSNs, Aadhaar, PAN, GSTIN, IBAN, Telefonnummern, IP-Adressen, Datumsangaben, Adress-Schlüsselwörter und wahrscheinliche Namen — dazu Gesichter in Fotos und Ausweisen.',
       },
       {
         title: 'Was Sie steuern',
-        copy: 'Jeder Rahmen wird standardmäßig nur dann einbezogen, wenn er einem Muster entspricht. Klicken Sie auf einen Rahmen, um ihn auszuschließen, oder nutzen Sie „Alle Texte“, um jede Zeile abzudecken.',
+        copy: 'Jeder Rahmen wird standardmäßig nur dann einbezogen, wenn er einem Muster entspricht. Klicken Sie auf einen Rahmen, um ihn auszuschließen, nutzen Sie „Alle Texte“ für jede Zeile, oder wenden Sie den aktuellen Stil auf die Gesichtsvorschläge an.',
+      },
+      {
+        title: 'Gesichter, auf dem Gerät',
+        copy: '„Gesichter erkennen“ schlägt einen etwas größeren Rahmen um jedes gefundene Gesicht vor. Prüfen Sie die Vorschläge und schwärzen Sie sie mit Tinte, Verpixeln, Weichzeichnen oder einem Emoji-Sticker.',
       },
     ],
     cta: 'An einem Beispiel ausprobieren',
@@ -163,6 +167,7 @@ export const featuresDeDE: FeaturesContent = {
       { keys: 'P', action: 'Verpixeln' },
       { keys: 'L', action: 'Weichzeichnen' },
       { keys: 'E', action: 'Emoji-Sticker' },
+      { keys: 'F', action: 'Gesichter erkennen' },
       { keys: 'R', action: 'Rechteck-Auswahl' },
       { keys: 'O', action: 'Oval-Auswahl' },
       { keys: 'C', action: 'Mit dem Original vergleichen' },
@@ -178,9 +183,9 @@ export const featuresDeDE: FeaturesContent = {
     copy: 'Ein Schwärzungswerkzeug sollte über seine blinden Flecken informieren. Diese sollten Sie kennen, bevor Sie sich auf die Ausgabe verlassen.',
     items: [
       {
-        title: 'Gesichter und Maschinencodes bleiben manuell',
-        copy: 'Gesichter, QR-Codes, Barcodes, MRZ-Zeilen und Logos werden noch nicht erkannt. Zeichnen Sie einen Rahmen über jedes einzelne — und prüfen Sie beide Seiten eines Ausweises.',
-        badge: 'Manuell',
+        title: 'Kleine Gesichter und Maschinencodes',
+        copy: 'Die Gesichtserkennung ist bestmöglich: kleine, abgewandte, teilweise verdeckte oder gezeichnete Gesichter können übersehen werden. QR-Codes, Barcodes, MRZ-Zeilen und Logos werden nicht erkannt. Zeichnen Sie einen Rahmen über jedes einzelne — und prüfen Sie beide Seiten eines Ausweises.',
+        badge: 'Ohne Gewähr',
       },
       {
         title: 'Namenserkennung ist nicht perfekt',
