@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="750" viewBox="0 0 1000 750">
+  <rect width="1000" height="750" fill="#dfdcd4"/>
+
+  <!-- Back sheet -->
+  <rect x="330" y="78" width="420" height="570" rx="10" fill="#1b1b1b" opacity="0.1"/>
+  <rect x="318" y="66" width="420" height="570" rx="10" fill="#fdfcf8" stroke="#d9d5ca" stroke-width="1.5"/>
+  <text x="350" y="120" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1b1b1b">STATEMENT</text>
+  <g fill="#cfcbc2">
+    <rect x="350" y="152" width="270" height="8" rx="4"/>
+    <rect x="350" y="176" width="210" height="8" rx="4"/>
+    <rect x="350" y="224" width="356" height="1.5"/>
+    <rect x="350" y="252" width="290" height="8" rx="4"/>
+    <rect x="350" y="276" width="240" height="8" rx="4"/>
+    <rect x="350" y="300" width="310" height="8" rx="4"/>
+    <rect x="350" y="324" width="180" height="8" rx="4"/>
+    <rect x="350" y="372" width="356" height="1.5"/>
+    <rect x="350" y="400" width="260" height="8" rx="4"/>
+    <rect x="350" y="424" width="300" height="8" rx="4"/>
+  </g>
+  <g fill="#2b2b2b">
+    <rect x="350" y="510" width="4" height="68"/>
+    <rect x="362" y="510" width="9" height="68"/>
+    <rect x="378" y="510" width="3" height="68"/>
+    <rect x="389" y="510" width="12" height="68"/>
+    <rect x="408" y="510" width="5" height="68"/>
+    <rect x="421" y="510" width="8" height="68"/>
+    <rect x="436" y="510" width="3" height="68"/>
+    <rect x="447" y="510" width="11" height="68"/>
+    <rect x="465" y="510" width="5" height="68"/>
+    <rect x="477" y="510" width="8" height="68"/>
+    <rect x="492" y="510" width="3" height="68"/>
+    <rect x="503" y="510" width="12" height="68"/>
+    <rect x="522" y="510" width="5" height="68"/>
+    <rect x="535" y="510" width="8" height="68"/>
+    <rect x="550" y="510" width="3" height="68"/>
+    <rect x="561" y="510" width="11" height="68"/>
+    <rect x="579" y="510" width="5" height="68"/>
+    <rect x="591" y="510" width="8" height="68"/>
+    <rect x="606" y="510" width="4" height="68"/>
+    <rect x="617" y="510" width="12" height="68"/>
+    <rect x="636" y="510" width="5" height="68"/>
+    <rect x="649" y="510" width="8" height="68"/>
+    <rect x="664" y="510" width="3" height="68"/>
+    <rect x="675" y="510" width="11" height="68"/>
+  </g>
+
+  <!-- Front sheet -->
+  <rect x="212" y="150" width="430" height="540" rx="10" fill="#1b1b1b" opacity="0.16"/>
+  <rect x="200" y="136" width="430" height="540" rx="10" fill="#fdfcf8" stroke="#d9d5ca" stroke-width="1.5"/>
+  <rect x="200" y="136" width="430" height="10" rx="5" fill="#20293c"/>
+
+  <text x="232" y="196" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#20293c">NORTHWIND STUDIO</text>
+  <text x="516" y="196" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#1b1b1b">INVOICE</text>
+  <text x="516" y="216" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="10" fill="#8a8579">INV-2026-1042</text>
+
+  <line x1="232" y1="240" x2="598" y2="240" stroke="#d8d4c8" stroke-width="1.5"/>
+  <text x="232" y="268" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#8a8579">BILLED TO</text>
+  <text x="232" y="290" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#1b1b1b">Meera Kapoor</text>
+  <text x="232" y="310" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#4b4a45">meera.kapoor@example.com</text>
+  <text x="232" y="328" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#4b4a45">+91 98200 41122</text>
+  <text x="232" y="346" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7c786e">88 Harbor Street, Apt 5C</text>
+
+  <line x1="232" y1="372" x2="598" y2="372" stroke="#e3dfd5" stroke-width="1.5"/>
+  <text x="232" y="398" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1b1b1b">Design system audit</text>
+  <text x="598" y="398" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1b1b1b">2,400.00</text>
+  <text x="232" y="424" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1b1b1b">Component library, 14 screens</text>
+  <text x="598" y="424" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1b1b1b">3,150.00</text>
+  <text x="232" y="450" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1b1b1b">Motion tokens and handoff</text>
+  <text x="598" y="450" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#1b1b1b">980.00</text>
+
+  <line x1="232" y1="476" x2="598" y2="476" stroke="#e3dfd5" stroke-width="1.5"/>
+  <text x="232" y="504" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7c786e">Subtotal</text>
+  <text x="598" y="504" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#4b4a45">6,530.00</text>
+  <text x="232" y="526" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7c786e">Tax (18%)</text>
+  <text x="598" y="526" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#4b4a45">1,175.40</text>
+  <text x="232" y="558" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#1b1b1b">Total due</text>
+  <text x="598" y="558" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#1b1b1b">7,705.40</text>
+
+  <line x1="232" y1="588" x2="598" y2="588" stroke="#d8d4c8" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <text x="232" y="614" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#4b4a45">Visa ending 4821 · Expiry 08/29</text>
+  <text x="232" y="634" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#7c786e">GSTIN 27AABCU9603R1ZX</text>
+
+  <rect x="232" y="648" width="42" height="14" rx="7" fill="#e7e4dc"/>
+  <text x="253" y="658" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="8" font-weight="700" fill="#7c786e">PDF</text>
+  <text x="286" y="658" font-family="Arial, Helvetica, sans-serif" font-size="9" fill="#8a8579">2 pages</text>
+</svg>

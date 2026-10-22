@@ -9,9 +9,10 @@ export const privacyEnGB: PrivacyContent = {
   meta: {
     title: 'Privacy — Redact',
     description:
-      'Your screenshot is never uploaded. See exactly what runs in your browser, the one disclosed CDN request used for optional OCR, and how to verify the claims yourself.',
+      'Your image or PDF is never uploaded. See exactly what runs in your browser, the disclosed OCR and PDF requests, and how to verify the claims yourself.',
     keywords: [
       'image redaction privacy uk',
+      'pdf redaction privacy uk',
       'gdpr screenshot redaction',
       'browser based image redaction',
       'no upload image editor',

@@ -4,9 +4,10 @@ export const privacyDeDE: PrivacyContent = {
   meta: {
     title: 'Datenschutz — Redact',
     description:
-      'Ihr Screenshot wird nie hochgeladen. Sehen Sie genau, was in Ihrem Browser läuft, welche offengelegte CDN-Anfrage für die optionale OCR nötig ist und wie Sie die Aussagen selbst überprüfen.',
+      'Ihre Bild- oder PDF-Datei wird nie hochgeladen. Sehen Sie genau, was in Ihrem Browser läuft, welche OCR- und PDF-Anfragen offengelegt sind und wie Sie die Aussagen selbst überprüfen.',
     keywords: [
       'datenschutz bildschwärzung',
+      'datenschutz pdf schwärzen',
       'bildschwärzung im browser',
       'bildeditor ohne upload',
       'überprüfen kein upload',
@@ -14,14 +15,14 @@ export const privacyDeDE: PrivacyContent = {
   },
   hero: {
     eyebrow: 'Datenschutz',
-    title: 'Das Bild verlässt diesen Tab nie.',
-    lead: 'Nicht nach der Verarbeitung. Nicht zur Moderation. Nicht als anonymes Analyseereignis. Ihr Browser liest die Datei, schwärzt sie und schreibt eine neue.',
+    title: 'Die Datei verlässt diesen Tab nie.',
+    lead: 'Nicht nach der Verarbeitung. Nicht zur Moderation. Nicht als anonymes Analyseereignis. Ihr Browser liest die Datei — Bild oder PDF —, schwärzt sie und schreibt eine neue.',
     primaryCta: 'Editor öffnen',
     secondaryCta: 'Selbst überprüfen',
   },
   policyNotice:
-    'Diese Seite erklärt, wie der Editor mit Ihrem Bild umgeht. Die formelle Richtlinie — Cookies, Hosting-Protokolle und Ihre Rechte — finden Sie in der Datenschutzerklärung.',
-  badges: ['Keine Bild-Uploads', 'Kein Konto', 'Keine Analysedienste', 'Keine Tracking-Cookies'],
+    'Diese Seite erklärt, wie der Editor mit Ihrer Datei umgeht. Die formelle Richtlinie — Cookies, Hosting-Protokolle und Ihre Rechte — finden Sie in der Datenschutzerklärung.',
+  badges: ['Keine Bild- oder PDF-Uploads', 'Kein Konto', 'Keine Analysedienste', 'Keine Tracking-Cookies'],
   flow: {
     eyebrow: 'Datenfluss',
     title: 'Die gesamte Reise findet innerhalb der Seite statt.',
@@ -37,7 +38,7 @@ export const privacyDeDE: PrivacyContent = {
       {
         icon: 'monitor',
         title: 'Der Browser dekodiert sie',
-        copy: 'Das Bild wird auf einen Canvas im Arbeitsspeicher gezeichnet. Es ist dieselbe Canvas-API, die jeder Bildeditor verwendet.',
+        copy: 'Ein Bild wird auf einen Canvas im Arbeitsspeicher gezeichnet; PDF-Seiten werden von der mitgelieferten PDF-Engine einzeln gerendert. Es werden keine Dateidaten irgendwohin gesendet.',
       },
       {
         icon: 'square',
@@ -46,12 +47,12 @@ export const privacyDeDE: PrivacyContent = {
       },
       {
         icon: 'download',
-        title: 'Canvas exportiert ein neues Bild',
-        copy: 'Der Download ist eine frisch aus dem Canvas kodierte Datei. Sie enthält keine EXIF-, GPS- oder Gerätemetadaten.',
+        title: 'Der Editor exportiert eine neue Datei',
+        copy: 'Bild-Exporte werden aus dem Canvas neu kodiert; PDF-Exporte werden Seite für Seite als Bilder neu aufgebaut. Keiner von beiden enthält die ursprünglichen EXIF-, GPS- oder Dokumentmetadaten.',
       },
     ],
     noServerTitle: 'Kein Server dazwischen.',
-    noServerCopy: 'Es gibt keinen Endpunkt, der ein Bild empfängt, also gibt es nichts, was aufbewahrt, protokolliert, moderiert oder verkauft werden könnte. Beim Schließen des Tabs wird die Arbeitskopie aus dem Speicher gelöscht.',
+    noServerCopy: 'Es gibt keinen Endpunkt, der eine Datei empfängt, also gibt es nichts, was aufbewahrt, protokolliert, moderiert oder verkauft werden könnte. Beim Schließen des Tabs wird die Arbeitskopie aus dem Speicher gelöscht.',
     requestLabel: 'Beispielhafte Anfrage',
     requestText: 'POST /upload',
     requestResult: '→ 404 Not Found',
@@ -60,45 +61,50 @@ export const privacyDeDE: PrivacyContent = {
   network: {
     eyebrow: 'Netzwerkanfragen',
     title: 'Die ehrliche Liste.',
-    copy: 'Die intelligente Erkennung ist optional und die einzige Funktion, die nach dem Laden der Seite Code abrufen muss. Hier ist jede Anfrage, die der Editor stellen kann.',
+    copy: 'Der Editor lädt seinen Grundcode beim Öffnen. Intelligente Erkennung und PDF-Unterstützung rufen zusätzlichen Code nur bei Bedarf ab. Hier ist jede Anfrage, die der Editor stellen kann.',
     columns: { request: 'Anfrage', when: 'Wann', contains: 'Was sie enthält' },
     rows: [
       {
         request: 'Diese Seite und ihre Schrift',
         when: 'Beim Öffnen der Website',
-        contains: 'HTML, CSS, JavaScript und die selbst gehostete Schrift Inter. Kein Bild.',
+        contains: 'HTML, CSS, JavaScript und die selbst gehostete Schrift Inter. Keine Dateidaten.',
       },
       {
         request: 'Tesseract.js',
         when: 'Beim ersten Ausführen der intelligenten Erkennung',
-        contains: 'Die OCR-Bibliothek von jsDelivr. Kein Bild.',
+        contains: 'Die OCR-Bibliothek von jsDelivr. Keine Dateidaten.',
       },
       {
         request: 'OCR-Kern und englisches Modell',
         when: 'Bei der ersten intelligenten Erkennung in einem Browser',
-        contains: 'Von Tesseract.js angeforderte WebAssembly- und Sprachdaten. Kein Bild.',
+        contains: 'Von Tesseract.js angeforderte WebAssembly- und Sprachdaten. Keine Dateidaten.',
       },
       {
-        request: 'Ihr Screenshot',
+        request: 'PDF-Engine und Assets',
+        when: 'Beim ersten Öffnen einer PDF',
+        contains: 'Der selbst gehostete PDF.js-Worker, Schriften und WebAssembly-Module. Keine Dateidaten.',
+      },
+      {
+        request: 'Ihr Bild oder PDF',
         when: 'Nie',
-        contains: 'Nichts. Es gibt keinen Upload-Endpunkt, der ihn empfangen könnte.',
+        contains: 'Nichts. Es gibt keinen Upload-Endpunkt, der es empfangen könnte.',
         never: true,
       },
     ],
     whenLabel: 'Wann:',
     noteTitle: 'Was „auf dem Gerät“ hier bedeutet',
     noteCopy:
-      'Die OCR-Engine ist heruntergeladener Code, und die Erkennung läuft in Ihrem Browser. Ihr Bild wird nicht mit der Anfrage gesendet. Der statische Host und das CDN können für die tatsächlich stattfindenden Anfragen gewöhnliche Zugriffsprotokolle führen, wie jede Website und jedes CDN. Diese Protokolle enthalten die Anfrage-URL, nicht Ihren Screenshot.',
+      'Die OCR-Engine und die PDF-Unterstützung sind heruntergeladener Code, und Erkennung wie Rendering laufen in Ihrem Browser. Ihre Datei wird nicht mit diesen Anfragen gesendet. Der statische Host und das CDN können für die tatsächlich stattfindenden Anfragen gewöhnliche Zugriffsprotokolle führen, wie jede Website und jedes CDN. Diese Protokolle enthalten die Anfrage-URL, nicht Ihre Datei.',
   },
   verify: {
     eyebrow: 'Selbst überprüfen',
     title: 'Verlassen Sie sich nicht auf die Aussagen dieser Seite.',
-    copy: 'Die Behauptung lässt sich in etwa zwei Minuten testen. Wenn Sie eine Anfrage finden, die Ihr Bild enthält, ist das ein Fehler, der gemeldet werden sollte.',
+    copy: 'Die Behauptung lässt sich in etwa zwei Minuten testen. Wenn Sie eine Anfrage finden, die Ihre Datei enthält, ist das ein Fehler, der gemeldet werden sollte.',
     cta: 'Problem melden',
     steps: [
       'Öffnen Sie die Entwicklertools Ihres Browsers und wechseln Sie zum Netzwerk-Tab. Leeren Sie die Liste.',
-      'Laden Sie ein Bild und zeichnen Sie ein paar Rahmen. Beobachten Sie die Anfrageliste: Es erscheint keine Bildanfrage.',
-      'Starten Sie die intelligente Erkennung. Sie sehen Anfragen für die OCR-Bibliothek und das Modell. Der Screenshot ist nicht dabei.',
+      'Laden Sie ein Bild oder eine PDF und zeichnen Sie ein paar Rahmen. Beobachten Sie die Anfrageliste: Es erscheint keine Upload-Anfrage.',
+      'Starten Sie die intelligente Erkennung oder öffnen Sie eine PDF. Sie sehen Anfragen für die OCR- oder PDF-Engine. Ihre Datei ist nicht dabei.',
       'Trennen Sie die Internetverbindung. Manuelles Schwärzen, Kopieren und Herunterladen funktionieren weiterhin, weil die Pixel bereits lokal sind.',
       'Öffnen Sie die Eigenschaften der heruntergeladenen Datei. Sie finden kein Kamera-, GPS- oder Gerätemetadatenfeld.',
     ],
@@ -123,12 +129,12 @@ export const privacyDeDE: PrivacyContent = {
   faq: {
     eyebrow: 'Datenschutzfragen',
     title: 'Die Kurzfassung, noch einmal.',
-    copy: 'Dieselben Antworten wie in den FAQ, mit Fokus darauf, wohin das Bild geht und was die Seite verlässt.',
+    copy: 'Dieselben Antworten wie in den FAQ, mit Fokus darauf, wohin die Datei geht und was die Seite verlässt.',
   },
   cta: {
     eyebrow: 'Überzeugen Sie sich selbst',
-    title: 'Bringen Sie ein Bild mit. Beobachten Sie den Netzwerk-Tab.',
-    copy: 'Der Editor ist der Beweis. Laden Sie einen Screenshot, schwärzen Sie ihn, exportieren Sie ihn und prüfen Sie die Datei. Nichts muss den Tab verlassen.',
+    title: 'Bringen Sie eine Datei mit. Beobachten Sie den Netzwerk-Tab.',
+    copy: 'Der Editor ist der Beweis. Laden Sie einen Screenshot oder eine PDF, schwärzen Sie sie, exportieren Sie sie und prüfen Sie die Datei. Nichts muss den Tab verlassen.',
     primary: 'Editor öffnen',
     secondary: 'Leitfäden lesen',
     secondaryHref: '/guides',

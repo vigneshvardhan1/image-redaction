@@ -4,9 +4,10 @@ export const featuresEnUS: FeaturesContent = {
   meta: {
     title: 'Features — Redact',
     description:
-      'On-device PII detection, four redaction styles, verification re-scan, metadata-free exports, keyboard shortcuts, and clearly stated limits.',
+      'On-device PII detection, four redaction styles, verification re-scan, flattened PDFs, metadata-free image exports, keyboard shortcuts, and clearly stated limits.',
     keywords: [
       'image redaction features',
+      'pdf redaction features',
       'on-device ocr redaction',
       'redact image metadata',
       'image redaction shortcuts',
@@ -16,7 +17,7 @@ export const featuresEnUS: FeaturesContent = {
   hero: {
     eyebrow: 'Features',
     title: 'Serious redaction. No upload ritual.',
-    lead: 'Everything you need to remove sensitive details from a screenshot — plus the checks most tools skip, and an honest account of what still needs a human eye.',
+    lead: 'Everything you need to remove sensitive details from a screenshot or a PDF — plus the checks most tools skip, and an honest account of what still needs a human eye.',
     primaryCta: 'Open the editor',
     secondaryCta: 'How privacy works',
   },
@@ -24,7 +25,7 @@ export const featuresEnUS: FeaturesContent = {
     {
       icon: 'sparkles',
       title: 'Smart PII detection',
-      copy: 'OCR finds emails, card numbers, phones, IDs, addresses, and likely names — on your device.',
+      copy: 'OCR finds emails, card numbers, phones, IDs, addresses, and likely names — on your device, page by page for a PDF.',
     },
     {
       icon: 'scan',
@@ -44,18 +45,18 @@ export const featuresEnUS: FeaturesContent = {
     {
       icon: 'shield-check',
       title: 'Verification re-scan',
-      copy: 'Run OCR on the flattened result and flag anything that still reads as sensitive.',
+      copy: 'Run OCR on the flattened result — or the current PDF page — and flag anything that still reads as sensitive.',
     },
     {
       icon: 'download',
       title: 'Clean exports',
-      copy: 'Download PNG, JPG, or WebP — or copy to the clipboard. Metadata stays behind, and the file can be shrunk before you send it.',
+      copy: 'Download PNG, JPG, or WebP, copy to the clipboard, or export a rebuilt PDF with no text layer. Metadata stays behind.',
     },
   ],
   detection: {
     eyebrow: 'Detection',
     title: 'Find the text before you share it.',
-    copy: 'Smart detection reads the screenshot with Tesseract OCR in a Web Worker, then checks each line against patterns for common identifiers. The image is passed to the worker inside the page; it is never part of a network request.',
+    copy: 'Smart detection reads the screenshot or the current PDF page with Tesseract OCR in a Web Worker, then checks each line against patterns for common identifiers. The file is passed to the worker inside the page; it is never part of a network request.',
     cards: [
       {
         title: 'What it looks for',
@@ -108,7 +109,7 @@ export const featuresEnUS: FeaturesContent = {
   delivery: {
     eyebrow: 'Delivery',
     title: 'Redact it, then make it small enough to send.',
-    copy: 'A redacted screenshot is often still too heavy for a chat, a ticket, or an email. The Size panel measures the real export in your browser: lower the quality for JPG and WebP, cap the longest edge, and read the actual byte count before you download anything.',
+    copy: 'A redacted screenshot is often still too heavy for a chat, a ticket, or an email. The Size panel measures the real image export in your browser: lower the quality for JPG and WebP, cap the longest edge, and read the actual byte count before you download anything. PDFs skip the size panel — every page is rebuilt as a flattened image at export.',
     points: [
       {
         icon: 'gauge',
@@ -151,11 +152,11 @@ export const featuresEnUS: FeaturesContent = {
   shortcuts: {
     eyebrow: 'Speed',
     title: 'Keep your hands on the keyboard.',
-    copy: 'Paste an image from the clipboard, drop one onto the editor, or replace the current file without reloading. Then switch tools and undo without reaching for the mouse.',
+    copy: 'Paste an image from the clipboard, drop an image or PDF onto the editor, or replace the current file without reloading. Then switch tools and undo without reaching for the mouse.',
     points: [
-      'Ctrl / ⌘ + V pastes an image while the editor is in view.',
+      'Ctrl / ⌘ + V pastes an image while the editor is in view. PDFs can be dropped or chosen.',
       'Drag and drop works on the start screen.',
-      'Replace the image from the toolbar without losing the page.',
+      'Replace the file from the toolbar without losing the page.',
     ],
     panelTitle: 'Shortcuts',
     list: [
@@ -188,8 +189,18 @@ export const featuresEnUS: FeaturesContent = {
         badge: 'Best-effort',
       },
       {
-        title: 'One image at a time',
-        copy: 'There is no batch queue yet. Replace the image and repeat; each export is independent and metadata-free.',
+        title: 'One file at a time',
+        copy: 'There is no batch queue yet, and a PDF is one file no matter how many pages it has. Replace the file and repeat; each export is independent and metadata-free.',
+        badge: 'Not yet',
+      },
+      {
+        title: 'PDFs lose their text layer',
+        copy: 'The export is rasterized page by page. That is what removes the original text, links, forms, and metadata — but the result is not searchable or selectable.',
+        badge: 'By design',
+      },
+      {
+        title: 'No PDF page editing',
+        copy: 'You can redact every page, but you cannot reorder, delete, or insert pages. Do that in a PDF editor first, then redact the result.',
         badge: 'Not yet',
       },
       {
@@ -205,7 +216,7 @@ export const featuresEnUS: FeaturesContent = {
     eyebrow: 'Ready when you are',
     title: 'Use the features, then use your eyes.',
     copy: 'Smart detection saves the first pass. Ink, Verify, and a final look at 100% save the last one.',
-    primary: 'Redact an image',
+    primary: 'Redact a file',
     secondary: 'Read the guides',
     secondaryHref: '/guides',
   },

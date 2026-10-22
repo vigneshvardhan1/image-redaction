@@ -64,6 +64,11 @@ export const faqs: FaqItem[] = [
     answer:
       'Today the editor works on one image at a time; a batch queue is on the roadmap. For now, use the replace button to load the next image and repeat. Each export is independent.',
   },
+  {
+    question: 'Can I redact a PDF?',
+    answer:
+      'Yes. Drop or choose a PDF up to 50 MB and 100 pages. Every page opens in the same editor with its own redaction history, and Smart detect and Verify run on the page you are viewing. On export, each page is re-rendered as an image into a new PDF, so the original text layer, links, form fields, and metadata are removed. The exported PDF is not searchable or selectable.',
+  },
 ];
 
 /**
@@ -101,6 +106,11 @@ export const homeFaqs: FaqItem[] = [
     question: 'What image formats are supported?',
     answer:
       'You can redact PNG, JPG, WebP, GIF, BMP, and AVIF images up to 25 MB. Animated GIFs are flattened to their first frame, and very large images are scaled to a 5,200 px long edge so the editor stays responsive. Redacted images can be exported as PNG, JPG, or WebP, with no EXIF or GPS metadata.',
+  },
+  {
+    question: 'Can I redact a PDF, not just an image?',
+    answer:
+      'Yes. Open a PDF up to 50 MB and 100 pages, scroll through the page stack, and redact each one. Smart detection and Verify work on the page you are viewing. Export rebuilds every page as an image inside a new PDF, so the text layer, links, form fields, and metadata do not survive. That also means the exported PDF is not searchable.',
   },
   {
     question: 'Will you have access to my image?',

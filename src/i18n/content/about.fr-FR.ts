@@ -4,10 +4,11 @@ export const aboutFrFR: AboutContent = {
   meta: {
     title: 'À propos — Redact',
     description:
-      'Pourquoi Redact existe : un outil de caviardage gratuit, exécuté dans le navigateur, conçu pour que la capture d’écran que vous cherchez à protéger n’ait jamais besoin d’être envoyée pour être protégée.',
+      'Pourquoi Redact existe : un outil de caviardage gratuit, exécuté dans le navigateur, conçu pour que l’image ou le PDF que vous cherchez à protéger n’ait jamais besoin d’être envoyé pour être protégé.',
     keywords: [
       'à propos de redact',
       'caviardage d’images privé',
+      'caviardage de pdf privé',
       'outil de caviardage dans le navigateur',
     ],
   },
@@ -19,7 +20,7 @@ export const aboutFrFR: AboutContent = {
     secondaryCta: 'Nous contacter',
   },
   stats: [
-    { value: '0', label: 'Images envoyées' },
+    { value: '0', label: 'Fichiers envoyés' },
     { value: '0', label: 'Comptes requis' },
     { value: '0', label: 'Traceurs ou analyse d’audience' },
     { value: '100%', label: 'Traitement dans votre navigateur' },
@@ -30,7 +31,7 @@ export const aboutFrFR: AboutContent = {
     paragraphs: [
       'Les captures d’écran sont devenues la façon d’expliquer le travail : un fil de support, un reçu, une pièce d’identité, un tableau de bord, une conversation contenant une adresse de livraison. Le détail qui rend la capture utile est souvent celui qui ne devrait pas voyager avec elle.',
       'La plupart des outils de caviardage commencent par vous demander d’envoyer le fichier exact que vous cherchez à protéger. Cela n’a jamais paru juste. Un outil qui supprime des détails sensibles ne devrait pas les collecter d’abord, et une promesse de supprimer la copie demain reste une copie aujourd’hui.',
-      'Redact inverse l’ordre. Votre navigateur décode l’image, la dessine sur un canvas local et intègre les caviardages dans un nouveau fichier. Il n’existe aucun point d’envoi. La détection intelligente télécharge un moteur OCR et un modèle de langue anglaise, mais votre image ne fait pas partie de cette requête.',
+      'Redact inverse l’ordre. Votre navigateur décode l’image — ou rend chaque page PDF —, la dessine sur un canvas local et intègre les caviardages dans un nouveau fichier. Il n’existe aucun point d’envoi. La détection intelligente télécharge un moteur OCR et un modèle de langue anglaise, et le moteur PDF est auto-hébergé, mais votre fichier ne fait pas partie de ces requêtes.',
     ],
     emphasis:
       'Nous ne sommes pas contre le cloud. Nous sommes contre l’étape inutile au milieu. Quand le navigateur peut faire le travail, l’endroit le plus sûr pour le fichier est celui où il se trouve déjà.',
@@ -75,25 +76,25 @@ export const aboutFrFR: AboutContent = {
   how: {
     eyebrow: 'Comment ça marche',
     title: 'Trois étapes, aucune sur un serveur.',
-    copy: 'L’ensemble du flux de travail tient dans un seul onglet. Le seul téléchargement facultatif est le moteur OCR utilisé par la détection intelligente.',
+    copy: 'L’ensemble du flux de travail tient dans un seul onglet. Les seuls téléchargements facultatifs sont le moteur OCR utilisé par la détection intelligente et le moteur PDF utilisé pour les PDF.',
     cta: 'Voir le flux de données',
     steps: [
       {
         number: '01',
         title: 'Déposer ou coller un fichier',
-        copy: 'Le navigateur lit l’image en local. PNG, JPG, WebP, GIF, BMP et AVIF sont pris en charge.',
+        copy: 'Le navigateur lit l’image ou le PDF en local. PNG, JPG, WebP, GIF, BMP, AVIF et PDF jusqu’à 100 pages sont pris en charge.',
         icon: 'image',
       },
       {
         number: '02',
         title: 'Couvrir ce qui compte',
-        copy: 'La détection intelligente suggère les données personnelles probables. Dessinez sur les visages, les codes et tout ce que l’analyse manque. L’encre est le style par défaut.',
+        copy: 'La détection intelligente suggère les données personnelles probables sur la page affichée. Dessinez sur les visages, les codes et tout ce que l’analyse manque. L’encre est le style par défaut.',
         icon: 'square',
       },
       {
         number: '03',
         title: 'Vérifier et exporter',
-        copy: 'Relisez l’image aplatie, comparez-la à l’originale, puis téléchargez un PNG, JPG ou WebP sans métadonnées.',
+        copy: 'Relisez le résultat aplati, comparez-le à l’original, puis téléchargez une image sans métadonnées ou un PDF aplati.',
         icon: 'shield-check',
       },
     ],
@@ -101,12 +102,14 @@ export const aboutFrFR: AboutContent = {
   stack: {
     eyebrow: 'Sous le capot',
     title: 'Une architecture légère. Aucun service caché.',
-    copy: 'Le site est en HTML, CSS et JavaScript statiques. Il n’y a aucun backend qui reçoit des images, aucun SDK d’analyse d’audience et aucun code publicitaire. Les éléments qui font le travail sont des API web ordinaires et des logiciels open source.',
-    note: 'La détection intelligente est la seule fonctionnalité qui nécessite une requête réseau après le chargement de la page. Elle récupère Tesseract.js et des données de langue ; l’image reste dans l’onglet.',
+    copy: 'Le site est en HTML, CSS et JavaScript statiques. Il n’y a aucun backend qui reçoit des fichiers, aucun SDK d’analyse d’audience et aucun code publicitaire. Les éléments qui font le travail sont des API web ordinaires et des logiciels open source.',
+    note: 'La détection intelligente et la prise en charge des PDF sont les fonctionnalités qui récupèrent du code après le chargement de la page. Elles chargent Tesseract.js, des données de langue et le moteur PDF auto-hébergé ; votre fichier reste dans l’onglet.',
     items: [
       { label: 'Astro', value: 'Pages et composants statiques' },
       { label: 'Canvas API', value: 'Décodage, caviardage et export en local' },
       { label: 'Tesseract.js', value: 'OCR facultatif dans un Web Worker' },
+      { label: 'PDF.js', value: 'Rendu PDF local auto-hébergé' },
+      { label: 'pdf-lib', value: 'Assemblage du PDF aplati dans l’onglet' },
       { label: 'Inter', value: 'Police auto-hébergée, servie depuis ce site' },
     ],
   },
@@ -123,8 +126,8 @@ export const aboutFrFR: AboutContent = {
         copy: 'Les guides expliquent le caviardage pratique. Ils ne remplacent pas un avocat ou un délégué à la protection des données.',
       },
       {
-        title: 'Pas un éditeur d’images complet',
-        copy: 'Il n’y a pas encore de calques, d’annotations textuelles ni d’exports par lots. C’est un outil ciblé pour couvrir des éléments.',
+        title: 'Pas un éditeur complet',
+        copy: 'Il n’y a pas encore de calques, d’annotations textuelles, d’exports par lots ni de réorganisation des pages PDF. C’est un outil ciblé pour couvrir des éléments.',
       },
       {
         title: 'Pas infaillible',
@@ -137,8 +140,8 @@ export const aboutFrFR: AboutContent = {
   cta: {
     eyebrow: 'Utilisez-le pour ce qu’il est',
     title: 'Partagez la capture. Pas les secrets.',
-    copy: 'L’éditeur est gratuit, local et ouvert à l’inspection. Chargez une image, couvrez ce qui ne devrait pas voyager avec elle, et vérifiez l’export avant de l’envoyer.',
-    primary: 'Caviarder une image',
+    copy: 'L’éditeur est gratuit, local et ouvert à l’inspection. Chargez une image ou un PDF, couvrez ce qui ne devrait pas voyager avec lui, et vérifiez l’export avant de l’envoyer.',
+    primary: 'Caviarder un fichier',
     secondary: 'Parlez-nous',
     secondaryHref: '/contact',
   },

@@ -4,8 +4,8 @@ export const aboutDeDE: AboutContent = {
   meta: {
     title: 'Über uns — Redact',
     description:
-      'Warum es Redact gibt: ein kostenloses Tool zum Schwärzen im Browser, damit der Screenshot, den Sie schützen möchten, nicht hochgeladen werden muss, um ihn zu schützen.',
-    keywords: ['über redact', 'private bildschwärzung', 'schwärzungstool im browser'],
+      'Warum es Redact gibt: ein kostenloses Tool zum Schwärzen im Browser, damit das Bild oder die PDF, die Sie schützen möchten, nicht hochgeladen werden muss, um sie zu schützen.',
+    keywords: ['über redact', 'private bildschwärzung', 'pdf schwärzen privat', 'schwärzungstool im browser'],
   },
   hero: {
     eyebrow: 'Über uns',
@@ -15,7 +15,7 @@ export const aboutDeDE: AboutContent = {
     secondaryCta: 'Kontakt aufnehmen',
   },
   stats: [
-    { value: '0', label: 'Hochgeladene Bilder' },
+    { value: '0', label: 'Hochgeladene Dateien' },
     { value: '0', label: 'Benötigte Konten' },
     { value: '0', label: 'Tracker oder Analysedienste' },
     { value: '100%', label: 'Verarbeitung in Ihrem Browser' },
@@ -26,7 +26,7 @@ export const aboutDeDE: AboutContent = {
     paragraphs: [
       'Screenshots sind heute das Mittel der Wahl, um Arbeit zu erklären — ein Support-Thread, ein Beleg, ein Ausweis, ein Dashboard, ein Chat mit Lieferadresse. Das Detail, das den Screenshot nützlich macht, ist oft genau das Detail, das nicht mit ihm reisen sollte.',
       'Die meisten Tools zum Schwärzen verlangen zuerst den Upload genau der Datei, die Sie schützen möchten. Das war nie richtig. Ein Tool, das sensible Details entfernt, sollte sie nicht zuerst einsammeln — und das Versprechen, die Kopie morgen zu löschen, ist heute trotzdem eine Kopie.',
-      'Redact dreht die Reihenfolge um. Ihr Browser dekodiert das Bild, zeichnet es auf einen lokalen Canvas und bäckt die Schwärzungen in eine neue Datei ein. Es gibt keinen Upload-Endpunkt. Die intelligente Erkennung lädt eine OCR-Engine und ein englisches Modell herunter, aber Ihr Bild ist nicht Teil dieser Anfrage.',
+      'Redact dreht die Reihenfolge um. Ihr Browser dekodiert das Bild — oder rendert jede PDF-Seite —, zeichnet es auf einen lokalen Canvas und bäckt die Schwärzungen in eine neue Datei ein. Es gibt keinen Upload-Endpunkt. Die intelligente Erkennung lädt eine OCR-Engine und ein englisches Modell herunter, die PDF-Engine wird selbst gehostet, aber Ihre Datei ist nicht Teil dieser Anfragen.',
     ],
     emphasis:
       'Wir sind nicht gegen die Cloud. Wir sind gegen den unnötigen Schritt dazwischen. Wenn der Browser die Aufgabe erledigen kann, ist der sicherste Ort für die Datei der Ort, an dem sie bereits ist.',
@@ -71,25 +71,25 @@ export const aboutDeDE: AboutContent = {
   how: {
     eyebrow: 'So funktioniert es',
     title: 'Drei Schritte, keiner davon ein Server.',
-    copy: 'Der gesamte Ablauf passt in einen Tab. Der einzige optionale Download ist die OCR-Engine, die von der intelligenten Erkennung verwendet wird.',
+    copy: 'Der gesamte Ablauf passt in einen Tab. Die einzigen optionalen Downloads sind die OCR-Engine für die intelligente Erkennung und die PDF-Engine für PDFs.',
     cta: 'Datenfluss ansehen',
     steps: [
       {
         number: '01',
         title: 'Datei ablegen oder einfügen',
-        copy: 'Der Browser liest das Bild lokal. PNG, JPG, WebP, GIF, BMP und AVIF werden unterstützt.',
+        copy: 'Der Browser liest das Bild oder die PDF lokal. PNG, JPG, WebP, GIF, BMP, AVIF und PDF mit bis zu 100 Seiten werden unterstützt.',
         icon: 'image',
       },
       {
         number: '02',
         title: 'Abdecken, was zählt',
-        copy: 'Die intelligente Erkennung schlägt wahrscheinliche personenbezogene Daten vor. Zeichnen Sie über Gesichter, Codes und alles, was der Scan übersieht. Tintenschwarz ist die Voreinstellung.',
+        copy: 'Die intelligente Erkennung schlägt auf der aktuellen Seite wahrscheinliche personenbezogene Daten vor. Zeichnen Sie über Gesichter, Codes und alles, was der Scan übersieht. Tintenschwarz ist die Voreinstellung.',
         icon: 'square',
       },
       {
         number: '03',
         title: 'Prüfen und exportieren',
-        copy: 'Scannen Sie das abgeflachte Bild erneut, vergleichen Sie es mit dem Original und laden Sie ein metadatenfreies PNG, JPG oder WebP herunter.',
+        copy: 'Scannen Sie das abgeflachte Ergebnis erneut, vergleichen Sie es mit dem Original und laden Sie ein metadatenfreies Bild oder eine abgeflachte PDF herunter.',
         icon: 'shield-check',
       },
     ],
@@ -97,12 +97,14 @@ export const aboutDeDE: AboutContent = {
   stack: {
     eyebrow: 'Unter der Haube',
     title: 'Kleiner Stack. Kein versteckter Dienst.',
-    copy: 'Die Website besteht aus statischem HTML, CSS und JavaScript. Es gibt kein Backend, das Bilder empfängt, kein Analyse-SDK und keinen Werbecode. Die Komponenten, die die Arbeit erledigen, sind gewöhnliche Web-APIs und Open-Source-Software.',
-    note: 'Die intelligente Erkennung ist die einzige Funktion, die nach dem Laden der Seite eine Netzwerkanfrage benötigt. Sie ruft Tesseract.js und Sprachdaten ab; das Bild bleibt im Tab.',
+    copy: 'Die Website besteht aus statischem HTML, CSS und JavaScript. Es gibt kein Backend, das Dateien empfängt, kein Analyse-SDK und keinen Werbecode. Die Komponenten, die die Arbeit erledigen, sind gewöhnliche Web-APIs und Open-Source-Software.',
+    note: 'Intelligente Erkennung und PDF-Unterstützung sind die Funktionen, die nach dem Laden der Seite zusätzlichen Code abrufen. Sie laden Tesseract.js, Sprachdaten und die selbst gehostete PDF-Engine; Ihre Datei bleibt im Tab.',
     items: [
       { label: 'Astro', value: 'Statische Seiten und Komponenten' },
       { label: 'Canvas API', value: 'Lokales Dekodieren, Schwärzen und Exportieren' },
       { label: 'Tesseract.js', value: 'Optionales OCR in einem Web Worker' },
+      { label: 'PDF.js', value: 'Selbst gehostetes lokales PDF-Rendering' },
+      { label: 'pdf-lib', value: 'Zusammenbau der abgeflachten PDF im Tab' },
       { label: 'Inter', value: 'Selbst gehostete Schrift, von dieser Website ausgeliefert' },
     ],
   },
@@ -119,8 +121,8 @@ export const aboutDeDE: AboutContent = {
         copy: 'Die Leitfäden erklären das praktische Schwärzen. Sie ersetzen weder einen Anwalt noch einen Datenschutzbeauftragten.',
       },
       {
-        title: 'Kein vollständiger Bildeditor',
-        copy: 'Es gibt noch keine Ebenen, Textanmerkungen oder Stapel-Exporte. Es ist ein fokussiertes Werkzeug zum Abdecken von Dingen.',
+        title: 'Kein vollständiger Editor',
+        copy: 'Es gibt noch keine Ebenen, Textanmerkungen, Stapel-Exporte oder das Umsortieren von PDF-Seiten. Es ist ein fokussiertes Werkzeug zum Abdecken von Dingen.',
       },
       {
         title: 'Nicht unfehlbar',
@@ -133,8 +135,8 @@ export const aboutDeDE: AboutContent = {
   cta: {
     eyebrow: 'Nutzen Sie es für das, was es ist',
     title: 'Teilen Sie den Screenshot. Nicht die Geheimnisse.',
-    copy: 'Der Editor ist kostenlos, lokal und offen für die Prüfung. Laden Sie ein Bild, decken Sie ab, was nicht mitreisen soll, und prüfen Sie den Export, bevor Sie ihn senden.',
-    primary: 'Bild schwärzen',
+    copy: 'Der Editor ist kostenlos, lokal und offen für die Prüfung. Laden Sie ein Bild oder eine PDF, decken Sie ab, was nicht mitreisen soll, und prüfen Sie den Export, bevor Sie ihn senden.',
+    primary: 'Datei schwärzen',
     secondary: 'Sprechen Sie mit uns',
     secondaryHref: '/contact',
   },

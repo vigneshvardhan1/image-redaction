@@ -9,9 +9,10 @@ export const privacyEnIN: PrivacyContent = {
   meta: {
     title: 'Privacy — Redact',
     description:
-      'Your Aadhaar, PAN or screenshot is never uploaded. See exactly what runs in your browser, the one disclosed CDN request used for optional OCR, and how to verify the claims yourself.',
+      'Your Aadhaar, PAN, image, or PDF is never uploaded. See exactly what runs in your browser, the disclosed OCR and PDF requests, and how to verify the claims yourself.',
     keywords: [
       'image redaction privacy india',
+      'pdf redaction privacy india',
       'dpdp act screenshot redaction',
       'browser based image redaction',
       'no upload image editor',

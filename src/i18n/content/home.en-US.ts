@@ -2,20 +2,22 @@ import type { HomeContent } from './types';
 
 export const homeEnUS: HomeContent = {
   meta: {
-    title: 'Image Redaction Tool — Free, Private, Online | Redact',
+    title: 'Image & PDF Redaction Tool — Free, Private, Online | Redact',
     description:
-      'Free AI image redaction software for screenshots and photos. Hide names, emails, card numbers, and addresses on your device — no uploads, no account.',
+      'Free on-device redaction software for screenshots, photos, and PDFs. Hide names, emails, card numbers, and addresses — no uploads, no account, no watermark.',
     keywords: [
       'image redaction',
+      'pdf redaction',
+      'redact pdf',
+      'redact pdf online',
       'image redaction software',
       'image redaction tool',
-      'image redaction online',
       'AI image redaction software',
       'redact image',
       'redact screenshot',
       'blur sensitive information in image',
     ],
-    ogImageAlt: 'Redact — a free image redaction tool for screenshots and photos',
+    ogImageAlt: 'Redact — a free on-device redaction tool for images and PDFs',
   },
   useCasesHead: {
     eyebrow: 'What people hide',
@@ -23,10 +25,10 @@ export const homeEnUS: HomeContent = {
     copy: 'The obvious secret is rarely the only one. Pick the kind of image you are about to share and see what usually needs covering.',
   },
   hero: {
-    badge: 'Image redaction, on your device',
+    badge: 'Image and PDF redaction, on your device',
     title: ['Share the screenshot.', 'Not the secrets.'],
-    lead: 'Image redaction in your browser: hide names, emails, card numbers, and addresses in seconds. Smart detection runs on your device, and every export leaves its metadata behind.',
-    primaryCta: 'Redact an image',
+    lead: 'Redact images and PDFs in your browser: hide names, emails, card numbers, and addresses in seconds. Smart detection runs on your device, and every export leaves its metadata behind — PDF pages are flattened too.',
+    primaryCta: 'Redact a file',
     secondaryCta: 'See how it works',
     proof: ['Free', 'No account', 'No uploads', 'No watermark'],
   },
@@ -39,7 +41,7 @@ export const homeEnUS: HomeContent = {
     {
       icon: 'shield',
       title: 'Metadata removed',
-      copy: "EXIF and GPS don't travel with the export.",
+      copy: "EXIF, GPS, and PDF metadata don't travel with the export.",
     },
     {
       icon: 'zap',
@@ -55,12 +57,12 @@ export const homeEnUS: HomeContent = {
   proof: {
     eyebrow: 'Proof, not promises',
     title: 'The black bar is the whole point.',
-    copy: 'A redaction should be boring: opaque, flattened, and verified. There is no hidden layer to peel back in the file you download — whichever of the four styles you use.',
+    copy: 'A redaction should be boring: opaque, flattened, and verified. There is no hidden layer to peel back in the file you download — image or PDF — whichever of the four styles you use.',
     points: [
       {
         icon: 'square',
         title: 'Flattened, not layered',
-        copy: 'The export is a new image. No hidden layer, no editable mask, no undo in the file.',
+        copy: 'The export is a new image or a rebuilt PDF. No hidden layer, no editable mask, no undo in the file.',
       },
       {
         icon: 'shield-check',
@@ -117,17 +119,17 @@ export const homeEnUS: HomeContent = {
   detection: {
     eyebrow: 'Smart detection',
     title: 'Stop hunting for the sensitive bits.',
-    copy: 'Smart detection reads the text already visible in your screenshot and suggests the lines that look like identifiers. It runs in a Web Worker on your device, so the image never leaves the page.',
+    copy: 'Smart detection reads the text already visible in your image — or on the current PDF page — and suggests the lines that look like identifiers. It runs in a Web Worker on your device, so the file never leaves the page.',
     points: [
       'Finds emails, card numbers, phone numbers, IDs, addresses, and dates.',
       'Every box is a suggestion — include or exclude it before you redact.',
       'All text mode covers every detected line when you would rather not decide.',
-      'Verify re-scans the flattened result for text that still looks sensitive.',
+      'Verify re-scans the flattened result for text that still looks sensitive, page by page for a PDF.',
     ],
     primaryCta: 'Try smart detection',
     secondaryCta: 'Read the redaction guide',
     footnote:
-      'First use downloads the OCR engine and English model. The image is not part of that request.',
+      'First use downloads the OCR engine and English model. Your file is not part of that request.',
   },
   styles: {
     eyebrow: 'Redaction styles',
@@ -137,7 +139,7 @@ export const homeEnUS: HomeContent = {
   },
   privacy: {
     eyebrow: 'Privacy by architecture',
-    title: 'There is nowhere for the image to go.',
+    title: 'There is nowhere for the file to go.',
     copy: 'This is not a promise to delete your file after processing. The file is never sent in the first place. You can confirm it in the network tab.',
     cta: 'Read the privacy notes',
     points: [
@@ -148,13 +150,13 @@ export const homeEnUS: HomeContent = {
       },
       {
         icon: 'image',
-        title: 'Exports are new images',
-        copy: 'Canvas re-encoding leaves the original EXIF, GPS coordinates, and device details behind.',
+        title: 'Exports are new files',
+        copy: 'Image exports are re-encoded from a canvas; PDF pages are rebuilt as fresh images. Original EXIF, GPS, and document metadata stay behind.',
       },
       {
         icon: 'globe',
-        title: 'The one request is disclosed',
-        copy: 'Smart detection downloads Tesseract.js and an English model on first use. Your image is never part of that request. Manual redaction works without it.',
+        title: 'The extra requests are disclosed',
+        copy: 'Smart detection downloads Tesseract.js and an English model on first use, and opening a PDF loads the self-hosted PDF engine. Your file is never part of either request.',
       },
     ],
   },
@@ -166,24 +168,24 @@ export const homeEnUS: HomeContent = {
   how: {
     eyebrow: 'How it works',
     title: 'Three steps. No account screen in the middle.',
-    copy: 'Open the page, work on the image, take the file. That is the whole flow.',
+    copy: 'Open the page, work on the image or PDF, take the file. That is the whole flow.',
     steps: [
       {
         number: '01',
-        title: 'Drop or paste an image',
-        copy: 'PNG, JPG, WebP, GIF, BMP, or AVIF. It opens locally — not on a server.',
+        title: 'Drop or paste a file',
+        copy: 'PNG, JPG, WebP, GIF, BMP, AVIF, or PDF. It opens locally — not on a server.',
         icon: 'image',
       },
       {
         number: '02',
         title: 'Cover what should not travel',
-        copy: 'Run Smart detect, then move, resize, or draw boxes. Use ink, pixelate, blur, or a sticker.',
+        copy: 'Run Smart detect on the current page, then move, resize, or draw boxes. Use ink, pixelate, blur, or a sticker.',
         icon: 'cursor',
       },
       {
         number: '03',
         title: 'Verify and download',
-        copy: 'Re-scan the flattened result, then export PNG, JPG, or WebP with no metadata — and shrink it if the file is too heavy.',
+        copy: 'Re-scan the flattened result, then export PNG, JPG, or WebP with no metadata — or a flattened PDF with no text layer. Shrink images if the file is too heavy.',
         icon: 'shield-check',
       },
     ],
@@ -293,16 +295,16 @@ export const homeEnUS: HomeContent = {
     cta: 'All guides',
   },
   faq: {
-    eyebrow: 'Image redaction FAQ',
-    title: 'Frequently asked questions about image redaction.',
+    eyebrow: 'Redaction FAQ',
+    title: 'Frequently asked questions about redacting images and PDFs.',
     copy: 'If something is missing, ask. The answer will be added here rather than buried in a support inbox.',
     ask: 'Ask a question',
   },
   cta: {
     eyebrow: 'Ready when you are',
     title: 'The safest screenshot is the one with less in it.',
-    copy: 'Open the editor, drop an image, and take a minute to cover what should not travel with it. No account, no upload, no watermark.',
-    primary: 'Redact an image',
+    copy: 'Open the editor, drop an image or PDF, and take a minute to cover what should not travel with it. No account, no upload, no watermark.',
+    primary: 'Redact a file',
     secondary: 'Read the privacy notes',
     secondaryHref: '/privacy',
   },

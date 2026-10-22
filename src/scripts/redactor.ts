@@ -1,5 +1,22 @@
 import { renderScene, type Mode, type Shape, type ShapeKind } from './render';
 import { scanCanvas, type Finding } from './detect';
+import {
+  PDF_EDIT_MAX_EDGE,
+  PDF_EXPORT_MAX_EDGE,
+  PDF_EXPORT_SCALE,
+  buildPdf,
+  canvasToJpeg,
+  openPdf,
+  pageScale,
+  renderPdfPage,
+  type OpenedPdf,
+  type PdfImagePage,
+} from './pdf';
+import type { PDFDocumentProxy } from 'pdfjs-dist';
+
+const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
+const MAX_PDF_BYTES = 50 * 1024 * 1024;
+const MAX_PDF_PAGES = 100;
 
 const root = document.querySelector<HTMLElement>('[data-redactor]');
 
@@ -59,12 +76,68 @@ function setup(editor: HTMLElement) {
   const sizeNote = query<HTMLElement>('[data-size-note]');
   const sizeEstimate = query<HTMLElement>('[data-size-estimate]');
   const sizeSavings = query<HTMLElement>('[data-size-savings]');
+  const pageNav = query<HTMLElement>('[data-pdf-nav]');
+  const pageIndicator = query<HTMLElement>('[data-page-indicator]');
+  const pdfScroll = query<HTMLElement>('[data-pdf-scroll]');
+  const pdfStack = query<HTMLElement>('[data-pdf-stack]');
+  const pageStatus = query<HTMLElement>('[data-page-status]');
+  const pdfNotice = query<HTMLElement>('[data-pdf-notice]');
+  const pdfFormat = query<HTMLElement>('[data-pdf-format]');
+  const downloadLabel = query<HTMLElement>('[data-download-label]');
+  const exportNote = query<HTMLElement>('[data-export-note]');
+  const exportNoteText = query<HTMLElement>('[data-export-note-text]');
+  const busyNote = query<HTMLElement>('[data-busy-note]');
+  const imageOnly = Array.from(editor.querySelectorAll<HTMLElement>('[data-image-only]'));
 
-  const baseCanvas = document.createElement('canvas');
-  baseCanvas.width = 1;
-  baseCanvas.height = 1;
+  const imageCanvas = document.createElement('canvas');
+  imageCanvas.width = 1;
+  imageCanvas.height = 1;
+  /** The source pixels for the active document. For PDFs this points at the
+   *  active page's offscreen render, so all shape math stays in one space. */
+  let baseCanvas = imageCanvas;
 
-  let hasImage = false;
+  interface PageState {
+    shapes: Shape[];
+    history: Shape[][];
+    historyIndex: number;
+    viewScale: number;
+    /** Page size in PDF points, used for the empty placeholder ratio. */
+    pageWidth: number;
+    pageHeight: number;
+    /** Offscreen page render at edit resolution. */
+    source: HTMLCanvasElement | null;
+    /** Visible canvas inside the scrolling page stack. */
+    display: HTMLCanvasElement | null;
+    /** Wrapper that owns the page aspect ratio and holds the overlay. */
+    sheet: HTMLElement | null;
+    rendered: boolean;
+    renderPromise: Promise<void> | null;
+  }
+
+  function createPageState(): PageState {
+    return {
+      shapes: [],
+      history: [[]],
+      historyIndex: 0,
+      viewScale: 0,
+      pageWidth: 0,
+      pageHeight: 0,
+      source: null,
+      display: null,
+      sheet: null,
+      rendered: false,
+      renderPromise: null,
+    };
+  }
+
+  let hasDoc = false;
+  let docKind: 'image' | 'pdf' = 'image';
+  let pdfDoc: PDFDocumentProxy | null = null;
+  let pdfDestroy: (() => Promise<void>) | null = null;
+  let pdfGeneration = 0;
+  let pdfObserver: IntersectionObserver | null = null;
+  let pageIndex = 0;
+  let pages: PageState[] = [createPageState()];
   let imageName = 'image';
   let shapes: Shape[] = [];
   let selectedId: number | null = null;
@@ -84,6 +157,8 @@ function setup(editor: HTMLElement) {
   let draft: { x: number; y: number; w: number; h: number } | null = null;
   let drag: DragState | null = null;
   let raf = 0;
+  let scrollRaf = 0;
+  let releaseTimer = 0;
   let toastTimer = 0;
   let clearTimer = 0;
 
@@ -122,14 +197,17 @@ function setup(editor: HTMLElement) {
     }, 4200);
   }
 
-  function setBusy(active: boolean, label?: string, percent = 6): void {
+  function setBusy(active: boolean, label?: string, percent = 6, note?: string): void {
     busy = active;
     busyOverlay.hidden = !active;
     editor.setAttribute('aria-busy', String(active));
     if (label) busyLabel.textContent = label;
+    if (note) busyNote.textContent = note;
     busyProgress.style.width = `${clamp(percent, 4, 100)}%`;
     if (!active) {
       busyProgress.style.width = '4%';
+      busyNote.textContent =
+        'OCR runs in your browser. The English model downloads once — your file is never sent.';
     }
   }
 
@@ -174,18 +252,66 @@ function setup(editor: HTMLElement) {
     verifyText.textContent = text;
   }
 
+  function totalRedactions(): number {
+    return pages.reduce(
+      (total, page, index) => total + (index === pageIndex ? shapes.length : page.shapes.length),
+      0
+    );
+  }
+
+  function syncPageState(): void {
+    const page = pages[pageIndex];
+    if (!page) return;
+    page.shapes = shapes;
+    page.history = history;
+    page.historyIndex = historyIndex;
+  }
+
+  function clearLabel(): string {
+    return docKind === 'pdf' ? 'Clear page redactions' : 'Clear all redactions';
+  }
+
+  function updatePageChrome(): void {
+    const isPdf = docKind === 'pdf';
+    pageNav.hidden = !isPdf;
+    pdfNotice.hidden = !isPdf;
+    pdfFormat.hidden = !isPdf;
+    imageOnly.forEach((element) => {
+      element.hidden = isPdf;
+    });
+
+    downloadLabel.textContent = isPdf ? 'Download PDF' : 'Download';
+    verifyBtn.title = isPdf
+      ? 'Re-scan this flattened page for readable PII'
+      : 'Re-scan the flattened image for readable PII';
+    clearBtn.title = clearLabel();
+    if (clearBtn.dataset.armed !== 'true') {
+      clearBtn.setAttribute('aria-label', clearLabel());
+    }
+    exportNoteText.textContent = isPdf ? 'Text layer flattened on export' : 'EXIF stripped on export';
+    exportNote.title = isPdf
+      ? 'Every page is rasterized. The original text layer, links, form fields, and metadata do not travel with the export.'
+      : 'Canvas exports do not carry EXIF, GPS, or camera metadata.';
+
+    if (isPdf) {
+      pageIndicator.textContent = `Page ${pageIndex + 1} / ${pages.length}`;
+    }
+  }
+
   function refreshChrome(): void {
-    countEl.textContent = String(shapes.length);
-    countLabel.textContent = shapes.length === 1 ? 'redaction' : 'redactions';
-    downloadBtn.disabled = shapes.length === 0;
-    copyBtn.disabled = shapes.length === 0;
+    const total = totalRedactions();
+    countEl.textContent = String(total);
+    countLabel.textContent = total === 1 ? 'redaction' : 'redactions';
+    downloadBtn.disabled = total === 0;
+    copyBtn.disabled = total === 0;
     verifyBtn.disabled = shapes.length === 0;
     compareBtn.disabled = shapes.length === 0;
     clearBtn.disabled = shapes.length === 0;
     undoBtn.disabled = historyIndex <= 0;
     redoBtn.disabled = historyIndex >= history.length - 1;
-    scanBtn.disabled = !hasImage || busy;
+    scanBtn.disabled = !hasDoc || busy;
     updateSizeButton();
+    updatePageChrome();
     if (shapes.length === 0) {
       compare = false;
       compareBtn.setAttribute('aria-pressed', 'false');
@@ -202,13 +328,14 @@ function setup(editor: HTMLElement) {
     history = history.slice(0, historyIndex + 1);
     history.push(cloneShapes());
     historyIndex = history.length - 1;
+    syncPageState();
     clearVerifyStatus();
     refreshChrome();
     if (!sizePanel.hidden) scheduleMeasure();
   }
 
   function scheduleRender(): void {
-    if (!hasImage || raf) return;
+    if (!hasDoc || raf) return;
     raf = requestAnimationFrame(() => {
       raf = 0;
       render();
@@ -217,7 +344,11 @@ function setup(editor: HTMLElement) {
   }
 
   function render(): void {
-    if (!hasImage) return;
+    if (!hasDoc) return;
+    if (docKind === 'pdf') {
+      void renderPageView(pageIndex);
+      return;
+    }
     renderScene({
       canvas,
       source: baseCanvas,
@@ -273,8 +404,23 @@ function setup(editor: HTMLElement) {
     return null;
   }
 
-  function pointFromEvent(event: { clientX: number; clientY: number }): { x: number; y: number } {
-    const rect = canvas.getBoundingClientRect();
+  function activeDisplay(): HTMLCanvasElement {
+    if (docKind === 'pdf') {
+      return pages[pageIndex]?.display ?? canvas;
+    }
+    return canvas;
+  }
+
+  function interactionSurface(): HTMLElement {
+    if (docKind === 'pdf') return pages[pageIndex]?.sheet ?? frame;
+    return frame;
+  }
+
+  function pointFromEvent(
+    event: { clientX: number; clientY: number },
+    target: HTMLCanvasElement = activeDisplay()
+  ): { x: number; y: number } {
+    const rect = target.getBoundingClientRect();
     if (!rect.width || !rect.height) return { x: 0, y: 0 };
     return {
       x: clamp(((event.clientX - rect.left) / rect.width) * baseCanvas.width, 0, baseCanvas.width),
@@ -330,6 +476,7 @@ function setup(editor: HTMLElement) {
     selectedId = null;
     clearVerifyStatus();
     setCompare(false);
+    syncPageState();
     refreshChrome();
     scheduleRender();
   }
@@ -341,6 +488,7 @@ function setup(editor: HTMLElement) {
     selectedId = null;
     clearVerifyStatus();
     setCompare(false);
+    syncPageState();
     refreshChrome();
     scheduleRender();
   }
@@ -360,24 +508,31 @@ function setup(editor: HTMLElement) {
     if (!shapes.length) return;
     if (clearBtn.dataset.armed !== 'true') {
       clearBtn.dataset.armed = 'true';
-      clearBtn.setAttribute('aria-label', 'Click again to clear all redactions');
-      toast(`Click clear again to remove all ${shapes.length} redaction${shapes.length === 1 ? '' : 's'}.`);
+      clearBtn.setAttribute(
+        'aria-label',
+        docKind === 'pdf' ? 'Click again to clear this page' : 'Click again to clear all redactions'
+      );
+      toast(
+        `Click clear again to remove all ${shapes.length} redaction${shapes.length === 1 ? '' : 's'}${
+          docKind === 'pdf' ? ' on this page' : ''
+        }.`
+      );
       window.clearTimeout(clearTimer);
       clearTimer = window.setTimeout(() => {
         delete clearBtn.dataset.armed;
-        clearBtn.setAttribute('aria-label', 'Clear all redactions');
+        clearBtn.setAttribute('aria-label', clearLabel());
       }, 3500);
       return;
     }
     delete clearBtn.dataset.armed;
-    clearBtn.setAttribute('aria-label', 'Clear all redactions');
+    clearBtn.setAttribute('aria-label', clearLabel());
     shapes = [];
     selectedId = null;
     selection.hidden = true;
     commitHistory();
     setCompare(false);
     scheduleRender();
-    toast('All redactions cleared.');
+    toast(docKind === 'pdf' ? 'All redactions on this page cleared.' : 'All redactions cleared.');
   }
 
   function statusLabel(count: number): string {
@@ -478,7 +633,7 @@ function setup(editor: HTMLElement) {
   }
 
   async function runScan(nextMode: 'scan' | 'verify'): Promise<void> {
-    if (!hasImage || busy) return;
+    if (!hasDoc || busy) return;
     if (nextMode === 'verify' && shapes.length === 0) {
       toast('Add at least one redaction before running a verification scan.');
       return;
@@ -509,10 +664,11 @@ function setup(editor: HTMLElement) {
 
       if (nextMode === 'verify') {
         const remaining = result.filter((finding) => finding.sensitive);
+        const scope = docKind === 'pdf' ? ` on page ${pageIndex + 1}` : '';
         if (remaining.length === 0) {
           setVerifyStatus('ok', 'No readable PII found');
           removeFindingUI();
-          toast('Verified. The flattened image has no readable PII. Always give it a final look.');
+          toast(`Verified${scope}. No readable PII found. Always give it a final look.`);
           return;
         }
 
@@ -525,7 +681,7 @@ function setup(editor: HTMLElement) {
         updateBanner();
         setVerifyStatus('warn', `${remaining.length} readable detail${remaining.length === 1 ? '' : 's'} remain`);
         toast(
-          `${remaining.length} readable detail${remaining.length === 1 ? '' : 's'} still remain. Add another box or redact them below.`
+          `${remaining.length} readable detail${remaining.length === 1 ? '' : 's'} still remain${scope}. Add another box or redact them below.`
         );
         return;
       }
@@ -640,7 +796,7 @@ function setup(editor: HTMLElement) {
   }
 
   async function measureExport(): Promise<void> {
-    if (!hasImage) return;
+    if (!hasDoc || docKind !== 'image') return;
     const type = formatSelect.value;
     try {
       const baseline = await toBlob(renderFullScene(type), type, 0.92);
@@ -667,6 +823,7 @@ function setup(editor: HTMLElement) {
   }
 
   function toggleSizePanel(force?: boolean): void {
+    if (docKind === 'pdf') return;
     const open = force ?? sizePanel.hidden;
     sizePanel.hidden = !open;
     sizeBtn.setAttribute('aria-expanded', String(open));
@@ -685,7 +842,114 @@ function setup(editor: HTMLElement) {
     return cleaned || 'image';
   }
 
+  function saveBlob(blob: Blob, filename: string): void {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1200);
+  }
+
+  /**
+   * Flattens every PDF page into an image and assembles a fresh document.
+   * Pages that were never opened are still rasterized, so no page keeps an
+   * original text layer or hidden object.
+   */
+  async function downloadPdf(): Promise<void> {
+    if (!pdfDoc) return;
+    syncPageState();
+    const total = totalRedactions();
+    if (total === 0) {
+      toast('Add at least one redaction before downloading.');
+      return;
+    }
+
+    setBusy(
+      true,
+      'Flattening every page on your device…',
+      4,
+      'PDF pages are rendered locally. The original file is never uploaded.'
+    );
+    downloadBtn.disabled = true;
+    updatePageChrome();
+
+    try {
+      const rendered: PdfImagePage[] = [];
+      for (let index = 0; index < pages.length; index += 1) {
+        const progress = 4 + (index / pages.length) * 88;
+        setBusy(
+          true,
+          `Flattening page ${index + 1} of ${pages.length}…`,
+          progress,
+          'PDF pages are rendered locally. The original file is never uploaded.'
+        );
+
+        const page = await pdfDoc.getPage(index + 1);
+        const base = page.getViewport({ scale: 1 });
+        const exportScale = pageScale(
+          { width: base.width, height: base.height },
+          PDF_EXPORT_MAX_EDGE,
+          PDF_EXPORT_SCALE
+        );
+
+        const source = document.createElement('canvas');
+        await renderPdfPage(page, source, exportScale);
+
+        const state = pages[index];
+        const factor = state.viewScale > 0 ? exportScale / state.viewScale : 1;
+        const scaledShapes = state.shapes.map((shape) => ({
+          ...shape,
+          x: shape.x * factor,
+          y: shape.y * factor,
+          w: shape.w * factor,
+          h: shape.h * factor,
+        }));
+
+        const output = document.createElement('canvas');
+        renderScene({
+          canvas: output,
+          source,
+          width: source.width,
+          height: source.height,
+          shapes: scaledShapes,
+          background: '#ffffff',
+        });
+
+        rendered.push({
+          data: await canvasToJpeg(output, 0.92),
+          width: base.width,
+          height: base.height,
+        });
+      }
+
+      setBusy(
+        true,
+        'Assembling the redacted PDF…',
+        94,
+        'PDF pages are rendered locally. The original file is never uploaded.'
+      );
+      const blob = await buildPdf(rendered);
+      saveBlob(blob, `${baseName()}-redacted.pdf`);
+      toast(
+        `Downloaded a flattened PDF (${formatBytes(blob.size)}). The original text layer, links, and metadata are gone.`
+      );
+    } catch (error) {
+      console.error(error);
+      toast('The PDF could not be exported. Try reopening the file, or use a smaller PDF.');
+    } finally {
+      setBusy(false);
+      refreshChrome();
+    }
+  }
+
   async function download(): Promise<void> {
+    if (docKind === 'pdf') {
+      await downloadPdf();
+      return;
+    }
     if (shapes.length === 0) {
       toast('Add at least one redaction before downloading.');
       return;
@@ -695,14 +959,7 @@ function setup(editor: HTMLElement) {
       const extension = type === 'image/jpeg' ? 'jpg' : type === 'image/webp' ? 'webp' : 'png';
       const output = exportCanvas(type);
       const blob = await toBlob(output, type, reduceQuality);
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${baseName()}-redacted.${extension}`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1200);
+      saveBlob(blob, `${baseName()}-redacted.${extension}`);
       const reduced = sizeSettingsActive() ? ` (${formatBytes(blob.size)}, reduced)` : '';
       toast(`Downloaded${reduced}. EXIF, GPS, and other metadata are stripped.`);
     } catch (error) {
@@ -740,6 +997,323 @@ function setup(editor: HTMLElement) {
     });
   }
 
+  function teardownPdfView(): void {
+    pdfGeneration += 1;
+    pdfObserver?.disconnect();
+    pdfObserver = null;
+    window.clearTimeout(releaseTimer);
+    releaseTimer = 0;
+    if (scrollRaf) {
+      cancelAnimationFrame(scrollRaf);
+      scrollRaf = 0;
+    }
+    pdfStack.replaceChildren();
+    pdfScroll.hidden = true;
+    pdfScroll.scrollTop = 0;
+    pages.forEach((page) => {
+      page.source = null;
+      page.display = null;
+      page.sheet = null;
+      page.rendered = false;
+      page.renderPromise = null;
+    });
+  }
+
+  function mountOverlay(sheet: HTMLElement | null): void {
+    const parent = sheet ?? frame;
+    if (overlay.parentElement !== parent) parent.appendChild(overlay);
+  }
+
+  function resetDocumentState(pageCount: number, kind: 'image' | 'pdf'): void {
+    if (kind === 'image' && pdfDoc) {
+      void pdfDestroy?.().catch((error) => console.error(error));
+      pdfDoc = null;
+      pdfDestroy = null;
+    }
+
+    // Release the old stack before replacing the page state it points at.
+    teardownPdfView();
+    docKind = kind;
+    pageIndex = 0;
+    pages = Array.from({ length: Math.max(1, pageCount) }, () => createPageState());
+    baseCanvas = imageCanvas;
+    shapes = pages[0].shapes;
+    history = pages[0].history;
+    historyIndex = 0;
+    selectedId = null;
+    nextId = 1;
+    compare = false;
+    compareBtn.setAttribute('aria-pressed', 'false');
+    originalBadge.hidden = true;
+    overlay.style.visibility = '';
+    draft = null;
+    drag = null;
+    ghost.hidden = true;
+    selection.hidden = true;
+    frame.hidden = kind === 'pdf';
+    pdfScroll.hidden = kind !== 'pdf';
+    if (kind === 'image') mountOverlay(null);
+    window.clearTimeout(clearTimer);
+    delete clearBtn.dataset.armed;
+    clearBtn.setAttribute('aria-label', clearLabel());
+    hasDoc = true;
+    removeFindingUI();
+    clearVerifyStatus();
+    if (!sizePanel.hidden) {
+      sizePanel.hidden = true;
+      sizeBtn.setAttribute('aria-expanded', 'false');
+    }
+    setBusy(false);
+
+    if (kind === 'pdf') {
+      pageStatus.textContent = `Page 1 of ${pages.length}`;
+    }
+  }
+
+  async function setupPdfView(doc: PDFDocumentProxy): Promise<void> {
+    const generation = pdfGeneration;
+    pdfStack.replaceChildren();
+
+    for (let index = 0; index < pages.length; index += 1) {
+      const page = await doc.getPage(index + 1);
+      if (generation !== pdfGeneration) return;
+      if (busy) {
+        setBusy(
+          true,
+          `Preparing page ${index + 1} of ${pages.length}…`,
+          8 + (index / pages.length) * 10,
+          'PDF pages are rendered locally. The file is never uploaded.'
+        );
+      }
+      const base = page.getViewport({ scale: 1 });
+      const state = pages[index];
+      state.pageWidth = base.width;
+      state.pageHeight = base.height;
+
+      const sheet = document.createElement('div');
+      sheet.className = 'pdf-page';
+      sheet.dataset.page = String(index);
+      sheet.dataset.loading = 'true';
+      sheet.style.aspectRatio = `${base.width} / ${base.height}`;
+      sheet.setAttribute('role', 'group');
+      sheet.setAttribute('aria-label', `PDF page ${index + 1} of ${pages.length}`);
+
+      const display = document.createElement('canvas');
+      display.width = 1;
+      display.height = 1;
+      display.tabIndex = -1;
+      display.setAttribute(
+        'aria-label',
+        `Redaction canvas for PDF page ${index + 1} of ${pages.length}. Draw a box to hide something.`
+      );
+      display.setAttribute('aria-describedby', 'canvas-help');
+      display.addEventListener('pointerdown', (event) => beginPointer(event, display, index));
+
+      const label = document.createElement('span');
+      label.className = 'pdf-page-number';
+      label.textContent = `${index + 1} / ${pages.length}`;
+      label.setAttribute('aria-hidden', 'true');
+
+      sheet.append(display, label);
+      state.sheet = sheet;
+      state.display = display;
+      pdfStack.appendChild(sheet);
+    }
+
+    if (generation !== pdfGeneration) return;
+
+    pdfObserver = new IntersectionObserver(
+      (entries) => {
+        if (generation !== pdfGeneration) return;
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const index = Number((entry.target as HTMLElement).dataset.page);
+          if (Number.isInteger(index)) void renderPageView(index);
+        }
+      },
+      { root: pdfScroll, rootMargin: '900px 0px' }
+    );
+    pages.forEach((state) => {
+      if (state.sheet) pdfObserver?.observe(state.sheet);
+    });
+  }
+
+  async function ensurePageSource(index: number): Promise<boolean> {
+    const state = pages[index];
+    if (!state || !pdfDoc) return false;
+    if (state.source) return true;
+    if (state.renderPromise) {
+      await state.renderPromise;
+      return Boolean(state.source);
+    }
+
+    const generation = pdfGeneration;
+    const doc = pdfDoc;
+    state.renderPromise = (async () => {
+      const page = await doc.getPage(index + 1);
+      if (generation !== pdfGeneration) return;
+      const base = page.getViewport({ scale: 1 });
+      const scale = pageScale({ width: base.width, height: base.height }, PDF_EDIT_MAX_EDGE);
+      const source = document.createElement('canvas');
+      await renderPdfPage(page, source, scale);
+      if (generation !== pdfGeneration) return;
+      state.source = source;
+      state.viewScale = scale;
+      state.pageWidth = base.width;
+      state.pageHeight = base.height;
+    })();
+
+    try {
+      await state.renderPromise;
+    } finally {
+      state.renderPromise = null;
+    }
+    return Boolean(state.source);
+  }
+
+  function paintPage(index: number): boolean {
+    const state = pages[index];
+    if (!state?.source || !state.display) return false;
+    renderScene({
+      canvas: state.display,
+      source: state.source,
+      width: state.source.width,
+      height: state.source.height,
+      shapes: compare && index === pageIndex ? [] : state.shapes,
+    });
+    state.rendered = true;
+    state.sheet?.removeAttribute('data-loading');
+    return true;
+  }
+
+  async function renderPageView(index: number): Promise<void> {
+    const state = pages[index];
+    if (!state || docKind !== 'pdf' || !pdfDoc) return;
+    const generation = pdfGeneration;
+
+    try {
+      if (!(await ensurePageSource(index))) return;
+      if (generation !== pdfGeneration) return;
+      if (!paintPage(index)) return;
+
+      if (index === pageIndex) {
+        baseCanvas = state.source ?? baseCanvas;
+        updateSelection();
+      } else if (!busy && nearestPageIndex() === index) {
+        // Scrolling can outrun the lazy render. Activate the page as soon as its
+        // pixels are ready so drawing always targets what is in view.
+        activatePage(index);
+      }
+    } catch (error) {
+      console.error(error);
+      state.sheet?.removeAttribute('data-loading');
+    }
+  }
+
+  function nearestPageIndex(): number {
+    const viewport = pdfScroll.getBoundingClientRect();
+    if (!viewport.height) return pageIndex;
+    const anchor = viewport.top + viewport.height * 0.4;
+    let nearest = pageIndex;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+
+    for (let index = 0; index < pages.length; index += 1) {
+      const sheet = pages[index].sheet;
+      if (!sheet) continue;
+      const rect = sheet.getBoundingClientRect();
+      if (rect.top <= anchor && rect.bottom >= anchor) return index;
+      const distance = Math.min(Math.abs(rect.top - anchor), Math.abs(rect.bottom - anchor));
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearest = index;
+      }
+    }
+    return nearest;
+  }
+
+  function activatePage(next: number, force = false): boolean {
+    if (!hasDoc || docKind !== 'pdf' || !pages[next]) return false;
+    if (!force && next === pageIndex) return true;
+
+    const state = pages[next];
+    if (!state.source) {
+      void renderPageView(next);
+      return false;
+    }
+
+    if (next !== pageIndex) {
+      syncPageState();
+      draft = null;
+      drag = null;
+      ghost.hidden = true;
+      selection.hidden = true;
+      frame.classList.remove('is-moving', 'is-resizing');
+      pages[pageIndex]?.sheet?.classList.remove('is-moving', 'is-resizing');
+      window.clearTimeout(clearTimer);
+      delete clearBtn.dataset.armed;
+      clearBtn.setAttribute('aria-label', clearLabel());
+      removeFindingUI();
+      clearVerifyStatus();
+      compare = false;
+      compareBtn.setAttribute('aria-pressed', 'false');
+      originalBadge.hidden = true;
+      overlay.style.visibility = '';
+      // Make sure the page we are leaving keeps its final pixels even if a
+      // scheduled frame had not painted the last committed change yet.
+      paintPage(pageIndex);
+    }
+
+    pageIndex = next;
+    baseCanvas = state.source;
+    shapes = state.shapes;
+    history = state.history;
+    historyIndex = state.historyIndex;
+    selectedId = null;
+    selection.hidden = true;
+    mountOverlay(state.sheet);
+    updateSelection();
+    pageStatus.textContent = `Page ${next + 1} of ${pages.length}`;
+    refreshChrome();
+    if (!state.rendered) void renderPageView(next);
+    return true;
+  }
+
+  function handlePdfScroll(): void {
+    if (docKind !== 'pdf' || busy || scrollRaf) return;
+    scrollRaf = requestAnimationFrame(() => {
+      scrollRaf = 0;
+      if (docKind !== 'pdf' || busy) return;
+
+      const next = nearestPageIndex();
+      if (next !== pageIndex) {
+        if (!activatePage(next)) void renderPageView(next);
+      }
+
+      window.clearTimeout(releaseTimer);
+      releaseTimer = window.setTimeout(releaseFarPages, 420);
+    });
+  }
+
+  function releaseFarPages(): void {
+    if (docKind !== 'pdf' || busy) return;
+    const viewport = pdfScroll.getBoundingClientRect();
+    const margin = Math.max(1200, viewport.height * 2.5);
+
+    pages.forEach((state, index) => {
+      if (index === pageIndex || !state.rendered || !state.sheet) return;
+      const rect = state.sheet.getBoundingClientRect();
+      if (rect.bottom > viewport.top - margin && rect.top < viewport.bottom + margin) return;
+
+      state.source = null;
+      state.rendered = false;
+      if (state.display) {
+        state.display.width = 1;
+        state.display.height = 1;
+      }
+      state.sheet.dataset.loading = 'true';
+    });
+  }
+
   function applyImage(image: HTMLImageElement, name: string): void {
     const naturalWidth = image.naturalWidth || image.width;
     const naturalHeight = image.naturalHeight || image.height;
@@ -752,9 +1326,10 @@ function setup(editor: HTMLElement) {
     const width = Math.max(1, Math.round(naturalWidth * scale));
     const height = Math.max(1, Math.round(naturalHeight * scale));
 
-    baseCanvas.width = width;
-    baseCanvas.height = height;
-    const context = baseCanvas.getContext('2d');
+    imageCanvas.width = width;
+    imageCanvas.height = height;
+    baseCanvas = imageCanvas;
+    const context = imageCanvas.getContext('2d');
     if (!context) {
       toast('Canvas is unavailable in this browser.');
       return;
@@ -767,24 +1342,8 @@ function setup(editor: HTMLElement) {
     canvas.width = width;
     canvas.height = height;
 
-    hasImage = true;
     imageName = name;
-    shapes = [];
-    selectedId = null;
-    nextId = 1;
-    history = [[]];
-    historyIndex = 0;
-    compare = false;
-    compareBtn.setAttribute('aria-pressed', 'false');
-    originalBadge.hidden = true;
-    overlay.style.visibility = '';
-    draft = null;
-    drag = null;
-    ghost.hidden = true;
-    selection.hidden = true;
-    removeFindingUI();
-    clearVerifyStatus();
-    setBusy(false);
+    resetDocumentState(1, 'image');
 
     filenameEl.textContent = name;
     filenameEl.title = name;
@@ -801,12 +1360,95 @@ function setup(editor: HTMLElement) {
     toast('Image loaded. It never left your device.');
   }
 
-  async function loadFile(file: File): Promise<void> {
-    if (!/^image\/(png|jpeg|webp|gif|bmp|avif)$/i.test(file.type)) {
-      toast('Use a PNG, JPG, WebP, GIF, BMP, or AVIF image.');
+  async function loadPdfBlob(blob: Blob, name: string): Promise<void> {
+    if (blob.size > MAX_PDF_BYTES) {
+      toast('That PDF is larger than 50 MB. Try a smaller file or split it first.');
       return;
     }
-    if (file.size > 25 * 1024 * 1024) {
+
+    setBusy(
+      true,
+      'Opening the PDF on your device…',
+      6,
+      'The PDF is parsed locally. Nothing is uploaded.'
+    );
+
+    let opened: OpenedPdf | null = null;
+    try {
+      opened = await openPdf(new Uint8Array(await blob.arrayBuffer()));
+      const doc = opened.document;
+      if (doc.numPages > MAX_PDF_PAGES) {
+        toast(
+          `That PDF has ${doc.numPages} pages. The editor handles up to ${MAX_PDF_PAGES} at a time.`
+        );
+        await opened.destroy();
+        opened = null;
+        return;
+      }
+
+      const previousDestroy = pdfDestroy;
+      pdfDoc = doc;
+      pdfDestroy = opened.destroy;
+      opened = null;
+      if (previousDestroy) {
+        void previousDestroy().catch((error) => console.error(error));
+      }
+
+      resetDocumentState(doc.numPages, 'pdf');
+      imageName = name || 'document.pdf';
+      filenameEl.textContent = imageName;
+      filenameEl.title = imageName;
+      sizeEl.textContent = `${doc.numPages} page${doc.numPages === 1 ? '' : 's'}`;
+      sizeEl.title = 'Every page is flattened on export.';
+      dropzone.hidden = true;
+      workspace.hidden = false;
+
+      await setupPdfView(doc);
+      setBusy(
+        true,
+        `Rendering page 1 of ${doc.numPages}…`,
+        20,
+        'PDF pages are rendered locally. The file is never uploaded.'
+      );
+      await renderPageView(0);
+      activatePage(0, true);
+      pdfScroll.scrollTop = 0;
+      refreshChrome();
+      toast(
+        `PDF loaded: ${doc.numPages} page${doc.numPages === 1 ? '' : 's'}. It never left your device.`
+      );
+    } catch (error) {
+      console.error(error);
+      if (opened) {
+        await opened.destroy();
+        opened = null;
+      }
+      const reason =
+        error instanceof Error && /password/i.test(error.message)
+          ? 'That PDF is password-protected. Remove the password, then try again.'
+          : 'That PDF could not be opened. Check that it is a valid, unencrypted PDF.';
+      toast(reason);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function loadPdfFile(file: File): Promise<void> {
+    await loadPdfBlob(file, file.name || 'document.pdf');
+  }
+
+  async function loadFile(file: File): Promise<void> {
+    const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+    if (isPdf) {
+      await loadPdfFile(file);
+      return;
+    }
+
+    if (!/^image\/(png|jpeg|webp|gif|bmp|avif)$/i.test(file.type)) {
+      toast('Use an image (PNG, JPG, WebP, GIF, BMP, AVIF) or a PDF.');
+      return;
+    }
+    if (file.size > MAX_IMAGE_BYTES) {
       toast('That image is larger than 25 MB. Try a smaller file.');
       return;
     }
@@ -814,11 +1456,12 @@ function setup(editor: HTMLElement) {
     const url = URL.createObjectURL(file);
     try {
       const image = await loadImage(url);
-      if (hasImage) {
-        toast('Replaced the previous image. Redactions were reset.');
+      if (hasDoc) {
+        toast('Replaced the previous document. Redactions were reset.');
       }
       applyImage(image, file.name || 'screenshot.png');
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast('That file could not be read as an image. Try a PNG or JPG.');
     } finally {
       URL.revokeObjectURL(url);
@@ -827,20 +1470,33 @@ function setup(editor: HTMLElement) {
 
   async function loadSample(source: string, name: string): Promise<void> {
     try {
+      if (/\.pdf($|\?)/i.test(source)) {
+        const response = await fetch(source);
+        if (!response.ok) throw new Error('Sample PDF could not be fetched');
+        if (hasDoc) {
+          toast('Replaced the previous document. Redactions were reset.');
+        }
+        await loadPdfBlob(await response.blob(), name);
+        return;
+      }
+
       const image = await loadImage(source);
-      if (hasImage) {
-        toast('Replaced the previous image. Redactions were reset.');
+      if (hasDoc) {
+        toast('Replaced the previous document. Redactions were reset.');
       }
       applyImage(image, name);
     } catch {
-      toast('The sample could not load. Try choosing your own image.');
+      toast('The sample could not load. Try choosing your own file.');
     }
   }
 
-  function findImageFile(items: DataTransferItemList | null): File | null {
+  function findFile(items: DataTransferItemList | null): File | null {
     if (!items) return null;
     for (const item of Array.from(items)) {
-      if (item.kind === 'file' && item.type.startsWith('image/')) {
+      if (
+        item.kind === 'file' &&
+        (item.type.startsWith('image/') || item.type === 'application/pdf')
+      ) {
         return item.getAsFile();
       }
     }
@@ -882,6 +1538,8 @@ function setup(editor: HTMLElement) {
     fileInput.value = '';
     if (file) void loadFile(file);
   });
+
+  pdfScroll.addEventListener('scroll', handlePdfScroll, { passive: true });
 
   editor.querySelectorAll<HTMLButtonElement>('[data-sample]').forEach((button) => {
     button.addEventListener('click', async () => {
@@ -927,14 +1585,29 @@ function setup(editor: HTMLElement) {
     deleteSelected();
   });
 
-  canvas.addEventListener('pointerdown', (event) => {
-    if (!hasImage || busy) return;
+  function beginPointer(
+    event: PointerEvent,
+    target: HTMLCanvasElement,
+    pageHint?: number
+  ): void {
+    if (!hasDoc || busy) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+    if (pageHint !== undefined && pageHint !== pageIndex) {
+      // A click on a page activates it first, so undo, clear, and verify always
+      // act on the page the person is looking at.
+      if (!pages[pageHint]?.source) {
+        void renderPageView(pageHint);
+        return;
+      }
+      if (!activatePage(pageHint)) return;
+    }
+
     event.preventDefault();
-    canvas.focus({ preventScroll: true });
+    target.focus({ preventScroll: true });
     setCompare(false);
 
-    const point = pointFromEvent(event);
+    const point = pointFromEvent(event, target);
     const hit = event.altKey ? null : hitTest(point.x, point.y);
 
     if (hit) {
@@ -947,7 +1620,7 @@ function setup(editor: HTMLElement) {
         orig: { ...hit },
         moved: false,
       };
-      frame.classList.add('is-moving');
+      interactionSurface().classList.add('is-moving');
       return;
     }
 
@@ -962,7 +1635,9 @@ function setup(editor: HTMLElement) {
       currentY: point.y,
     };
     updateGhost();
-  });
+  }
+
+  canvas.addEventListener('pointerdown', (event) => beginPointer(event, canvas));
 
   editor.querySelectorAll<HTMLElement>('[data-handle]').forEach((handle) => {
     handle.addEventListener('pointerdown', (event) => {
@@ -980,7 +1655,7 @@ function setup(editor: HTMLElement) {
         orig: { ...shape },
         moved: false,
       };
-      frame.classList.add('is-resizing');
+      interactionSurface().classList.add('is-resizing');
     });
   });
 
@@ -1033,7 +1708,7 @@ function setup(editor: HTMLElement) {
     if (!drag) return;
     const finished = drag;
     drag = null;
-    frame.classList.remove('is-moving', 'is-resizing');
+    interactionSurface().classList.remove('is-moving', 'is-resizing');
     ghost.hidden = true;
 
     if (finished.type === 'draw') {
@@ -1075,11 +1750,11 @@ function setup(editor: HTMLElement) {
     if (!editorInView()) return;
     const target = event.target as HTMLElement | null;
     if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;
-    const file = findImageFile(event.clipboardData?.items ?? null);
+    const file = findFile(event.clipboardData?.items ?? null);
     if (!file) return;
     event.preventDefault();
-    if (hasImage) {
-      toast('You already have an image open. Use Replace image to swap it.');
+    if (hasDoc) {
+      toast('You already have a file open. Use Replace file to swap it.');
       return;
     }
     void loadFile(file);
@@ -1087,7 +1762,7 @@ function setup(editor: HTMLElement) {
 
   ['dragenter', 'dragover'].forEach((type) => {
     dropzone.addEventListener(type, (event) => {
-      if (hasImage) return;
+      if (hasDoc) return;
       event.preventDefault();
       dropzone.classList.add('is-dragging');
       if (event instanceof DragEvent && event.dataTransfer) {
@@ -1105,8 +1780,8 @@ function setup(editor: HTMLElement) {
   dropzone.addEventListener('drop', (event) => {
     event.preventDefault();
     dropzone.classList.remove('is-dragging');
-    if (hasImage) {
-      toast('You already have an image open. Use Replace image to swap it.');
+    if (hasDoc) {
+      toast('You already have a file open. Use Replace file to swap it.');
       return;
     }
     const file = event.dataTransfer?.files?.[0];
@@ -1116,19 +1791,19 @@ function setup(editor: HTMLElement) {
   window.addEventListener('dragover', (event) => {
     if (!editorInView()) return;
     event.preventDefault();
-    if (event.dataTransfer) event.dataTransfer.dropEffect = hasImage ? 'none' : 'copy';
+    if (event.dataTransfer) event.dataTransfer.dropEffect = hasDoc ? 'none' : 'copy';
   });
 
   window.addEventListener('drop', (event) => {
     if (!editorInView()) return;
     event.preventDefault();
-    if (hasImage) {
-      toast('You already have an image open. Use Replace image to swap it.');
+    if (hasDoc) {
+      toast('You already have a file open. Use Replace file to swap it.');
     }
   });
 
   document.addEventListener('keydown', (event) => {
-    if (!hasImage || !editorInView()) return;
+    if (!hasDoc || !editorInView()) return;
     const target = event.target as HTMLElement | null;
     if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;
     const modifier = event.metaKey || event.ctrlKey;
@@ -1150,7 +1825,7 @@ function setup(editor: HTMLElement) {
       draft = null;
       ghost.hidden = true;
       drag = null;
-      frame.classList.remove('is-moving', 'is-resizing');
+      interactionSurface().classList.remove('is-moving', 'is-resizing');
       return;
     }
     if (event.key === 'Delete' || event.key === 'Backspace') {

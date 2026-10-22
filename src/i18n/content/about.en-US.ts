@@ -4,8 +4,8 @@ export const aboutEnUS: AboutContent = {
   meta: {
     title: 'About — Redact',
     description:
-      'Why Redact exists: a free, browser-based redaction tool built so the screenshot you are trying to protect never has to be uploaded to protect it.',
-    keywords: ['about redact', 'private image redaction', 'browser based redaction tool'],
+      'Why Redact exists: a free, browser-based redaction tool built so the image or PDF you are trying to protect never has to be uploaded to protect it.',
+    keywords: ['about redact', 'private image redaction', 'private pdf redaction', 'browser based redaction tool'],
   },
   hero: {
     eyebrow: 'About',
@@ -15,7 +15,7 @@ export const aboutEnUS: AboutContent = {
     secondaryCta: 'Contact us',
   },
   stats: [
-    { value: '0', label: 'Images uploaded' },
+    { value: '0', label: 'Files uploaded' },
     { value: '0', label: 'Accounts required' },
     { value: '0', label: 'Trackers or analytics' },
     { value: '100%', label: 'Processing in your browser' },
@@ -26,7 +26,7 @@ export const aboutEnUS: AboutContent = {
     paragraphs: [
       'Screenshots are how work gets explained now — a support thread, a receipt, an ID, a dashboard, a chat with a delivery address in it. The detail that makes the screenshot useful is often the same detail that should not travel with it.',
       'Most redaction tools start by asking you to upload the exact file you are trying to protect. That never sat right. A tool that removes sensitive details should not collect them first, and a promise to delete the copy tomorrow is still a copy today.',
-      'Redact flips the order. Your browser decodes the image, draws it to a local canvas, and bakes the redactions into a new file. There is no upload endpoint. Smart detection downloads an OCR engine and an English model, but your image is not part of that request.',
+      'Redact flips the order. Your browser decodes the image — or renders each PDF page — draws it to a local canvas, and bakes the redactions into a new file. There is no upload endpoint. Smart detection downloads an OCR engine and an English model, and the PDF engine is self-hosted, but your file is not part of those requests.',
     ],
     emphasis:
       'We are not anti-cloud. We are against the unnecessary step in the middle. When the browser can do the job, the safest place for the file is the place it already is.',
@@ -71,25 +71,25 @@ export const aboutEnUS: AboutContent = {
   how: {
     eyebrow: 'How it works',
     title: 'Three steps, none of them a server.',
-    copy: 'The whole workflow fits in one tab. The only optional download is the OCR engine used by Smart detect.',
+    copy: 'The whole workflow fits in one tab. The only optional downloads are the OCR engine used by Smart detect and the PDF engine used for PDFs.',
     cta: 'See the data flow',
     steps: [
       {
         number: '01',
         title: 'Drop or paste a file',
-        copy: 'The browser reads the image locally. PNG, JPG, WebP, GIF, BMP, and AVIF are supported.',
+        copy: 'The browser reads the image or PDF locally. PNG, JPG, WebP, GIF, BMP, AVIF, and PDF up to 100 pages are supported.',
         icon: 'image',
       },
       {
         number: '02',
         title: 'Cover what matters',
-        copy: 'Smart detect suggests likely PII. Draw over faces, codes, and anything the scan misses. Ink is the default.',
+        copy: 'Smart detect suggests likely PII on the current page. Draw over faces, codes, and anything the scan misses. Ink is the default.',
         icon: 'square',
       },
       {
         number: '03',
         title: 'Verify and export',
-        copy: 'Re-scan the flattened image, compare it with the original, then download a metadata-free PNG, JPG, or WebP.',
+        copy: 'Re-scan the flattened result, compare it with the original, then download a metadata-free image or a flattened PDF.',
         icon: 'shield-check',
       },
     ],
@@ -97,12 +97,14 @@ export const aboutEnUS: AboutContent = {
   stack: {
     eyebrow: 'Under the hood',
     title: 'Small stack. No hidden service.',
-    copy: 'The site is static HTML, CSS, and JavaScript. There is no backend that receives images, no analytics SDK, and no advertising code. The pieces that do the work are ordinary web APIs and open-source software.',
-    note: 'Smart detection is the one feature that needs a network request after the page loads. It fetches Tesseract.js and language data; the image stays in the tab.',
+    copy: 'The site is static HTML, CSS, and JavaScript. There is no backend that receives files, no analytics SDK, and no advertising code. The pieces that do the work are ordinary web APIs and open-source software.',
+    note: 'Smart detection and PDF support are the features that fetch extra code after the page loads. They load Tesseract.js, language data, and the self-hosted PDF engine; your file stays in the tab.',
     items: [
       { label: 'Astro', value: 'Static pages and components' },
       { label: 'Canvas API', value: 'Local decoding, redaction, and export' },
       { label: 'Tesseract.js', value: 'Optional OCR in a Web Worker' },
+      { label: 'PDF.js', value: 'Self-hosted local PDF rendering' },
+      { label: 'pdf-lib', value: 'Flattened PDF assembly in the tab' },
       { label: 'Inter', value: 'Self-hosted type, served from this site' },
     ],
   },
@@ -119,8 +121,8 @@ export const aboutEnUS: AboutContent = {
         copy: 'The guides explain practical redaction. They are not a substitute for a lawyer or a data protection officer.',
       },
       {
-        title: 'Not a full image editor',
-        copy: 'There are no layers, text annotations, or batch exports yet. It is a focused tool for covering things.',
+        title: 'Not a full editor',
+        copy: 'There are no layers, text annotations, batch exports, or PDF page reordering yet. It is a focused tool for covering things.',
       },
       {
         title: 'Not infallible',
@@ -133,8 +135,8 @@ export const aboutEnUS: AboutContent = {
   cta: {
     eyebrow: 'Use it for what it is',
     title: 'Share the screenshot. Not the secrets.',
-    copy: 'The editor is free, local, and open to inspection. Load an image, cover what should not travel with it, and check the export before you send it.',
-    primary: 'Redact an image',
+    copy: 'The editor is free, local, and open to inspection. Load an image or PDF, cover what should not travel with it, and check the export before you send it.',
+    primary: 'Redact a file',
     secondary: 'Talk to us',
     secondaryHref: '/contact',
   },

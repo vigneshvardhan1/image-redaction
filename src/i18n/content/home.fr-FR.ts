@@ -2,12 +2,14 @@ import type { HomeContent } from './types';
 
 export const homeFrFR: HomeContent = {
   meta: {
-    title: 'Outil de caviardage d’images — Gratuit, privé, en ligne | Redact',
+    title: 'Outil de caviardage d’images et de PDF — Gratuit, privé, en ligne | Redact',
     description:
-      'Logiciel gratuit de caviardage d’images par IA pour captures d’écran et photos. Masquez noms, e-mails, numéros de carte et adresses sur votre appareil — sans envoi ni compte.',
+      'Logiciel gratuit de caviardage d’images et de PDF. Masquez noms, e-mails, numéros de carte et adresses sur votre appareil — sans envoi ni compte.',
     keywords: [
       'caviardage d’image',
       'caviarder une image',
+      'caviarder un PDF',
+      'caviardage de PDF',
       'logiciel de caviardage',
       'caviardage en ligne',
       'caviardage automatique par IA',
@@ -15,7 +17,7 @@ export const homeFrFR: HomeContent = {
       'anonymiser une capture d’écran',
       'Redact',
     ],
-    ogImageAlt: 'Redact — un outil gratuit de caviardage d’images pour captures d’écran et photos',
+    ogImageAlt: 'Redact — un outil gratuit de caviardage d’images et de PDF',
   },
   useCasesHead: {
     eyebrow: 'Ce que les gens cachent',
@@ -23,10 +25,10 @@ export const homeFrFR: HomeContent = {
     copy: 'Le secret évident est rarement le seul. Choisissez le type d’image que vous êtes sur le point de partager et voyez ce qui doit généralement être couvert.',
   },
   hero: {
-    badge: 'Caviardage d’images, sur votre appareil',
+    badge: 'Caviardage d’images et de PDF, sur votre appareil',
     title: ['Partagez la capture.', 'Pas les secrets.'],
-    lead: 'Caviardage d’images dans votre navigateur : masquez noms, e-mails, numéros de carte et adresses en quelques secondes. La détection intelligente s’exécute sur votre appareil, et chaque export abandonne ses métadonnées.',
-    primaryCta: 'Caviarder une image',
+    lead: 'Caviardez images et PDF dans votre navigateur : masquez noms, e-mails, numéros de carte et adresses en quelques secondes. La détection intelligente s’exécute sur votre appareil, et chaque export abandonne ses métadonnées.',
+    primaryCta: 'Caviarder un fichier',
     secondaryCta: 'Voir comment ça marche',
     proof: ['Gratuit', 'Sans compte', 'Aucun envoi', 'Sans filigrane'],
   },

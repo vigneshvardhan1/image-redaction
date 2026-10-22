@@ -2,11 +2,13 @@ import type { HomeContent } from './types';
 
 export const homeDeDE: HomeContent = {
   meta: {
-    title: 'Bilder schwärzen — kostenlos, privat, online | Redact',
+    title: 'Bilder und PDFs schwärzen — kostenlos, privat, online | Redact',
     description:
-      'Kostenlose KI-Software zum Schwärzen von Bildern, Screenshots und Fotos. Namen, E-Mails, Kartennummern und Adressen direkt auf Ihrem Gerät verbergen — kein Upload, kein Konto.',
+      'Kostenlose Software zum Schwärzen von Bildern, Screenshots, Fotos und PDFs. Namen, E-Mails, Kartennummern und Adressen direkt auf Ihrem Gerät verbergen — kein Upload, kein Konto.',
     keywords: [
       'Bilder schwärzen',
+      'PDF schwärzen',
+      'PDF schwärzen online',
       'Bilder schwärzen Software',
       'Bilder schwärzen mit Redact',
       'Bilder schwärzen online',
@@ -15,7 +17,7 @@ export const homeDeDE: HomeContent = {
       'Screenshot schwärzen',
       'sensible Daten im Bild verbergen',
     ],
-    ogImageAlt: 'Redact — ein kostenloses Werkzeug zum Schwärzen von Screenshots und Fotos',
+    ogImageAlt: 'Redact — ein kostenloses Werkzeug zum Schwärzen von Bildern und PDFs',
   },
   useCasesHead: {
     eyebrow: 'Was Menschen verbergen',
@@ -23,10 +25,10 @@ export const homeDeDE: HomeContent = {
     copy: 'Das offensichtliche Geheimnis ist selten das einzige. Wählen Sie die Art von Bild, die Sie gleich teilen möchten, und sehen Sie, was üblicherweise abgedeckt werden sollte.',
   },
   hero: {
-    badge: 'Bilder schwärzen direkt auf Ihrem Gerät',
+    badge: 'Bilder und PDFs schwärzen, direkt auf Ihrem Gerät',
     title: ['Teilen Sie den Screenshot.', 'Nicht die Geheimnisse.'],
-    lead: 'Bilder schwärzen direkt im Browser: Namen, E-Mails, Kartennummern und Adressen in Sekunden verbergen. Die intelligente Erkennung läuft auf Ihrem Gerät, und jeder Export lässt seine Metadaten zurück.',
-    primaryCta: 'Bild schwärzen',
+    lead: 'Bilder und PDFs direkt im Browser schwärzen: Namen, E-Mails, Kartennummern und Adressen in Sekunden verbergen. Die intelligente Erkennung läuft auf Ihrem Gerät, und jeder Export lässt seine Metadaten zurück.',
+    primaryCta: 'Datei schwärzen',
     secondaryCta: 'So funktioniert es',
     proof: ['Kostenlos', 'Kein Konto', 'Kein Upload', 'Kein Wasserzeichen'],
   },

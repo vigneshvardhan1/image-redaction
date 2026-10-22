@@ -10,7 +10,7 @@ import Icon from './Icon.astro';
         <span class="text-[11px] font-heading leading-none">On-device editor</span>
         <span class="text-[11px] leading-none text-faint" aria-hidden="true">/</span>
         <span data-filename class="max-w-[150px] truncate text-[11px] leading-none text-muted sm:max-w-[260px]">
-          No image open
+          No file open
         </span>
         <span data-image-size class="hidden text-[11px] leading-none text-faint sm:inline"></span>
       </div>
@@ -35,11 +35,11 @@ import Icon from './Icon.astro';
           </div>
 
           <h2 class="mt-6 text-[clamp(1.5rem,3vw,2rem)] leading-[1.1]">
-            Drop a screenshot. Keep the secrets.
+            Drop a screenshot or a PDF. Keep the secrets.
           </h2>
           <p class="mx-auto mt-3 max-w-lg text-[14px] leading-relaxed text-muted">
             Paste with <kbd class="rounded bg-field px-1.5 py-0.5 font-sans text-[11px] font-heading text-ink">Ctrl</kbd>/<kbd class="rounded bg-field px-1.5 py-0.5 font-sans text-[11px] font-heading text-ink">⌘ V</kbd>,
-            drop a file, or choose one. PNG, JPG, WebP, GIF, or BMP up to 25 MB.
+            drop a file, or choose one. Images up to 25 MB; PDFs up to 50 MB and 100 pages.
           </p>
 
           <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
@@ -48,8 +48,8 @@ import Icon from './Icon.astro';
               data-open-file
               class="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-[14px] font-heading text-on-ink transition-colors hover:bg-ink-soft"
             >
-              <Icon name="image" size={16} />
-              Choose an image
+              <Icon name="file" size={16} />
+              Choose a file
             </button>
             <span class="inline-flex items-center gap-1.5 px-2 text-[11px] text-muted">
               <Icon name="lock" size={12} />
@@ -62,18 +62,18 @@ import Icon from './Icon.astro';
             data-file-input
             type="file"
             tabindex="-1"
-            accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,image/avif"
-            aria-label="Choose an image to redact"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,image/avif,application/pdf,.pdf"
+            aria-label="Choose an image or PDF to redact"
           />
 
           <p class="mt-4 text-[11px] text-faint">
-            Your browser reads the file locally. There is no upload endpoint.
+            PNG, JPG, WebP, GIF, BMP, AVIF, or PDF. Your browser reads the file locally. There is no upload endpoint.
           </p>
         </div>
 
         <div class="mx-auto mt-9 max-w-3xl border-t border-hairline-soft pt-5">
           <p class="text-center text-[11px] font-heading text-muted">Or try a sample</p>
-          <div class="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+          <div class="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-5">
             <button
               type="button"
               data-sample="/samples/chat.svg"
@@ -165,6 +165,29 @@ import Icon from './Icon.astro';
                 <span class="text-faint">Sample</span>
               </span>
             </button>
+
+            <button
+              type="button"
+              data-sample="/samples/invoice.pdf"
+              data-sample-name="Invoice PDF"
+              class="group col-span-2 rounded-tile text-left disabled:opacity-50 sm:col-span-1"
+              aria-label="Try the two-page invoice PDF sample"
+            >
+              <span class="block overflow-hidden rounded-tile border border-hairline bg-canvas">
+                <img
+                  src="/samples/invoice-cover.svg"
+                  width="480"
+                  height="320"
+                  alt=""
+                  decoding="async"
+                  class="aspect-[4/3] w-full object-cover transition-transform duration-300 group-hover:scale-[1.025]"
+                />
+              </span>
+              <span class="mt-2 flex items-baseline justify-between gap-2 text-[11px] leading-tight">
+                <span class="font-heading">Invoice</span>
+                <span class="text-faint">2-page PDF</span>
+              </span>
+            </button>
           </div>
         </div>
       </div>
@@ -200,6 +223,16 @@ import Icon from './Icon.astro';
           </button>
         </div>
 
+        <div
+          data-pdf-nav
+          hidden
+          class="flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1.5 text-[11px] font-heading text-ink"
+        >
+          <Icon name="file" size={12} class="text-muted" />
+          <span data-page-indicator>Page 1 / 1</span>
+        </div>
+        <span data-page-status class="sr-only" aria-live="polite"></span>
+
         <div data-emoji-palette hidden class="flex items-center gap-0.5 rounded-full bg-canvas-soft p-1" role="group" aria-label="Sticker">
           <span class="px-1.5 text-[10px] font-heading text-muted">Sticker</span>
           <button type="button" class="grid h-7 w-7 place-items-center rounded-full text-[15px] hover:bg-canvas" data-emoji="😎" aria-pressed="true" aria-label="Use sunglasses emoji">😎</button>
@@ -222,7 +255,7 @@ import Icon from './Icon.astro';
         </button>
 
         <div class="ml-auto flex items-center gap-0.5">
-          <button type="button" class="icon-btn" data-open-file aria-label="Replace image" title="Replace image">
+          <button type="button" class="icon-btn" data-open-file aria-label="Replace file" title="Replace file">
             <Icon name="refresh" size={15} />
           </button>
           <button type="button" class="icon-btn" data-action="undo" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>
@@ -277,7 +310,30 @@ import Icon from './Icon.astro';
         </div>
       </div>
 
+      <div
+        data-pdf-notice
+        hidden
+        class="flex items-start gap-2.5 border-b border-hairline-soft bg-canvas-soft px-3 py-2.5 md:px-4"
+      >
+        <Icon name="info" size={13} class="mt-0.5 shrink-0 text-muted" />
+        <p class="text-[11px] leading-relaxed text-muted">
+          <span class="font-heading text-ink">Flattened on export.</span>
+          Scroll to move between pages. Every page is re-rendered as an image, so the original text layer, links, form fields, and metadata are left behind. Redactions become pixels you cannot peel back.
+        </p>
+      </div>
+
       <div class="canvas-stage relative flex min-h-[300px] items-center justify-center overflow-auto p-4 md:min-h-[420px] md:p-6">
+        <div
+          data-pdf-scroll
+          hidden
+          tabindex="0"
+          role="region"
+          aria-label="PDF pages. Scroll to move between pages."
+          class="pdf-scroll"
+        >
+          <div data-pdf-stack class="pdf-stack"></div>
+        </div>
+
         <div class="canvas-frame" data-canvas-frame>
           <canvas
             data-canvas
@@ -308,9 +364,9 @@ import Icon from './Icon.astro';
         </div>
 
         <p id="canvas-help" class="sr-only">
-          Draw a box on the image to redact it. Choose ink, pixelate, blur, or an emoji sticker
-          from the toolbar. Move or resize a redaction by dragging it. Press Control Z to undo and
-          Delete to remove a selected redaction.
+          Draw a box on a page to redact it. Choose ink, pixelate, blur, or an emoji sticker
+          from the toolbar. Move or resize a redaction by dragging it. Scroll the page stack to
+          move between PDF pages. Press Control Z to undo and Delete to remove a selected redaction.
         </p>
 
         <div
@@ -341,8 +397,8 @@ import Icon from './Icon.astro';
                 style="width:5%"
               ></div>
             </div>
-            <p class="mt-3 text-[11px] leading-relaxed text-muted">
-              OCR runs in your browser. The English model downloads once — your image is never sent.
+            <p data-busy-note class="mt-3 text-[11px] leading-relaxed text-muted">
+              OCR runs in your browser. The English model downloads once — your file is never sent.
             </p>
           </div>
         </div>
@@ -420,9 +476,13 @@ import Icon from './Icon.astro';
             </span>
             <span data-verify-text></span>
           </span>
-          <span class="hidden items-center gap-1 text-[10px] text-muted xl:inline-flex" title="Canvas exports do not carry EXIF, GPS, or camera metadata.">
+          <span
+            data-export-note
+            class="hidden items-center gap-1 text-[10px] text-muted xl:inline-flex"
+            title="Canvas exports do not carry EXIF, GPS, or camera metadata."
+          >
             <Icon name="shield" size={11} />
-            EXIF stripped on export
+            <span data-export-note-text>EXIF stripped on export</span>
           </span>
         </div>
 
@@ -430,6 +490,7 @@ import Icon from './Icon.astro';
           <button
             type="button"
             data-action="size"
+            data-image-only
             aria-expanded="false"
             aria-controls="size-panel"
             class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field"
@@ -438,7 +499,7 @@ import Icon from './Icon.astro';
             <Icon name="shrink" size={13} />
             <span class="hidden sm:inline">Size</span>
           </button>
-          <div class="relative">
+          <div class="relative" data-image-only>
             <label class="sr-only" for="export-format">Download format</label>
             <select
               id="export-format"
@@ -451,6 +512,15 @@ import Icon from './Icon.astro';
             </select>
             <Icon name="chevron-down" size={12} class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted" />
           </div>
+          <span
+            data-pdf-format
+            hidden
+            class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink"
+            title="Every page is flattened into a new PDF"
+          >
+            <Icon name="file" size={13} />
+            PDF
+          </span>
           <button
             type="button"
             data-action="verify"
@@ -464,6 +534,7 @@ import Icon from './Icon.astro';
           <button
             type="button"
             data-action="copy"
+            data-image-only
             class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field disabled:opacity-40"
             title="Copy the redacted PNG to your clipboard"
             disabled
@@ -478,7 +549,7 @@ import Icon from './Icon.astro';
             disabled
           >
             <Icon name="download" size={13} />
-            Download
+            <span data-download-label>Download</span>
           </button>
         </div>
       </div>
@@ -493,10 +564,10 @@ import Icon from './Icon.astro';
       <Icon name="lock" size={12} />
       Everything happens in this browser tab.
     </p>
-    <p>Smart detection downloads a text model once. Your image never leaves the page.</p>
+    <p>Smart detection downloads a text model once. Your file never leaves the page.</p>
     <p class="inline-flex items-center gap-1.5">
       <Icon name="shrink" size={12} />
-      The size panel measures the real export before you download it.
+      Images measured before download; PDFs flattened page by page.
     </p>
   </div>
 </section>
