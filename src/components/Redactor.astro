@@ -15,7 +15,7 @@ import Icon from './Icon.astro';
         <span data-image-size class="hidden text-[11px] leading-none text-faint sm:inline"></span>
       </div>
       <div class="flex items-center gap-2">
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] leading-none text-muted">
+        <span class="hidden items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] leading-none text-muted sm:inline-flex">
           <Icon name="lock" size={11} />
           0 bytes uploaded
         </span>
@@ -265,6 +265,42 @@ import Icon from './Icon.astro';
           <span class="sm:hidden">Faces</span>
         </button>
 
+        <div
+          class="flex items-center gap-0.5 rounded-full bg-canvas-soft p-1"
+          role="group"
+          aria-label="Zoom"
+        >
+          <button
+            type="button"
+            class="icon-btn !h-7 !w-7"
+            data-zoom-out
+            aria-label="Zoom out"
+            title="Zoom out (Ctrl −)"
+            disabled
+          >
+            <Icon name="zoom-out" size={13} />
+          </button>
+          <button
+            type="button"
+            class="min-w-10 rounded-full px-1.5 text-[11px] font-heading leading-none text-ink tabular-nums transition-colors hover:bg-canvas"
+            data-zoom-reset
+            aria-label="Reset zoom to fit"
+            title="Reset zoom to fit"
+          >
+            <span data-zoom-label>Fit</span>
+          </button>
+          <button
+            type="button"
+            class="icon-btn !h-7 !w-7"
+            data-zoom-in
+            aria-label="Zoom in"
+            title="Zoom in (Ctrl +)"
+            disabled
+          >
+            <Icon name="zoom-in" size={13} />
+          </button>
+        </div>
+
         <div class="ml-auto flex items-center gap-0.5">
           <button type="button" class="icon-btn" data-open-file aria-label="Replace file" title="Replace file">
             <Icon name="refresh" size={15} />
@@ -333,7 +369,7 @@ import Icon from './Icon.astro';
         </p>
       </div>
 
-      <div class="canvas-stage relative flex min-h-[300px] items-center justify-center overflow-auto p-4 md:min-h-[420px] md:p-6">
+      <div class="canvas-stage relative flex min-h-[300px] overflow-auto p-4 md:min-h-[420px] md:p-6">
         <div
           data-pdf-scroll
           hidden
@@ -376,8 +412,9 @@ import Icon from './Icon.astro';
 
         <p id="canvas-help" class="sr-only">
           Draw a box on a page to redact it. Choose ink, pixelate, blur, or an emoji sticker
-          from the toolbar. Move or resize a redaction by dragging it. Scroll the page stack to
-          move between PDF pages. Press Control Z to undo and Delete to remove a selected redaction.
+          from the toolbar. Move or resize a redaction by dragging it. Pinch with two fingers,
+          or hold Control and scroll, to zoom the page. Scroll the page stack to move between
+          PDF pages. Press Control Z to undo and Delete to remove a selected redaction.
         </p>
 
         <div
@@ -546,7 +583,7 @@ import Icon from './Icon.astro';
             type="button"
             data-action="copy"
             data-image-only
-            class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field disabled:opacity-40"
+            class="hidden h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field disabled:opacity-40 sm:inline-flex"
             title="Copy the redacted PNG to your clipboard"
             disabled
           >

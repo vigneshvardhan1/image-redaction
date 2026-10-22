@@ -12,6 +12,18 @@ const translatedRoutes = ['/', '/features/', '/guides/', '/about/', '/contact/',
 
 const legalRoutes = ['/privacy-policy/', '/terms/'];
 
+// English-only tool landing pages. Each is linked from the other tool pages,
+// so one entry without alternates is enough.
+const toolRoutes = [
+  '/blur-text-in-image/',
+  '/redact-screenshot/',
+  '/redact-screenshot-iphone/',
+  '/redact-screenshot-mac/',
+  '/redact-screenshot-windows/',
+  '/redact-screenshot-android/',
+  '/remove-exif-data/',
+];
+
 interface SitemapEntry {
   path: string;
   locales: Locale[];
@@ -33,6 +45,7 @@ for (const locale of LOCALES) {
 const entries: SitemapEntry[] = [
   ...translatedRoutes.map((path) => ({ path, locales: [...LOCALES] })),
   ...legalRoutes.map((path) => ({ path, locales: [DEFAULT_LOCALE] })),
+  ...toolRoutes.map((path) => ({ path, locales: [DEFAULT_LOCALE] })),
   ...[...guideLocales.entries()].map(([slug, locales]) => ({
     path: `/guides/${slug}/`,
     locales,

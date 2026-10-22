@@ -43,11 +43,11 @@ const languageLinks = availableLocales.map((code) => ({
 const currentLanguage = localeConfig[locale];
 ---
 
-<header class="sticky top-0 z-50 pt-3 md:pt-5">
+<header class="sticky top-0 z-50 pt-[max(0.75rem,env(safe-area-inset-top))] md:pt-[max(1.25rem,env(safe-area-inset-top))]">
   <div class="container-page">
     <div class="relative mx-auto max-w-[1080px]">
       <nav
-        class="flex items-center justify-between gap-3 rounded-full bg-canvas-soft/92 py-2 pl-3 pr-2 backdrop-blur-xl md:pl-4"
+        class="flex items-center justify-between gap-2 rounded-full bg-canvas-soft/92 py-2 pl-3 pr-2 backdrop-blur-xl sm:gap-3 md:pl-4"
         aria-label={t(locale, 'nav.primary')}
       >
         <Logo size="sm" href={localizePath(locale, '/')} />
@@ -69,20 +69,35 @@ const currentLanguage = localeConfig[locale];
           }
         </div>
 
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1 sm:gap-1.5">
+          {/* The install chip is the first thing to go on a narrow phone: the
+              logo, theme, language, and menu must fit the pill without spilling. */}
+          <span class="hidden sm:inline-flex">
+            <button
+              type="button"
+              data-install-app
+              hidden
+              class="inline-grid h-11 w-11 place-items-center rounded-full text-muted transition-colors hover:bg-canvas hover:text-ink"
+              aria-label="Install Redact as an app"
+              title="Install Redact as an app"
+            >
+              <Icon name="install" size={17} />
+            </button>
+          </span>
+
           <ThemeToggle locale={locale} />
 
           {
             languageLinks.length > 1 && (
               <details class="relative z-50" data-lang-picker>
                 <summary
-                  class="flex h-11 cursor-pointer list-none items-center gap-1.5 rounded-full px-2.5 text-[12px] font-heading leading-none text-muted transition-colors marker:hidden hover:text-ink [&::-webkit-details-marker]:hidden"
+                  class="flex h-11 cursor-pointer list-none items-center gap-1.5 rounded-full px-2 text-[12px] font-heading leading-none text-muted transition-colors marker:hidden hover:text-ink sm:px-2.5 [&::-webkit-details-marker]:hidden"
                   aria-label={t(locale, 'nav.languageChoose')}
                 >
                   <Icon name="globe" size={16} />
                   <span class="hidden sm:inline">{currentLanguage.label}</span>
                   <span class="sm:hidden">{currentLanguage.code.split('-')[0].toUpperCase()}</span>
-                  <Icon name="chevron-down" size={12} class="text-faint" />
+                  <Icon name="chevron-down" size={12} class="hidden text-faint xs:block" />
                 </summary>
                 <div
                   class="absolute right-0 top-[calc(100%+8px)] w-56 rounded-card border border-hairline-soft bg-canvas p-1.5"
@@ -130,7 +145,7 @@ const currentLanguage = localeConfig[locale];
           <Button
             variant="ghost"
             size="sm"
-            class="!h-11 !w-11 !px-0 lg:hidden"
+            class="!h-10 !w-10 !px-0 xs:!h-11 xs:!w-11 lg:hidden"
             ariaLabel={t(locale, 'nav.menuOpen')}
             dataAttrs={{
               'data-menu-toggle': 'true',

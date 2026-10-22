@@ -88,24 +88,24 @@ const faqSchema = buildFaqSchema(homeFaqs);
     <div class="mx-auto max-w-4xl text-center">
       <a
         href="#image-redaction"
-        class="inline-flex items-center gap-2 rounded-full border border-hairline bg-canvas px-3 py-1.5 text-[12px] leading-none transition-colors hover:bg-canvas-soft"
+        class="inline-flex max-w-full items-center gap-2 rounded-full border border-hairline bg-canvas px-3 py-1.5 text-[11px] leading-snug transition-colors hover:bg-canvas-soft sm:text-[12px] sm:leading-none"
       >
         <Icon name="sparkles" size={13} class="text-muted" />
         <span class="font-heading">{hero.badge}</span>
         <Icon name="arrow-right" size={12} class="text-muted" />
       </a>
 
-      <h1 class="mx-auto mt-6 max-w-4xl text-[2.55rem] leading-[1.02] text-balance sm:text-display sm:leading-[0.98]">
+      <h1 class="mx-auto mt-6 max-w-4xl text-[2.05rem] leading-[1.06] text-balance xs:text-[2.35rem] sm:text-display sm:leading-[0.98]">
         {hero.title[0]}<span class="block">{hero.title[1]}</span>
       </h1>
 
-      <p class="mx-auto mt-6 max-w-2xl text-[19px] font-light leading-relaxed text-muted md:text-[21px]">
+      <p class="mx-auto mt-6 max-w-2xl text-[16px] font-light leading-[1.65] text-muted sm:text-[18px] md:text-[21px] md:leading-relaxed">
         {hero.lead}
       </p>
 
       <div class="mt-8 flex flex-col items-center justify-center gap-2 sm:flex-row">
-        <Button href="#editor" size="lg" iconRight="arrow-right">{hero.primaryCta}</Button>
-        <Button href="#how-it-works" variant="outline" size="lg">{hero.secondaryCta}</Button>
+        <Button href="#editor" size="lg" iconRight="arrow-right" class="w-full xs:w-auto">{hero.primaryCta}</Button>
+        <Button href="#how-it-works" variant="outline" size="lg" class="w-full xs:w-auto">{hero.secondaryCta}</Button>
       </div>
 
       <p class="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[12px] text-muted">
@@ -146,7 +146,7 @@ const faqSchema = buildFaqSchema(homeFaqs);
   </section>
 
   <section id="proof" class="container-page mt-20 scroll-mt-28 md:mt-28">
-    <div class="grid gap-9 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-12">
+    <div class="grid grid-cols-1 gap-9 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-12">
       <div>
         <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
           <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
@@ -243,7 +243,7 @@ const faqSchema = buildFaqSchema(homeFaqs);
 
   <section id="detection" class="container-page mt-20 scroll-mt-28 md:mt-28">
     <div class="rounded-panel bg-canvas-soft p-5 md:p-10 lg:p-12">
-      <div class="grid gap-9 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-12">
+      <div class="grid grid-cols-1 gap-9 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-12">
         <div>
           <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
             <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
@@ -296,7 +296,7 @@ const faqSchema = buildFaqSchema(homeFaqs);
 
   <section id="privacy" class="container-page mt-20 scroll-mt-28 md:mt-28">
     <div class="rounded-panel bg-canvas-soft p-5 md:p-10 lg:p-12">
-      <div class="grid gap-9 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
+      <div class="grid grid-cols-1 gap-9 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
         <div>
           <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
             <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
@@ -307,7 +307,11 @@ const faqSchema = buildFaqSchema(homeFaqs);
             {privacy.copy}
           </p>
           <div class="mt-6">
-            <Button href={localizePath(locale, '/privacy')} variant="soft" iconRight="arrow-up-right">
+            <Button
+              href={localizePath(locale, '/privacy')}
+              variant="soft"
+              iconRight="arrow-up-right"
+            >
               {privacy.cta}
             </Button>
           </div>

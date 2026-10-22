@@ -36,6 +36,15 @@ const columns = [
         label: t(locale, 'footer.shortcuts'),
         href: localizePath(locale, '/features#shortcuts'),
       },
+      // The tool landing pages are English-only, so only English editions
+      // advertise them.
+      ...(locale.startsWith('en')
+        ? [
+            { label: 'Blur text in an image', href: '/blur-text-in-image' },
+            { label: 'Redact a screenshot', href: '/redact-screenshot' },
+            { label: 'Remove EXIF data', href: '/remove-exif-data' },
+          ]
+        : []),
     ],
   },
   {
@@ -91,7 +100,7 @@ const languageLinks = availableLocales
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-x-8 gap-y-10">
+        <div class="grid grid-cols-2 gap-x-8 gap-y-10 max-[389px]:grid-cols-1 max-[389px]:gap-y-8">
           {
             columns.map((column) => (
               <div>

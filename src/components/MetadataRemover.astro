@@ -1,0 +1,128 @@
+---
+import Icon from './Icon.astro';
+---
+
+<section id="metadata-remover" class="scroll-mt-24" data-metadata-remover>
+  <div class="overflow-hidden rounded-card border border-hairline bg-canvas">
+    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-hairline-soft px-3 py-2.5 md:px-4">
+      <div class="flex min-w-0 items-center gap-2">
+        <Icon name="eraser" size={12} class="shrink-0 text-muted" />
+        <span class="text-[11px] font-heading leading-none">Metadata remover</span>
+        <span class="text-[11px] leading-none text-faint" aria-hidden="true">/</span>
+        <span
+          data-meta-filename
+          class="max-w-[130px] truncate text-[11px] leading-none text-muted sm:max-w-[260px]"
+        >
+          No file open
+        </span>
+      </div>
+      <span
+        class="hidden items-center gap-1.5 rounded-full bg-canvas-soft px-2.5 py-1 text-[10px] leading-none text-muted sm:inline-flex"
+      >
+        <Icon name="lock" size={11} />
+        0 bytes uploaded
+      </span>
+    </div>
+
+    <div class="p-3 md:p-4">
+      <div
+        data-meta-dropzone
+        class="rounded-tile border border-dashed border-hairline bg-canvas-soft/60 p-5 transition-shadow md:p-7"
+      >
+        <div data-meta-empty class="mx-auto max-w-xl text-center">
+          <div
+            class="mx-auto grid h-14 w-14 place-items-center rounded-[18px] border border-hairline-soft bg-canvas text-ink"
+          >
+            <Icon name="eraser" size={27} />
+          </div>
+          <h2 class="mt-5 text-[clamp(1.35rem,3vw,1.75rem)] leading-[1.12]">
+            Strip EXIF, GPS, and camera data
+          </h2>
+          <p class="mx-auto mt-2.5 max-w-md text-[13px] leading-relaxed text-muted">
+            Drop a photo below, or choose one. The new file is rebuilt from pixels in your
+            browser, so the original metadata is not copied across.
+          </p>
+
+          <div class="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              data-meta-choose
+              class="inline-flex h-11 items-center gap-2 rounded-full bg-ink px-5 text-[14px] font-heading text-on-ink transition-colors hover:bg-ink-soft"
+            >
+              <Icon name="image" size={16} />
+              Choose a photo
+            </button>
+            <span class="inline-flex items-center gap-1.5 px-2 text-[11px] text-muted">
+              <Icon name="lock" size={12} />
+              Nothing is uploaded
+            </span>
+          </div>
+
+          <input
+            data-meta-input
+            class="hidden"
+            type="file"
+            tabindex="-1"
+            accept="image/png,image/jpeg,image/webp,image/gif,image/bmp,image/avif"
+            aria-label="Choose a photo to remove metadata from"
+          />
+
+          <p class="mt-4 text-[11px] leading-relaxed text-faint">
+            JPG, PNG, WebP, GIF, BMP, or AVIF, up to 25 MB. Animated images are flattened to the
+            first frame.
+          </p>
+        </div>
+
+        <div data-meta-ready hidden class="mx-auto max-w-2xl">
+          <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <img
+              data-meta-preview
+              src=""
+              alt=""
+              width="112"
+              height="112"
+              class="h-24 w-24 shrink-0 rounded-tile border border-hairline-soft bg-field object-cover"
+            />
+            <div class="min-w-0 flex-1">
+              <p data-meta-name class="truncate text-[14px] font-heading leading-tight"></p>
+              <p data-meta-details class="mt-1 text-[11px] leading-relaxed text-muted"></p>
+              <div class="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  data-meta-clean
+                  class="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-4 text-[13px] font-heading text-on-ink transition-colors hover:bg-ink-soft disabled:opacity-50"
+                >
+                  <Icon name="download" size={14} />
+                  <span data-meta-clean-label>Remove metadata &amp; download</span>
+                </button>
+                <button
+                  type="button"
+                  data-meta-reset
+                  class="inline-flex h-10 items-center rounded-full border border-hairline bg-canvas px-4 text-[13px] font-heading transition-colors hover:bg-canvas-soft"
+                >
+                  Choose another
+                </button>
+              </div>
+            </div>
+          </div>
+          <p class="mt-4 border-t border-hairline-soft pt-3 text-[11px] leading-relaxed text-faint">
+            The download is a fresh encode of the visible pixels. It keeps the picture, not the
+            hidden history: no EXIF, GPS, camera, lens, date, or software tags from the original.
+          </p>
+        </div>
+      </div>
+
+      <p
+        data-meta-status
+        role="status"
+        aria-live="polite"
+        class="mt-3 px-1 text-[12px] leading-relaxed text-muted"
+      >
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '../scripts/metadata-remover';
+</script>

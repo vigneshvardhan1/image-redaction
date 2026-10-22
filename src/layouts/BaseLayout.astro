@@ -83,8 +83,12 @@ const hasAlternates = alternates.length > 1;
 <html lang={locale} dir={currentLanguage.dir}>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="application-name" content="Redact" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Redact" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {keywords.length > 0 && <meta name="keywords" content={keywords.join(', ')} />}
@@ -103,6 +107,7 @@ const hasAlternates = alternates.length > 1;
     )}
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#ffffff" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap.xml" />
@@ -264,6 +269,16 @@ const hasAlternates = alternates.length > 1;
       })();
     </script>
 
+    {/* Captured here, before the module bundle is attached: Chrome can fire
+        this while the page is still parsing. The PWA module consumes it. */}
+    <script is:inline>
+      window.addEventListener('beforeinstallprompt', (event) => {
+        event.preventDefault();
+        window.__redactInstallPrompt = event;
+        window.dispatchEvent(new Event('redact-install-ready'));
+      });
+    </script>
+
     {/* Runs before first paint. Reduced motion skips the intro; the
         ?intro=1 preview overrides that. */}
     {
@@ -328,6 +343,9 @@ const hasAlternates = alternates.length > 1;
         );
         elements.forEach((element) => observer.observe(element));
       })();
+    </script>
+    <script>
+      import '../scripts/pwa';
     </script>
   </body>
 </html>

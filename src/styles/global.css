@@ -61,10 +61,10 @@
   --text-h4--line-height: 1.25;
   --text-h3: 2rem;
   --text-h3--line-height: 1.13;
-  --text-h2: clamp(2rem, 4.2vw, 2.75rem);
+  --text-h2: clamp(1.75rem, 4.2vw, 2.75rem);
   --text-h2--line-height: 1.13;
-  --text-h1: clamp(2.6rem, 5.8vw, 3.5rem);
-  --text-h1--line-height: 1.03;
+  --text-h1: clamp(2.05rem, 5.8vw, 3.5rem);
+  --text-h1--line-height: 1.06;
   --text-display: clamp(2.9rem, 7.4vw, 5rem);
   --text-display--line-height: 0.98;
 
@@ -124,6 +124,9 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* A stray wide element must never turn the whole page into a sideways
+       scroller on a phone. Inner scrollers (tables, PDF pages) still scroll. */
+    overflow-x: clip;
   }
 
   /* The brand intro locks scrolling while it is on screen. */
@@ -325,22 +328,38 @@
     background-color: var(--color-stage);
     background-image: radial-gradient(var(--color-stage-dot) 1px, transparent 1px);
     background-size: 16px 16px;
+    /* `safe` keeps the left/top edge reachable when zoom pushes the sheet
+       outside the stage; plain centering would clip it behind the padding. */
+    align-items: center;
+    justify-content: center;
+    align-items: safe center;
+    justify-content: safe center;
+    overscroll-behavior: contain;
+    touch-action: pan-x pan-y;
+  }
+
+  /* Images are fitted to 66vh, so cap the stage just above that (plus the
+     largest padding) and let the stage scroll once the user zooms in. PDFs
+     already have their own scroll host. */
+  .canvas-stage[data-mode="image"] {
+    max-height: calc(min(66vh, 640px) + 3rem);
   }
 
   .canvas-frame {
     position: relative;
     display: inline-block;
-    max-width: 100%;
+    flex: none;
     line-height: 0;
     touch-action: none;
   }
 
+  /* The frame is sized in pixels by the editor to fit the stage at 1x. Keeping
+     that size explicit lets zoom enlarge the content instead of percentage
+     constraints shrinking it back to fit. */
   .canvas-frame > canvas {
     display: block;
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: min(66vh, 640px);
+    width: 100%;
+    height: 100%;
     border-radius: 0.5rem;
     cursor: crosshair;
     touch-action: none;
@@ -358,11 +377,11 @@
     width: 100%;
     max-width: 920px;
     max-height: min(72vh, 760px);
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: auto;
     overscroll-behavior: contain;
     border-radius: 0.75rem;
     scrollbar-gutter: stable;
+    touch-action: pan-x pan-y;
   }
 
   .pdf-scroll:focus-visible {
@@ -375,13 +394,13 @@
     flex-direction: column;
     align-items: center;
     gap: 2.5rem;
+    margin-inline: auto;
     padding: 1rem 0.5rem 2rem;
   }
 
   .pdf-page {
     position: relative;
     width: 100%;
-    max-width: 860px;
     flex: none;
     border-radius: 0.5rem;
     background: #ffffff;
@@ -571,6 +590,15 @@
   .suggestion[aria-pressed="true"] .suggestion-tag {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* On a phone the detected boxes are often only a few pixels tall at fit
+     zoom, so full text tags cover the document. The fills, outlines and tick
+     badges still communicate selection; the banner carries the explanation. */
+  @media (max-width: 639px) {
+    .suggestion-tag {
+      display: none;
+    }
   }
 
   .ghost-box {
@@ -764,6 +792,14 @@
   .theme-toggle:hover {
     background-color: var(--color-canvas);
     color: var(--color-ink);
+  }
+
+  /* Reclaim 8px in the nav on narrow phones. */
+  @media (max-width: 29.999rem) {
+    .theme-toggle {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
   }
 
   /* One icon per mode: the moon invites a switch to dark, the sun back to light. */

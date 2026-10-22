@@ -1,0 +1,304 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Button from '../Button.astro';
+import Faq from '../Faq.astro';
+import Icon from '../Icon.astro';
+import Redactor from '../Redactor.astro';
+import MetadataRemover from '../MetadataRemover.astro';
+import SectionHead from '../SectionHead.astro';
+import CtaBand from '../CtaBand.astro';
+import { DEFAULT_LOCALE } from '../../i18n/config';
+import { buildFaqSchema } from '../../data/faq';
+import type { ToolPageContent } from '../../data/toolPages';
+
+interface Props {
+  content: ToolPageContent;
+}
+
+const { content } = Astro.props;
+const { meta, hero, intro, features, steps, safety, checklist, faqs, related, cta, editor } = content;
+
+const site = Astro.site ?? new URL('https://imageredaction.com');
+const canonical = new URL(Astro.url.pathname, site).href;
+
+const appSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: `Redact — ${hero.eyebrow}`,
+  url: canonical,
+  applicationCategory: 'UtilitiesApplication',
+  operatingSystem: 'Any modern web browser',
+  browserRequirements:
+    editor === 'metadata'
+      ? 'Requires JavaScript. The image is decoded and re-encoded in the browser.'
+      : 'Requires JavaScript. Smart detection downloads an OCR model on first use.',
+  inLanguage: DEFAULT_LOCALE,
+  isAccessibleForFree: true,
+  description: meta.description,
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+  },
+  featureList: features.items.map((item) => item.title),
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Redact',
+      item: new URL('/', site).href,
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: hero.eyebrow,
+      item: canonical,
+    },
+  ],
+};
+
+const faqSchema = buildFaqSchema(faqs);
+const stepColumns = steps.items.length === 4 ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3';
+---
+
+<BaseLayout
+  title={meta.title}
+  description={meta.description}
+  keywords={meta.keywords}
+  schema={[appSchema, breadcrumbSchema, faqSchema]}
+  ogType="website"
+  ogImageAlt={meta.title}
+  locale={DEFAULT_LOCALE}
+  availableLocales={[DEFAULT_LOCALE]}
+  splash
+>
+  <section class="container-page pb-8 pt-10 md:pt-14">
+    <nav
+      aria-label="Breadcrumb"
+      class="flex flex-wrap items-center gap-2 text-[11px] text-muted"
+    >
+      <a href="/" class="hover:text-ink">Redact</a>
+      <span class="text-faint" aria-hidden="true">/</span>
+      <span>{hero.eyebrow}</span>
+    </nav>
+
+    <div class="mx-auto mt-7 max-w-4xl text-center">
+      <p class="inline-flex max-w-full items-center gap-2 rounded-full border border-hairline bg-canvas px-3 py-1.5 text-[11px] leading-snug text-muted sm:text-[12px] sm:leading-none">
+        <Icon name="sparkles" size={13} />
+        <span class="font-heading">{hero.eyebrow}</span>
+      </p>
+
+      <h1 class="mx-auto mt-5 max-w-4xl text-[2.05rem] leading-[1.06] text-balance xs:text-[2.35rem] sm:text-display sm:leading-[0.98]">
+        {hero.title}
+      </h1>
+
+      <p class="mx-auto mt-6 max-w-2xl text-[16px] font-light leading-[1.65] text-muted sm:text-[18px] md:text-[21px] md:leading-relaxed">
+        {hero.lead}
+      </p>
+
+      <div class="mt-8 flex flex-col items-center justify-center gap-2 sm:flex-row">
+        <Button href={hero.primaryHref} size="lg" iconRight="arrow-right" class="w-full xs:w-auto">
+          {hero.primary}
+        </Button>
+        <Button href={hero.secondaryHref} variant="outline" size="lg" class="w-full xs:w-auto">
+          {hero.secondary}
+        </Button>
+      </div>
+
+      <p class="mt-5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[12px] text-muted">
+        {
+          hero.proof.map((item, index) => (
+            <>
+              {index > 0 && (
+                <span class="text-faint" aria-hidden="true">
+                  ·
+                </span>
+              )}
+              <span>{item}</span>
+            </>
+          ))
+        }
+      </p>
+    </div>
+
+    {
+      editor === 'redactor' && (
+        <div class="mx-auto mt-10 max-w-[1080px] md:mt-14">
+          <Redactor />
+        </div>
+      )
+    }
+    {
+      editor === 'metadata' && (
+        <div class="mx-auto mt-10 max-w-[1080px] md:mt-14">
+          <MetadataRemover />
+        </div>
+      )
+    }
+  </section>
+
+  <section class="container-page mt-16 md:mt-24">
+    <div class="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+      <div>
+        <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+          <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+          {intro.eyebrow}
+        </p>
+        <h2 class="mt-4 text-h2">{intro.title}</h2>
+      </div>
+      <div class="max-w-2xl space-y-4">
+        {
+          intro.paragraphs.map((paragraph) => (
+            <p class="text-[15.5px] leading-[1.75] text-ink-soft">{paragraph}</p>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id={features.id ?? 'features'} class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <SectionHead eyebrow={features.eyebrow} title={features.title} copy={features.copy} />
+    <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        features.items.map((item) => (
+          <article class="rounded-card border border-hairline-soft bg-canvas p-5">
+            <span class="grid h-9 w-9 place-items-center rounded-full bg-canvas-soft">
+              <Icon name={item.icon as any} size={16} />
+            </span>
+            <h3 class="mt-4 text-[17px] leading-tight">{item.title}</h3>
+            <p class="mt-2 text-[13px] leading-relaxed text-muted">{item.copy}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="steps" class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <div class="rounded-panel bg-canvas-soft p-5 md:p-10 lg:p-12">
+      <SectionHead eyebrow={steps.eyebrow} title={steps.title} copy={steps.copy} />
+      <ol class={`mt-8 grid gap-3 ${stepColumns}`}>
+        {
+          steps.items.map((item, index) => (
+            <li class="rounded-card bg-canvas p-5">
+              <div class="flex items-center justify-between">
+                <span class="text-[30px] font-light leading-none text-faint">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span class="grid h-8 w-8 place-items-center rounded-full bg-canvas-soft">
+                  <Icon name="check" size={14} />
+                </span>
+              </div>
+              <h3 class="mt-6 text-[16px] leading-tight">{item.title}</h3>
+              <p class="mt-2 text-[12.5px] leading-relaxed text-muted">{item.copy}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  {
+    safety && (
+      <section id={safety.id ?? 'safety'} class="container-page mt-20 scroll-mt-28 md:mt-28">
+        <div class="flex flex-col gap-5 rounded-panel border border-hairline bg-canvas-soft p-6 sm:flex-row sm:gap-6 md:p-9">
+          <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-canvas">
+            <Icon name="alert" size={19} />
+          </span>
+          <div>
+            <h2 class="text-h3">{safety.title}</h2>
+            <p class="mt-3 max-w-3xl text-[14px] leading-relaxed text-muted">{safety.text}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    checklist && (
+      <section id="checklist" class="container-page mt-20 scroll-mt-28 md:mt-28">
+        <div class="grid gap-8 rounded-panel border border-hairline-soft bg-canvas p-6 md:p-10 lg:grid-cols-[0.75fr_1.25fr] lg:gap-14">
+          <div>
+            <p class="flex items-center gap-2 text-[12px] font-heading leading-none text-muted">
+              <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+              Checklist
+            </p>
+            <h2 class="mt-4 text-h2">{checklist.title}</h2>
+            {checklist.copy && (
+              <p class="mt-4 max-w-md text-[15px] leading-relaxed text-muted">{checklist.copy}</p>
+            )}
+          </div>
+          <ul class="grid gap-3 sm:grid-cols-2">
+            {
+              checklist.items.map((item) => (
+                <li class="flex gap-2.5 rounded-tile bg-canvas-soft p-4 text-[13px] leading-relaxed text-ink">
+                  <Icon name="check" size={14} class="mt-0.5 shrink-0" />
+                  <span>{item}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section id="faq" class="container-page mt-20 scroll-mt-28 md:mt-28">
+    <SectionHead
+      align="center"
+      eyebrow="Questions"
+      title="A few honest answers"
+      copy="No guarantees, no hidden uploads. If something here is unclear, the guide goes deeper."
+    />
+    <div class="mx-auto mt-8 max-w-3xl">
+      <Faq items={faqs} />
+    </div>
+  </section>
+
+  <section class="container-page mt-20 md:mt-28">
+    <SectionHead
+      eyebrow="Keep going"
+      title="Related tools and guides"
+      copy="The next step depends on what is in the frame."
+    />
+    <div class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        related.map((item) => (
+          <a
+            href={item.href}
+            class="group flex flex-col rounded-card border border-hairline-soft bg-canvas p-5 transition-colors hover:bg-canvas-soft"
+          >
+            <span class="text-[10px] font-heading uppercase tracking-wide text-faint">
+              {item.label}
+            </span>
+            <span class="mt-2 flex items-start justify-between gap-3">
+              <span class="text-[17px] font-heading leading-tight">{item.title}</span>
+              <Icon
+                name="arrow-up-right"
+                size={14}
+                class="mt-0.5 shrink-0 text-faint transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
+            </span>
+            <span class="mt-2 text-[13px] leading-relaxed text-muted">{item.copy}</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaBand
+    class="mt-20 md:mt-28"
+    eyebrow={cta.eyebrow}
+    title={cta.title}
+    copy={cta.copy}
+    cta={cta.primary}
+    href={cta.primaryHref}
+    secondary={cta.secondary}
+    secondaryHref={cta.secondaryHref}
+    locale={DEFAULT_LOCALE}
+  />
+</BaseLayout>

@@ -31,13 +31,15 @@ const {
   dataAttrs = {},
 } = Astro.props;
 
+// Long labels in some locales are wider than a 320px phone. Let them wrap and
+// grow instead of forcing the page into a horizontal scroll.
 const base =
-  'inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-heading leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-40';
+  'inline-flex max-w-full select-none items-center justify-center gap-2 whitespace-normal text-center rounded-full font-heading leading-none transition-colors duration-150 disabled:pointer-events-none disabled:opacity-40';
 
 const sizes = {
-  sm: 'h-9 px-3.5 text-[13px]',
-  md: 'h-11 px-4 text-[15px]',
-  lg: 'h-12 px-5 text-[16px]',
+  sm: 'min-h-9 px-3.5 py-1.5 text-[13px]',
+  md: 'min-h-11 px-4 py-2 text-[15px]',
+  lg: 'min-h-12 px-5 py-2.5 text-[16px]',
 };
 
 const variants = {

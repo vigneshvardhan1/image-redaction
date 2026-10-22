@@ -17,7 +17,7 @@ const hasActions = Astro.slots.has('actions');
       {eyebrow}
     </p>
     <h1 class="mt-5 max-w-3xl text-h1">{title}</h1>
-    {lead && <p class="mt-6 max-w-2xl text-[19px] font-light leading-relaxed text-muted">{lead}</p>}
+    {lead && <p class="mt-6 max-w-2xl text-[16px] font-light leading-[1.65] text-muted sm:text-[18px] md:text-[19px]">{lead}</p>}
     {
       hasActions && (
         <div class="mt-8 flex flex-col items-start gap-2 sm:flex-row sm:items-center">

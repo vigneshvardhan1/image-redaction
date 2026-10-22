@@ -19,6 +19,10 @@ const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
 const MAX_PDF_BYTES = 50 * 1024 * 1024;
 const MAX_PDF_PAGES = 100;
 
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 8;
+const ZOOM_STEP = 1.25;
+
 const root = document.querySelector<HTMLElement>('[data-redactor]');
 
 if (root) {
@@ -78,6 +82,11 @@ function setup(editor: HTMLElement) {
   const sizeNote = query<HTMLElement>('[data-size-note]');
   const sizeEstimate = query<HTMLElement>('[data-size-estimate]');
   const sizeSavings = query<HTMLElement>('[data-size-savings]');
+  const stage = query<HTMLElement>('.canvas-stage');
+  const zoomOutBtn = query<HTMLButtonElement>('[data-zoom-out]');
+  const zoomInBtn = query<HTMLButtonElement>('[data-zoom-in]');
+  const zoomResetBtn = query<HTMLButtonElement>('[data-zoom-reset]');
+  const zoomLabel = query<HTMLElement>('[data-zoom-label]');
   const pageNav = query<HTMLElement>('[data-pdf-nav]');
   const pageIndicator = query<HTMLElement>('[data-page-indicator]');
   const pdfScroll = query<HTMLElement>('[data-pdf-scroll]');
@@ -182,6 +191,25 @@ function setup(editor: HTMLElement) {
         moved: boolean;
       };
 
+  interface PinchState {
+    startDistance: number;
+    startZoom: number;
+    startMidX: number;
+    startMidY: number;
+    anchorX: number;
+    anchorY: number;
+    startScrollLeft: number;
+    startScrollTop: number;
+  }
+
+  const touchPoints = new Map<number, { x: number; y: number }>();
+  let pinch: PinchState | null = null;
+  let zoom = 1;
+  // Fit sizes are measured once per document/layout change. Zoom then scales
+  // these explicit sizes, which keeps overlays at a constant screen size.
+  let imageFit = { width: 0, height: 0 };
+  let pdfFitWidth = 0;
+
   const toolButtons = Array.from(editor.querySelectorAll<HTMLButtonElement>('[data-tool]'));
   const shapeButtons = Array.from(editor.querySelectorAll<HTMLButtonElement>('[data-shape]'));
   const emojiButtons = Array.from(editor.querySelectorAll<HTMLButtonElement>('[data-emoji]'));
@@ -240,6 +268,141 @@ function setup(editor: HTMLElement) {
     originalBadge.hidden = !compare;
     overlay.style.visibility = compare ? 'hidden' : '';
     render();
+  }
+
+  // --- Zoom ---------------------------------------------------------------
+
+  function scrollHost(): HTMLElement {
+    return docKind === 'pdf' ? pdfScroll : stage;
+  }
+
+  /**
+   * Measures the size that fits the document inside the stage at 1x.
+   * The zoom surface is then sized from this baseline in `applyZoomSize`.
+   */
+  function measureZoomSurface(): void {
+    if (!hasDoc) return;
+
+    if (docKind === 'pdf') {
+      const hostWidth = pdfScroll.clientWidth || stage.clientWidth;
+      // The stack has 0.5rem side padding, so the page gets the rest (up to 860).
+      pdfFitWidth = Math.max(1, Math.min(860, hostWidth - 16));
+      return;
+    }
+
+    if (!baseCanvas.width || !baseCanvas.height) return;
+    const style = getComputedStyle(stage);
+    const horizontalPadding =
+      Number.parseFloat(style.paddingLeft) + Number.parseFloat(style.paddingRight);
+    const availableWidth = Math.max(1, stage.clientWidth - horizontalPadding);
+    const availableHeight = Math.max(1, Math.min(window.innerHeight * 0.66, 640));
+    const scale = Math.min(
+      1,
+      availableWidth / baseCanvas.width,
+      availableHeight / baseCanvas.height
+    );
+
+    imageFit = {
+      width: baseCanvas.width * scale,
+      height: baseCanvas.height * scale,
+    };
+  }
+
+  function applyZoomSize(): void {
+    if (!hasDoc) return;
+
+    if (docKind === 'pdf') {
+      if (!pdfFitWidth) measureZoomSurface();
+      // Padding stays fixed, so only the page width scales with zoom.
+      pdfStack.style.width = `${pdfFitWidth * zoom + 16}px`;
+      return;
+    }
+
+    if (!imageFit.width) measureZoomSurface();
+    frame.style.width = `${imageFit.width * zoom}px`;
+    frame.style.height = `${imageFit.height * zoom}px`;
+  }
+
+  /** Re-measure after a document load or layout change, keeping the zoom. */
+  function sizeZoomSurface(): void {
+    if (!hasDoc) return;
+    imageFit = { width: 0, height: 0 };
+    pdfFitWidth = 0;
+    measureZoomSurface();
+    applyZoomSize();
+  }
+
+  function updateZoomUI(): void {
+    const available = hasDoc && baseCanvas.width > 0 && baseCanvas.height > 0;
+    const rect = activeDisplay().getBoundingClientRect();
+    const percent =
+      available && rect.width > 0
+        ? Math.max(1, Math.round((rect.width / baseCanvas.width) * 100))
+        : 100;
+
+    zoomLabel.textContent = `${percent}%`;
+    zoomOutBtn.disabled = !available || zoom <= ZOOM_MIN + 0.001;
+    zoomInBtn.disabled = !available || zoom >= ZOOM_MAX - 0.001;
+    zoomResetBtn.disabled = !available || zoom <= ZOOM_MIN + 0.001;
+    zoomResetBtn.setAttribute('aria-label', `Reset zoom to fit (${percent}% shown)`);
+    zoomResetBtn.title = `Reset zoom to fit (${percent}% shown)`;
+  }
+
+  /** Scales the surface to the requested zoom. */
+  function setZoom(next: number): void {
+    const value = clamp(next, ZOOM_MIN, ZOOM_MAX);
+    if (Math.abs(value - zoom) < 0.001) return;
+    zoom = value;
+    applyZoomSize();
+    updateZoomUI();
+  }
+
+  /** Zooms around a client coordinate so the point under it stays in place. */
+  function zoomAt(next: number, clientX: number, clientY: number): void {
+    const host = scrollHost();
+    const rect = host.getBoundingClientRect();
+    const anchorX = clamp(clientX - rect.left, 0, rect.width);
+    const anchorY = clamp(clientY - rect.top, 0, rect.height);
+    const before = zoom;
+    setZoom(next);
+    if (zoom === before) return;
+    const ratio = zoom / before;
+    host.scrollLeft = (host.scrollLeft + anchorX) * ratio - anchorX;
+    host.scrollTop = (host.scrollTop + anchorY) * ratio - anchorY;
+  }
+
+  function zoomFromCenter(factor: number): void {
+    const host = scrollHost();
+    const rect = host.getBoundingClientRect();
+    zoomAt(zoom * factor, rect.left + rect.width / 2, rect.top + rect.height / 2);
+  }
+
+  function resetZoom(): void {
+    setZoom(ZOOM_MIN);
+    stage.scrollLeft = 0;
+    stage.scrollTop = 0;
+    pdfScroll.scrollLeft = 0;
+    pdfScroll.scrollTop = 0;
+  }
+
+  function resetZoomStyles(): void {
+    zoom = ZOOM_MIN;
+    imageFit = { width: 0, height: 0 };
+    pdfFitWidth = 0;
+    frame.style.removeProperty('width');
+    frame.style.removeProperty('height');
+    pdfStack.style.removeProperty('width');
+    stage.scrollLeft = 0;
+    stage.scrollTop = 0;
+    pdfScroll.scrollLeft = 0;
+    pdfScroll.scrollTop = 0;
+  }
+
+  function cancelActiveDrag(): void {
+    drag = null;
+    draft = null;
+    ghost.hidden = true;
+    interactionSurface().classList.remove('is-moving', 'is-resizing');
   }
 
   function clearVerifyStatus(): void {
@@ -315,6 +478,7 @@ function setup(editor: HTMLElement) {
     facesBtn.disabled = !hasDoc || busy;
     updateSizeButton();
     updatePageChrome();
+    updateZoomUI();
     if (shapes.length === 0) {
       compare = false;
       compareBtn.setAttribute('aria-pressed', 'false');
@@ -1104,6 +1268,7 @@ function setup(editor: HTMLElement) {
     // Release the old stack before replacing the page state it points at.
     teardownPdfView();
     docKind = kind;
+    stage.dataset.mode = kind;
     pageIndex = 0;
     pages = Array.from({ length: Math.max(1, pageCount) }, () => createPageState());
     baseCanvas = imageCanvas;
@@ -1122,6 +1287,7 @@ function setup(editor: HTMLElement) {
     selection.hidden = true;
     frame.hidden = kind === 'pdf';
     pdfScroll.hidden = kind !== 'pdf';
+    resetZoomStyles();
     if (kind === 'image') mountOverlay(null);
     window.clearTimeout(clearTimer);
     delete clearBtn.dataset.armed;
@@ -1269,6 +1435,7 @@ function setup(editor: HTMLElement) {
       if (index === pageIndex) {
         baseCanvas = state.source ?? baseCanvas;
         updateSelection();
+        updateZoomUI();
       } else if (!busy && nearestPageIndex() === index) {
         // Scrolling can outrun the lazy render. Activate the page as soon as its
         // pixels are ready so drawing always targets what is in view.
@@ -1422,6 +1589,7 @@ function setup(editor: HTMLElement) {
       scale < 1 ? `Original: ${naturalWidth} × ${naturalHeight}. Downscaled for memory.` : '';
     dropzone.hidden = true;
     workspace.hidden = false;
+    sizeZoomSurface();
 
     setMode(mode);
     refreshChrome();
@@ -1472,6 +1640,7 @@ function setup(editor: HTMLElement) {
       sizeEl.title = 'Every page is flattened on export.';
       dropzone.hidden = true;
       workspace.hidden = false;
+      sizeZoomSurface();
 
       await setupPdfView(doc);
       setBusy(
@@ -1654,6 +1823,99 @@ function setup(editor: HTMLElement) {
   deleteSelectedBtn.addEventListener('click', (event) => {
     event.stopPropagation();
     deleteSelected();
+  });
+
+  zoomInBtn.addEventListener('click', () => zoomFromCenter(ZOOM_STEP));
+  zoomOutBtn.addEventListener('click', () => zoomFromCenter(1 / ZOOM_STEP));
+  zoomResetBtn.addEventListener('click', resetZoom);
+
+  stage.addEventListener(
+    'wheel',
+    (event) => {
+      if (!hasDoc || (!event.ctrlKey && !event.metaKey)) return;
+      event.preventDefault();
+      zoomAt(zoom * Math.exp(-event.deltaY * 0.0018), event.clientX, event.clientY);
+    },
+    { passive: false }
+  );
+
+  function beginPinch(): void {
+    const [first, second] = [...touchPoints.values()];
+    if (!first || !second || !hasDoc) return;
+
+    const host = scrollHost();
+    const rect = host.getBoundingClientRect();
+    const midX = (first.x + second.x) / 2;
+    const midY = (first.y + second.y) / 2;
+
+    cancelActiveDrag();
+    pinch = {
+      startDistance: Math.max(1, Math.hypot(second.x - first.x, second.y - first.y)),
+      startZoom: zoom,
+      startMidX: midX,
+      startMidY: midY,
+      anchorX: clamp(midX - rect.left, 0, rect.width),
+      anchorY: clamp(midY - rect.top, 0, rect.height),
+      startScrollLeft: host.scrollLeft,
+      startScrollTop: host.scrollTop,
+    };
+  }
+
+  stage.addEventListener(
+    'pointerdown',
+    (event) => {
+      if (event.pointerType !== 'touch' || !hasDoc) return;
+      touchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (touchPoints.size < 2) return;
+
+      // A second finger turns the gesture into zoom + pan instead of a draw.
+      event.preventDefault();
+      event.stopPropagation();
+      if (touchPoints.size === 2) beginPinch();
+    },
+    { capture: true }
+  );
+
+  window.addEventListener(
+    'pointermove',
+    (event) => {
+      if (event.pointerType !== 'touch' || !touchPoints.has(event.pointerId)) return;
+      touchPoints.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      if (!pinch || touchPoints.size < 2) return;
+
+      event.preventDefault();
+      const [first, second] = [...touchPoints.values()];
+      if (!first || !second) return;
+
+      const distance = Math.max(1, Math.hypot(second.x - first.x, second.y - first.y));
+      const midX = (first.x + second.x) / 2;
+      const midY = (first.y + second.y) / 2;
+      setZoom(pinch.startZoom * (distance / pinch.startDistance));
+
+      const host = scrollHost();
+      const ratio = zoom / pinch.startZoom;
+      host.scrollLeft =
+        (pinch.startScrollLeft + pinch.anchorX) * ratio -
+        pinch.anchorX -
+        (midX - pinch.startMidX);
+      host.scrollTop =
+        (pinch.startScrollTop + pinch.anchorY) * ratio -
+        pinch.anchorY -
+        (midY - pinch.startMidY);
+    },
+    { passive: false }
+  );
+
+  function endTouchPoint(event: PointerEvent): void {
+    if (!touchPoints.delete(event.pointerId)) return;
+    if (touchPoints.size < 2) pinch = null;
+  }
+
+  window.addEventListener('pointerup', endTouchPoint);
+  window.addEventListener('pointercancel', endTouchPoint);
+  window.addEventListener('resize', () => {
+    sizeZoomSurface();
+    updateZoomUI();
   });
 
   function beginPointer(
@@ -1904,6 +2166,21 @@ function setup(editor: HTMLElement) {
         event.preventDefault();
         deleteSelected();
       }
+      return;
+    }
+    if (modifier && (event.key === '+' || event.key === '=')) {
+      event.preventDefault();
+      zoomFromCenter(ZOOM_STEP);
+      return;
+    }
+    if (modifier && event.key === '-') {
+      event.preventDefault();
+      zoomFromCenter(1 / ZOOM_STEP);
+      return;
+    }
+    if (modifier && event.key === '0') {
+      event.preventDefault();
+      resetZoom();
       return;
     }
     if (modifier || event.altKey) return;
