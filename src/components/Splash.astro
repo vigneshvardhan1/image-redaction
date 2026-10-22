@@ -1,8 +1,9 @@
 ---
 /**
- * One-time brand intro. The wordmark lands in the middle, two strips of
- * masking tape slap across it, then the whole lockup shrinks and flies into
- * the wordmark in the top left corner — the one in the nav — and hands over.
+ * Brand intro, replayed whenever a page loads. The wordmark lands in the
+ * middle, two strips of masking tape slap across it, then the whole lockup
+ * shrinks and flies into the wordmark in the top left corner — the one in
+ * the nav — and hands over.
  *
  * The entrance is CSS. The flight is measured at runtime so it lands exactly
  * on the nav wordmark whatever the viewport size, and the sheet never
@@ -139,7 +140,7 @@
     }
   }
 
-  /* Repeat visits (or reduced motion) skip the intro entirely. */
+  /* Reduced motion skips the intro entirely. */
   :global(html.splash-skip) .splash {
     display: none;
   }
