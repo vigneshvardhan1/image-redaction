@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "npm run build && wrangler pages deploy",
     "astro": "astro",
     "assets": "node scripts/make-og.mjs && node scripts/make-icons.mjs",
     "og": "node scripts/make-og.mjs",
@@ -21,6 +22,7 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "sharp": "^0.35.5"
+    "sharp": "^0.35.5",
+    "wrangler": "^4.151.3"
   }
 }
