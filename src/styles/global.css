@@ -461,10 +461,14 @@
     touch-action: none;
   }
 
+  /* Detection suggestions. Excluded boxes read as hollow "marching ants"
+     outlines; included boxes get the accent fill, a solid ring and a tick so
+     the two states stay obvious at a glance over any photo. */
   .suggestion {
     position: absolute;
-    border: 1.5px dashed var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 7%, transparent);
+    border: 1.5px dashed #ffffff;
+    background: color-mix(in srgb, var(--color-overlay-ink) 8%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-overlay-ink) 60%, transparent);
     border-radius: 3px;
     cursor: pointer;
     padding: 0;
@@ -477,13 +481,37 @@
 
   .suggestion:hover,
   .suggestion:focus-visible {
-    background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+    border-color: var(--color-accent);
     border-style: solid;
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
   }
 
   .suggestion[aria-pressed="true"] {
-    border-style: solid;
-    background: color-mix(in srgb, var(--color-accent) 18%, transparent);
+    border: 2px solid var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 26%, transparent);
+    box-shadow:
+      0 0 0 1px #ffffff,
+      0 0 0 4px color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+
+  /* Tick badge pinned to the corner of every included box. */
+  .suggestion[aria-pressed="true"]::after {
+    content: "✓";
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    display: grid;
+    width: 18px;
+    height: 18px;
+    place-items: center;
+    border-radius: 9999px;
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    box-shadow: 0 0 0 2px #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    pointer-events: none;
   }
 
   /* Redactor only. Hovering a detected box paints the exact ink fill the
@@ -508,8 +536,8 @@
     max-width: 12rem;
     padding: 2px 6px;
     border-radius: 9999px;
-    background: var(--color-accent);
-    color: var(--color-on-accent);
+    background: var(--color-overlay-ink);
+    color: #ffffff;
     font-size: 10px;
     font-weight: 600;
     line-height: 1.4;
@@ -522,6 +550,20 @@
       opacity 0.15s ease,
       transform 0.15s ease;
     pointer-events: none;
+  }
+
+  .suggestion-tag::before {
+    content: "+";
+    font-weight: 700;
+  }
+
+  .suggestion[aria-pressed="true"] .suggestion-tag {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+
+  .suggestion[aria-pressed="true"] .suggestion-tag::before {
+    content: "✓";
   }
 
   .suggestion:hover .suggestion-tag,

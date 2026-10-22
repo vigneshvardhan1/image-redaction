@@ -603,9 +603,9 @@ function setup(editor: HTMLElement) {
     bannerSub.textContent = isVerify
       ? 'The re-scan found text that still matches a sensitive pattern. Add another box, then verify again.'
       : isFaces
-        ? 'Face detection runs locally. Hover a box to preview it, click to include or exclude it, then redact them all.'
+        ? 'Ticked faces are included. Hover a box to preview it, click to include or exclude it, then redact them all.'
         : sensitiveCount > 0
-          ? 'OCR runs locally. Hover a box to preview the ink, click to include or exclude it, then redact them all.'
+          ? 'OCR runs locally. Ticked boxes are included — click a box to include or exclude it, then redact them all.'
           : 'Nothing matched our sensitive patterns. Hover to preview, or use All text to redact every line anyway.';
 
     detectPrimary.textContent = `Redact ${selectedCount}`;
