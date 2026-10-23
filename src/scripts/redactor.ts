@@ -707,7 +707,6 @@ function setup(editor: HTMLElement) {
     commitHistory();
     setCompare(false);
     scheduleRender();
-    toast(docKind === 'pdf' ? 'All redactions on this page cleared.' : 'All redactions cleared.');
   }
 
   function statusLabel(count: number): string {
@@ -795,7 +794,7 @@ function setup(editor: HTMLElement) {
         : findings.filter((finding, index) => findingSelected[index]);
     if (!chosen.length) return;
 
-    const added = addShapes(
+    addShapes(
       chosen.map((finding) => ({
         id: nextId++,
         mode: isFaces ? mode : ('ink' as Mode),
@@ -809,9 +808,6 @@ function setup(editor: HTMLElement) {
     );
 
     removeFindingUI();
-    toast(
-      `${added} redaction${added === 1 ? '' : 's'} added. Review them before you download.`
-    );
   }
 
   function dismissFindings(): void {
@@ -885,13 +881,6 @@ function setup(editor: HTMLElement) {
       banner.dataset.mode = 'scan';
       renderSuggestions();
       updateBanner();
-
-      const sensitiveCount = result.filter((finding) => finding.sensitive).length;
-      toast(
-        sensitiveCount > 0
-          ? `${sensitiveCount} sensitive detail${sensitiveCount === 1 ? '' : 's'} found. Review the boxes.`
-          : `${result.length} text block${result.length === 1 ? '' : 's'} found. Use All text to redact every line.`
-      );
     } catch (error) {
       console.error(error);
       toast('Smart detection could not load. Check your connection, or draw boxes manually.');
@@ -943,10 +932,6 @@ function setup(editor: HTMLElement) {
       banner.dataset.mode = 'faces';
       renderSuggestions();
       updateBanner();
-
-      toast(
-        `${result.length} face${result.length === 1 ? '' : 's'} found. Review the boxes before you redact them.`
-      );
     } catch (error) {
       console.error(error);
       toast('Face detection could not load. Check your connection, or draw boxes manually.');
@@ -1188,9 +1173,6 @@ function setup(editor: HTMLElement) {
     try {
       const { blob, filename } = await buildPdfExport();
       saveBlob(blob, filename);
-      toast(
-        `Downloaded a flattened PDF (${formatBytes(blob.size)}). The original text layer, links, and metadata are gone.`
-      );
     } catch (error) {
       console.error(error);
       toast('The PDF could not be exported. Try reopening the file, or use a smaller PDF.');
@@ -1200,7 +1182,6 @@ function setup(editor: HTMLElement) {
   async function buildImageExport(): Promise<{
     blob: Blob;
     filename: string;
-    reduced: boolean;
   }> {
     if (shapes.length === 0) throw new Error('No redactions');
     const type = formatSelect.value;
@@ -1214,7 +1195,6 @@ function setup(editor: HTMLElement) {
     return {
       blob,
       filename: `${baseName()}-redacted.${extension}`,
-      reduced: sizeSettingsActive(),
     };
   }
 
@@ -1228,10 +1208,8 @@ function setup(editor: HTMLElement) {
       return;
     }
     try {
-      const { blob, filename, reduced } = await buildImageExport();
+      const { blob, filename } = await buildImageExport();
       saveBlob(blob, filename);
-      const reducedText = reduced ? ` (${formatBytes(blob.size)}, reduced)` : '';
-      toast(`Downloaded${reducedText}. EXIF, GPS, and other metadata are stripped.`);
     } catch (error) {
       console.error(error);
       toast('The download could not be created. Try PNG instead.');
@@ -1332,7 +1310,6 @@ function setup(editor: HTMLElement) {
       }
 
       await navigator.share(shareData);
-      toast('Shared the redacted file.');
     } catch (error) {
       if ((error as DOMException | undefined)?.name === 'AbortError') return;
       console.error(error);
@@ -1728,7 +1705,6 @@ function setup(editor: HTMLElement) {
     refreshChrome();
     scheduleRender();
     if (!sizePanel.hidden) scheduleMeasure();
-    toast('Image loaded. It never left your device.');
   }
 
   async function loadPdfBlob(blob: Blob, name: string): Promise<void> {
@@ -1786,9 +1762,6 @@ function setup(editor: HTMLElement) {
       activatePage(0, true);
       pdfScroll.scrollTop = 0;
       refreshChrome();
-      toast(
-        `PDF loaded: ${doc.numPages} page${doc.numPages === 1 ? '' : 's'}. It never left your device.`
-      );
     } catch (error) {
       console.error(error);
       if (opened) {

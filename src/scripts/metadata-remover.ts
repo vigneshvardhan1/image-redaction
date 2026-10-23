@@ -108,7 +108,6 @@ if (root) {
       preview.src = currentPreviewUrl;
       preview.alt = `Preview of ${file.name}`;
     }
-    setStatus('Photo loaded locally. Nothing has been uploaded.');
 
     // Decode once to show the real pixel dimensions and to catch files the
     // browser cannot read before the visitor clicks download.

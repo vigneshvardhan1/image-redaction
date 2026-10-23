@@ -320,11 +320,6 @@ function setup(editor: HTMLElement) {
       renderBoxes();
       refreshChrome();
       scheduleRender();
-      toast(
-        detected.length > 0
-          ? `${detected.length} candidate bar${detected.length === 1 ? '' : 's'} found. Review the marks before repairing.`
-          : 'No solid bars found. Drag over the redaction to mark it by hand.'
-      );
     } catch (error) {
       console.error(error);
       toast('The on-device scan could not finish. Mark the area by hand instead.');
@@ -393,7 +388,6 @@ function setup(editor: HTMLElement) {
     banner.hidden = true;
     render();
     refreshChrome();
-    toast('Image loaded. It never left your device.');
 
     window.setTimeout(() => {
       detectOnDevice();
@@ -413,7 +407,7 @@ function setup(editor: HTMLElement) {
     const url = URL.createObjectURL(file);
     try {
       const image = await loadImage(url);
-      if (hasImage) toast('Replaced the previous image.');
+      if (hasImage) toast('Replaced the previous image. Repairs were reset.');
       applyImage(image, file.name || 'redacted-image.png');
     } catch {
       toast('That file could not be read as an image. Try a PNG or JPG.');
@@ -493,7 +487,6 @@ function setup(editor: HTMLElement) {
     render();
     renderBoxes();
     refreshChrome();
-    toast('Reset to the original image.');
     window.setTimeout(() => {
       detectOnDevice();
     }, 80);
@@ -549,7 +542,6 @@ function setup(editor: HTMLElement) {
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1200);
-      toast('Downloaded. EXIF, GPS, and other metadata are stripped.');
     } catch (error) {
       console.error(error);
       toast('The download could not be created. Try PNG instead.');
@@ -643,7 +635,6 @@ function setup(editor: HTMLElement) {
       renderBoxes();
       refreshChrome();
       scheduleRender();
-      toast('Area marked. Remove the selected areas when you are ready.');
     }
   }
 
