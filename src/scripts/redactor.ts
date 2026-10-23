@@ -71,11 +71,11 @@ function setup(editor: HTMLElement) {
   const copyBtn = query<HTMLButtonElement>('[data-action="copy"]');
   const shareBtn = query<HTMLButtonElement>('[data-action="share"]');
   const shareMenu = query<HTMLElement>('[data-share-menu]');
+  const shareBackdrop = query<HTMLElement>('[data-share-backdrop]');
   const shareNativeBtn = query<HTMLButtonElement>('[data-share-native]');
-  const shareCopyBtn = query<HTMLButtonElement>('[data-share-copy]');
-  const shareLinks = Array.from(
-    editor.querySelectorAll<HTMLAnchorElement>('[data-share-platform]')
-  );
+  const shareDownloadBtn = query<HTMLButtonElement>('[data-share-download]');
+  const shareCloseBtn = query<HTMLButtonElement>('[data-share-close]');
+  const shareNote = query<HTMLElement>('[data-share-note]');
   const verifyBtn = query<HTMLButtonElement>('[data-action="verify"]');
   const scanBtn = query<HTMLButtonElement>('[data-action="scan"]');
   const facesBtn = query<HTMLButtonElement>('[data-action="faces"]');
@@ -1204,9 +1204,13 @@ function setup(editor: HTMLElement) {
   }> {
     if (shapes.length === 0) throw new Error('No redactions');
     const type = formatSelect.value;
-    const extension = type === 'image/jpeg' ? 'jpg' : type === 'image/webp' ? 'webp' : 'png';
     const output = exportCanvas(type);
     const blob = await toBlob(output, type, reduceQuality);
+    // Browsers that cannot encode the requested format fall back to PNG. Name
+    // the downloaded/shared file after the bytes we actually produced so the
+    // share sheet does not see a .webp with a PNG payload.
+    const extension =
+      blob.type === 'image/jpeg' ? 'jpg' : blob.type === 'image/webp' ? 'webp' : 'png';
     return {
       blob,
       filename: `${baseName()}-redacted.${extension}`,
@@ -1255,42 +1259,40 @@ function setup(editor: HTMLElement) {
 
   // --- Sharing ------------------------------------------------------------
 
-  function sharePageUrl(): string {
-    return `${window.location.origin}${window.location.pathname}`;
-  }
-
-  function updateShareLinks(): void {
-    const url = sharePageUrl();
-    const text = 'Redact images and PDFs in your browser. Nothing is uploaded.';
-    const encodedUrl = encodeURIComponent(url);
-    const encodedText = encodeURIComponent(text);
-    const targets: Record<string, string> = {
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`,
-      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
-      x: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
-      email: `mailto:?subject=${encodeURIComponent('Redact — image redaction')}&body=${encodeURIComponent(
-        `${text}\n\n${url}`
-      )}`,
-    };
-
-    for (const link of shareLinks) {
-      const platform = link.dataset.sharePlatform;
-      if (platform && targets[platform]) link.href = targets[platform];
+  /** File-level sharing needs Web Share Level 2. Probe with a tiny file so the
+   *  menu only offers the native action when files can reach installed apps. */
+  function canShareFiles(): boolean {
+    if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') {
+      return false;
+    }
+    try {
+      const probe = new File([new Uint8Array([0])], 'probe.png', { type: 'image/png' });
+      return navigator.canShare({ files: [probe] });
+    } catch {
+      return false;
     }
   }
 
   function setShareMenu(open: boolean, moveFocus = false): void {
     shareMenu.hidden = !open;
+    shareBackdrop.hidden = !open;
     shareBtn.setAttribute('aria-expanded', String(open));
     if (!open) return;
 
-    updateShareLinks();
+    // The toast sits at the bottom of the viewport, exactly where the mobile
+    // sheet opens. Dismiss it so it cannot cover the actions.
+    window.clearTimeout(toastTimer);
+    toastEl.classList.remove('is-visible');
+
     if (moveFocus) {
-      const first = shareNativeBtn.hidden ? shareLinks[0] ?? shareCopyBtn : shareNativeBtn;
+      const first = shareNativeBtn.hidden ? shareDownloadBtn : shareNativeBtn;
       first.focus();
     }
+  }
+
+  function closeShareMenu(): void {
+    setShareMenu(false);
+    shareBtn.focus();
   }
 
   async function shareFile(): Promise<void> {
@@ -1298,69 +1300,58 @@ function setup(editor: HTMLElement) {
       toast('Add at least one redaction before sharing.');
       return;
     }
-    if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') {
-      toast('This browser cannot share files directly. Download the file instead.');
-      return;
-    }
 
     setShareMenu(false);
-    shareNativeBtn.disabled = true;
-    try {
-      const exported =
-        docKind === 'pdf' ? await buildPdfExport() : await buildImageExport();
-      const file = new File([exported.blob], exported.filename, {
-        type: exported.blob.type || 'application/octet-stream',
-      });
+    shareBtn.disabled = true;
+    let exported: { blob: Blob; filename: string } | null = null;
 
-      if (!navigator.canShare({ files: [file] })) {
-        toast('This browser cannot share this file. Download it instead.');
+    try {
+      const result =
+        docKind === 'pdf' ? await buildPdfExport() : await buildImageExport();
+      exported = { blob: result.blob, filename: result.filename };
+      const type = result.blob.type || (docKind === 'pdf' ? 'application/pdf' : 'image/png');
+      const file = new File([result.blob], result.filename, { type });
+      const shareData = {
+        files: [file],
+        title: 'Redacted with Redact',
+      };
+
+      // canShare is the only reliable way to know whether this browser can
+      // hand the actual file to installed apps. If it cannot, download it so
+      // the user still gets the redacted file instead of a page link.
+      if (
+        typeof navigator.share !== 'function' ||
+        typeof navigator.canShare !== 'function' ||
+        !navigator.canShare(shareData)
+      ) {
+        saveBlob(result.blob, result.filename);
+        toast(
+          'This browser cannot attach files to apps. The redacted file was downloaded instead.'
+        );
         return;
       }
 
-      await navigator.share({
-        files: [file],
-        title: 'Redacted with Redact',
-        text: 'Redacted with Redact. The original file was never uploaded.',
-      });
+      await navigator.share(shareData);
       toast('Shared the redacted file.');
     } catch (error) {
       if ((error as DOMException | undefined)?.name === 'AbortError') return;
       console.error(error);
-      toast('The file could not be shared. Download it instead.');
+      if (exported) {
+        saveBlob(exported.blob, exported.filename);
+        toast(
+          'The share sheet could not open. The redacted file was downloaded instead — attach it from your gallery or Files.'
+        );
+      } else {
+        toast('The file could not be prepared. Try downloading it instead.');
+      }
     } finally {
-      shareNativeBtn.disabled = false;
+      shareBtn.disabled = totalRedactions() === 0;
     }
   }
 
-  async function copyPageLink(): Promise<void> {
-    const url = sharePageUrl();
+  function downloadFromShare(): void {
     setShareMenu(false);
-
-    try {
-      if (!navigator.clipboard) throw new Error('Clipboard unavailable');
-      await navigator.clipboard.writeText(url);
-      toast('Link copied to the clipboard.');
-      return;
-    } catch {
-      /* Fall back to a temporary field. */
-    }
-
-    try {
-      const field = document.createElement('textarea');
-      field.value = url;
-      field.setAttribute('readonly', '');
-      field.style.position = 'fixed';
-      field.style.opacity = '0';
-      document.body.appendChild(field);
-      field.select();
-      const copied = document.execCommand('copy');
-      field.remove();
-      if (!copied) throw new Error('Copy blocked');
-      toast('Link copied to the clipboard.');
-    } catch (error) {
-      console.error(error);
-      toast('The link could not be copied. Select it from the address bar instead.');
-    }
+    void download();
   }
 
   function loadImage(source: string): Promise<HTMLImageElement> {
@@ -1945,14 +1936,16 @@ function setup(editor: HTMLElement) {
   copyBtn.addEventListener('click', () => void copyImage());
   shareBtn.addEventListener('click', (event) => {
     event.stopPropagation();
-    const open = shareMenu.hidden;
-    setShareMenu(open, open);
+    if (!shareMenu.hidden) {
+      setShareMenu(false);
+      return;
+    }
+    setShareMenu(true, true);
   });
   shareNativeBtn.addEventListener('click', () => void shareFile());
-  shareCopyBtn.addEventListener('click', () => void copyPageLink());
-  for (const link of shareLinks) {
-    link.addEventListener('click', () => setShareMenu(false));
-  }
+  shareDownloadBtn.addEventListener('click', downloadFromShare);
+  shareCloseBtn.addEventListener('click', closeShareMenu);
+  shareBackdrop.addEventListener('click', closeShareMenu);
   document.addEventListener('click', (event) => {
     if (shareMenu.hidden) return;
     const target = event.target as Element | null;
@@ -2389,10 +2382,9 @@ function setup(editor: HTMLElement) {
     });
   });
 
-  shareNativeBtn.hidden = !(
-    typeof navigator.share === 'function' && typeof navigator.canShare === 'function'
-  );
-  updateShareLinks();
+  const fileShareSupported = canShareFiles();
+  shareNativeBtn.hidden = !fileShareSupported;
+  shareNote.hidden = fileShareSupported;
   setMode('ink');
   setShapeKind('rect');
   refreshChrome();
