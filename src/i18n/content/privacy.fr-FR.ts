@@ -25,8 +25,8 @@ export const privacyFrFR: PrivacyContent = {
   badges: [
     'Aucun envoi d’image ou de PDF',
     'Aucun compte',
-    'Aucune analyse d’audience',
-    'Aucun cookie de suivi',
+    'Un cookie fonctionnel',
+    'Publicité avec consentement',
   ],
   flow: {
     eyebrow: 'Flux de données',
@@ -76,6 +76,12 @@ export const privacyFrFR: PrivacyContent = {
         contains: 'HTML, CSS, JavaScript et la police Inter auto-hébergée. Aucune donnée de fichier.',
       },
       {
+        request: 'Google AdSense (si activé)',
+        when: 'Après le chargement de la page, si la publicité est configurée',
+        contains:
+          'Le script publicitaire, les blocs d’annonces et les signaux de consentement. Des cookies peuvent être lus ou écrits après votre acceptation de la bannière. Aucune donnée de fichier.',
+      },
+      {
         request: 'Tesseract.js',
         when: 'À la première utilisation de la détection intelligente',
         contains: 'La bibliothèque OCR depuis jsDelivr. Aucune donnée de fichier.',
@@ -121,7 +127,7 @@ export const privacyFrFR: PrivacyContent = {
       'Ouvrez les outils de développement de votre navigateur et passez à l’onglet réseau. Videz la liste.',
       'Chargez une image ou un PDF et dessinez quelques cadres. Observez la liste des requêtes : aucune requête d’envoi n’apparaît.',
       'Lancez la détection intelligente, « Détecter les visages » ou ouvrez un PDF. Vous verrez des requêtes pour le moteur OCR, le détecteur de visages ou le moteur PDF. Votre fichier n’en fait pas partie.',
-      'Déconnectez-vous d’Internet. Le caviardage manuel, la copie et le téléchargement fonctionnent encore, car les pixels sont déjà en local.',
+      'Vérifiez la liste complète des requêtes : aucune requête d’envoi. Les seules concernent le code, les polices, les modèles et — si la publicité est activée — Google AdSense. Votre fichier n’y figure jamais.',
       'Ouvrez les propriétés du fichier téléchargé. Vous n’y trouverez aucun champ de métadonnées lié à l’appareil photo, au GPS ou à l’appareil.',
     ],
   },
@@ -139,7 +145,7 @@ export const privacyFrFR: PrivacyContent = {
     {
       icon: 'code',
       title: 'Ouvert à l’inspection',
-      copy: 'L’éditeur est du JavaScript simple et du canvas. Il n’y a pas de couche native cachée. Utilisez l’onglet réseau, lisez la liste des requêtes et testez le comportement hors ligne.',
+      copy: 'L’éditeur est du JavaScript simple et du canvas. Il n’y a pas de couche native cachée. Utilisez l’onglet réseau, lisez la liste des requêtes et observez ce que la page charge.',
     },
   ],
   faq: {

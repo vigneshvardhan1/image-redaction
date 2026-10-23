@@ -22,7 +22,12 @@ export const privacyDeDE: PrivacyContent = {
   },
   policyNotice:
     'Diese Seite erklärt, wie der Editor mit Ihrer Datei umgeht. Die formelle Richtlinie — Cookies, Hosting-Protokolle und Ihre Rechte — finden Sie in der Datenschutzerklärung.',
-  badges: ['Keine Bild- oder PDF-Uploads', 'Kein Konto', 'Keine Analysedienste', 'Keine Tracking-Cookies'],
+  badges: [
+    'Keine Bild- oder PDF-Uploads',
+    'Kein Konto',
+    'Ein funktionales Cookie',
+    'Werbung nur mit Zustimmung',
+  ],
   flow: {
     eyebrow: 'Datenfluss',
     title: 'Die gesamte Reise findet innerhalb der Seite statt.',
@@ -70,6 +75,12 @@ export const privacyDeDE: PrivacyContent = {
         contains: 'HTML, CSS, JavaScript und die selbst gehostete Schrift Inter. Keine Dateidaten.',
       },
       {
+        request: 'Google AdSense (wenn aktiviert)',
+        when: 'Nach dem Laden der Seite, wenn Werbung konfiguriert ist',
+        contains:
+          'Das Anzeigenskript, die Anzeigenflächen und Consent-Signale. Nach Ihrer Zustimmung im Consent-Banner können Cookies gesetzt oder gelesen werden. Keine Dateidaten.',
+      },
+      {
         request: 'Tesseract.js',
         when: 'Beim ersten Ausführen der intelligenten Erkennung',
         contains: 'Die OCR-Bibliothek von jsDelivr. Keine Dateidaten.',
@@ -115,7 +126,7 @@ export const privacyDeDE: PrivacyContent = {
       'Öffnen Sie die Entwicklertools Ihres Browsers und wechseln Sie zum Netzwerk-Tab. Leeren Sie die Liste.',
       'Laden Sie ein Bild oder eine PDF und zeichnen Sie ein paar Rahmen. Beobachten Sie die Anfrageliste: Es erscheint keine Upload-Anfrage.',
       'Starten Sie die intelligente Erkennung, „Gesichter erkennen“ oder öffnen Sie eine PDF. Sie sehen Anfragen für die OCR-, Gesichts- oder PDF-Engine. Ihre Datei ist nicht dabei.',
-      'Trennen Sie die Internetverbindung. Manuelles Schwärzen, Kopieren und Herunterladen funktionieren weiterhin, weil die Pixel bereits lokal sind.',
+      'Prüfen Sie die vollständige Anfrageliste auf einen Upload. Die einzigen Anfragen gelten Code, Schriften, Modellen und — falls Werbung aktiviert ist — Google AdSense. Ihre Datei ist nie dabei.',
       'Öffnen Sie die Eigenschaften der heruntergeladenen Datei. Sie finden kein Kamera-, GPS- oder Gerätemetadatenfeld.',
     ],
   },
@@ -133,7 +144,7 @@ export const privacyDeDE: PrivacyContent = {
     {
       icon: 'code',
       title: 'Offen für die Prüfung',
-      copy: 'Der Editor besteht aus einfachem JavaScript und Canvas. Es gibt keine versteckte native Ebene. Nutzen Sie den Netzwerk-Tab, lesen Sie die Anfrageliste und testen Sie das Offline-Verhalten.',
+      copy: 'Der Editor besteht aus einfachem JavaScript und Canvas. Es gibt keine versteckte native Ebene. Nutzen Sie den Netzwerk-Tab, lesen Sie die Anfrageliste und beobachten Sie, was die Seite abruft.',
     },
   ],
   faq: {

@@ -132,9 +132,9 @@ export const blurTextInImage: ToolPageContent = {
         copy: 'Pick the format, cap the long edge if the file is heavy, and download a new image.',
       },
       {
-        icon: 'wifi-off',
-        title: 'Works offline after load',
-        copy: 'The editor and manual redactions keep working without a network. Nothing is sent anywhere.',
+        icon: 'globe',
+        title: 'No install or account',
+        copy: 'Open the page in any modern browser. There is no app, extension, or sign-up screen.',
       },
     ],
   },
@@ -484,9 +484,9 @@ export const redactScreenshotIphone: ToolPageContent = {
         copy: 'Export PNG, JPG, or WebP, then save the download wherever you keep screenshots.',
       },
       {
-        icon: 'wifi-off',
-        title: 'Works offline',
-        copy: 'After the page has loaded, manual redaction and export keep working without a connection.',
+        icon: 'globe',
+        title: 'No App Store download',
+        copy: 'The editor runs in Safari. There is nothing to install and no account to create.',
       },
       {
         icon: 'lock',
@@ -993,9 +993,9 @@ export const redactScreenshotAndroid: ToolPageContent = {
         copy: 'Export PNG, JPG, or WebP and share that copy instead of the original from Gallery.',
       },
       {
-        icon: 'wifi-off',
-        title: 'Works offline',
-        copy: 'After the page has loaded, manual redaction and export keep working without a connection.',
+        icon: 'globe',
+        title: 'No install needed',
+        copy: 'The editor runs in Chrome. There is no APK to download and no account to create.',
       },
       {
         icon: 'lock',
@@ -1070,9 +1070,9 @@ export const redactScreenshotAndroid: ToolPageContent = {
         'Often yes. Sending a photo as a normal photo usually recompresses it and drops much of the metadata; sending it as a document can preserve the original. Clean the file before either path.',
     },
     {
-      question: 'Does it work offline?',
+      question: 'Do I need to install an app?',
       answer:
-        'Manual redaction and export work after the page has loaded. Smart detection needs its OCR model on first use, so do that once while connected if you plan to work offline.',
+        'No. Open this page in Chrome and work in the browser. There is no APK, no Play Store listing, and no account. The site does need an internet connection to load and to fetch the detection models on first use.',
     },
   ],
   related: [

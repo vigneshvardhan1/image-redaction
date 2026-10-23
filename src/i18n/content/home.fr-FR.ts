@@ -49,9 +49,9 @@ export const homeFrFR: HomeContent = {
       copy: 'Aucun e-mail, aucune formule, aucun filigrane.',
     },
     {
-      icon: 'wifi-off',
-      title: 'Fonctionne hors ligne',
-      copy: 'Continuez à retoucher une fois la page chargée.',
+      icon: 'globe',
+      title: 'Fonctionne dans le navigateur',
+      copy: 'Tout navigateur moderne suffit. Rien à installer.',
     },
   ],
   proof: {
@@ -231,7 +231,7 @@ export const homeFrFR: HomeContent = {
         title: 'Le caviardage d’images en ligne, sans l’envoi',
         paragraphs: [
           'La plupart des outils de caviardage d’images en ligne vous demandent d’envoyer le fichier à un serveur, d’attendre son retour et de croire que la copie a été supprimée. Celui-ci est construit dans l’autre sens. Le navigateur décode l’image dans un canvas de l’onglet courant, garde les pixels en mémoire et dessine chaque caviardage localement. Il n’y a pas de point d’envoi, donc pas de copie serveur à supprimer. La page Confidentialité documente chaque requête effectuée par le site.',
-          'Un ensemble de requêtes mérite d’être connu : les détecteurs. Au premier usage, la page télécharge Tesseract.js, un modèle de langue anglaise et le modèle de visages MediaPipe. Votre image ne fait pas partie de ces requêtes. Le caviardage manuel, l’annulation, la copie et l’export fonctionnent sans eux, et une fois la page chargée, vous pouvez continuer à retoucher hors ligne.',
+          'Un ensemble de requêtes mérite d’être connu : les détecteurs. Au premier usage, la page télécharge Tesseract.js, un modèle de langue anglaise et le modèle de visages MediaPipe. Votre image ne fait pas partie de ces requêtes. Le caviardage manuel, l’annulation, la copie et l’export n’en ont pas besoin, et vous pouvez observer chaque requête dans l’onglet réseau de votre navigateur.',
         ],
       },
       {

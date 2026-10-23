@@ -534,7 +534,7 @@ import Icon from './Icon.astro';
           </span>
         </div>
 
-        <div class="ml-auto flex flex-wrap items-center gap-1.5">
+        <div class="relative ml-auto flex flex-wrap items-center gap-1.5">
           <button
             type="button"
             data-action="size"
@@ -590,6 +590,82 @@ import Icon from './Icon.astro';
             <Icon name="copy" size={13} />
             <span class="hidden sm:inline">Copy</span>
           </button>
+          <div data-share>
+            <button
+              type="button"
+              data-action="share"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              aria-controls="share-menu"
+              class="inline-flex h-9 items-center gap-1.5 rounded-full bg-canvas-soft px-3 text-[11px] font-heading text-ink transition-colors hover:bg-field disabled:opacity-40"
+              title="Share the redacted file or this page"
+              disabled
+            >
+              <Icon name="share" size={13} />
+              <span class="hidden sm:inline">Share</span>
+            </button>
+
+            <div
+              id="share-menu"
+              data-share-menu
+              hidden
+              role="menu"
+              aria-label="Share options"
+              class="absolute bottom-full right-0 z-50 mb-2 w-[16rem] rounded-panel border border-hairline bg-canvas p-2 shadow-2xl shadow-ink/10"
+            >
+              <button
+                type="button"
+                data-share-native
+                role="menuitem"
+                class="share-item w-full text-left"
+                hidden
+              >
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-canvas-soft">
+                  <Icon name="share" size={14} />
+                </span>
+                <span class="min-w-0">
+                  <span class="block text-[12px] font-heading leading-tight">Share file</span>
+                  <span class="block text-[10px] leading-snug text-muted">Send the redacted file</span>
+                </span>
+              </button>
+
+              <p class="px-2 pb-1 pt-2 text-[10px] font-heading uppercase tracking-[0.12em] text-faint">
+                Share this page
+              </p>
+              <div class="grid grid-cols-2 gap-0.5">
+                <a data-share-platform="whatsapp" role="menuitem" href="#" target="_blank" rel="noopener noreferrer" class="share-item">
+                  <Icon name="whatsapp" size={14} />
+                  <span>WhatsApp</span>
+                </a>
+                <a data-share-platform="telegram" role="menuitem" href="#" target="_blank" rel="noopener noreferrer" class="share-item">
+                  <Icon name="telegram" size={14} />
+                  <span>Telegram</span>
+                </a>
+                <a data-share-platform="x" role="menuitem" href="#" target="_blank" rel="noopener noreferrer" class="share-item">
+                  <Icon name="x-social" size={13} />
+                  <span>X</span>
+                </a>
+                <a data-share-platform="facebook" role="menuitem" href="#" target="_blank" rel="noopener noreferrer" class="share-item">
+                  <Icon name="facebook" size={14} />
+                  <span>Facebook</span>
+                </a>
+                <a data-share-platform="linkedin" role="menuitem" href="#" target="_blank" rel="noopener noreferrer" class="share-item">
+                  <Icon name="linkedin" size={14} />
+                  <span>LinkedIn</span>
+                </a>
+                <a data-share-platform="email" role="menuitem" href="#" class="share-item">
+                  <Icon name="mail" size={14} />
+                  <span>Email</span>
+                </a>
+              </div>
+              <div class="mt-1 border-t border-hairline-soft pt-1">
+                <button type="button" data-share-copy role="menuitem" class="share-item w-full text-left">
+                  <Icon name="link" size={14} />
+                  <span>Copy link</span>
+                </button>
+              </div>
+            </div>
+          </div>
           <button
             type="button"
             data-action="download"

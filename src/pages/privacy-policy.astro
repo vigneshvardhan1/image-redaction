@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 
-const updated = 'October 21, 2026';
+const updated = 'October 23, 2026';
 
 const toc = [
   { id: 'overview', label: 'Overview' },
@@ -9,6 +9,7 @@ const toc = [
   { id: 'what-we-collect', label: 'What we collect' },
   { id: 'your-images', label: 'Your images' },
   { id: 'cookies', label: 'Cookies and storage' },
+  { id: 'advertising', label: 'Advertising' },
   { id: 'third-parties', label: 'Third-party requests' },
   { id: 'hosting-logs', label: 'Hosting logs' },
   { id: 'email', label: 'Email you send' },
@@ -21,8 +22,8 @@ const toc = [
 
 const highlights = [
   { value: '0', label: 'Images uploaded or stored' },
-  { value: '0', label: 'Analytics and tracking pixels' },
   { value: '1', label: 'Functional theme cookie' },
+  { value: 'Off', label: 'Ad cookies before you accept' },
 ];
 
 const schema = {
@@ -31,8 +32,8 @@ const schema = {
   name: 'Privacy Policy',
   url: 'https://imageredaction.com/privacy-policy',
   description:
-    'How Redact handles information: images stay in your browser, there is no analytics, and the only cookie stores your theme preference.',
-  dateModified: '2026-10-21',
+    'How Redact handles information: images stay in your browser, the theme cookie is functional, and Google AdSense is consent-controlled.',
+  dateModified: '2026-10-23',
   publisher: {
     '@type': 'Organization',
     name: 'Redact',
@@ -44,11 +45,11 @@ const schema = {
 
 <LegalLayout
   title="Privacy Policy"
-  description="What Redact does with information, in plain language: your image stays in your browser, there is no analytics, and the only cookie remembers your theme."
+  description="What Redact does with information, in plain language: your image stays in your browser, the theme cookie is functional, and advertising is consent-controlled."
   updated={updated}
   toc={toc}
   highlights={highlights}
-  summary="We do not collect your images, run analytics, or ask for an account. The only cookie this site sets remembers whether you chose the light or dark theme. The rest of this page explains the small number of requests the site does make."
+  summary="We do not collect your images or ask for an account. The site sets one functional theme cookie. If advertising is enabled, Google AdSense may use cookies only after you accept the consent banner, and you can change that choice at any time."
   schema={schema}
 >
   <section id="overview">
@@ -100,10 +101,17 @@ const schema = {
         library and language data. That request does not include your image. See{' '}
         <a href="#third-parties">third-party requests</a>.
       </li>
+      <li>
+        <strong>You accept advertising cookies.</strong> If advertising is enabled,
+        Google AdSense may process cookie, device, and usage data as described under{' '}
+        <a href="#advertising">advertising</a>. Rejecting the banner keeps
+        non-essential ad storage disabled.
+      </li>
     </ul>
     <p>
-      We do not use analytics, advertising pixels, session recording, or cross-site
-      trackers. We do not sell, rent, or share personal information.
+      We do not run first-party analytics, session recording, or cross-site trackers.
+      The editor sets no advertising cookies of its own. We do not sell personal
+      information for money.
     </p>
   </section>
 
@@ -144,16 +152,74 @@ const schema = {
       blocked.
     </p>
     <p>
-      The cookie contains no personal data and is not used to identify you. Like any
-      cookie, it is included in requests to imageredaction.com, where the static host
-      may receive it as part of ordinary request handling. It is never used for
+      The theme cookie contains no personal data and is not used to identify you. Like
+      any cookie, it is included in requests to imageredaction.com, where the static
+      host may receive it as part of ordinary request handling. It is never used for
       advertising or analytics.
     </p>
     <p>
-      There is no consent banner because there is nothing to opt in to. You can delete
-      the cookie and the local-storage entry at any time through your browser
-      settings; the site will work normally and will simply ask your operating system
-      for a theme again.
+      Your advertising choice is stored in local storage under the key
+      <code>ir-consent-v1</code>, together with the version and the date you chose.
+      That record stays in your browser. It is not sent to us, and it is how the site
+      remembers not to ask again. Clearing site data removes it, and the banner will
+      appear on your next visit.
+    </p>
+    <p>
+      When advertising is enabled, Google AdSense and its partners may set advertising
+      cookies or similar identifiers after you accept the consent banner. They are not
+      set by the editor, and they are not required to redact a file. See{' '}
+      <a href="#advertising">advertising</a> for the choices available.
+    </p>
+    <p>
+      You can delete the theme cookie and local-storage entries at any time through
+      your browser settings; the site will work normally and will simply ask your
+      operating system for a theme again.
+    </p>
+  </section>
+
+  <section id="advertising">
+    <h2>Advertising and Google AdSense</h2>
+    <p>
+      Advertising is optional and is only present when it has been enabled for this
+      deployment. When it is enabled, the site uses Google AdSense, a service provided
+      by Google. Google and its partners may use cookies, web beacons, IP address,
+      device information, and information about your visits to this and other websites
+      to serve, measure, limit, and — where you consent — personalise ads.
+    </p>
+    <p>
+      The site loads Google Consent Mode v2 with ad storage, ad user data, and ad
+      personalisation denied by default. If you accept the banner, those signals are
+      updated to granted. If you reject non-essential storage, they stay denied, and
+      ads are limited to non-personalised delivery. You can change the choice later
+      with <strong>Privacy settings</strong> in the footer.
+    </p>
+    <p>
+      Google’s use of advertising cookies is described in{' '}
+      <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">
+        How Google uses information from sites that use its services
+      </a>
+      . You can manage or opt out of personalised advertising through{' '}
+      <a href="https://adssettings.google.com/" rel="noopener">Google Ad Settings</a>.
+      Industry opt-out pages are also available at{' '}
+      <a href="https://www.aboutads.info/choices/" rel="noopener">
+        aboutads.info
+      </a>{' '}
+      and{' '}
+      <a href="https://www.youronlinechoices.eu/" rel="noopener">
+        youronlinechoices.eu
+      </a>
+      . Opting out does not stop ads; it stops them being personalised by participating
+      companies.
+    </p>
+    <p>
+      Where local law requires it, Google may show an additional consent message or
+      require a certified consent management platform before personalised ads are
+      served. The banner on this site is the first layer of that choice, and rejecting
+      it never blocks the editor.
+    </p>
+    <p>
+      We do not receive your image or PDF through advertising. Ad requests carry page
+      and device information, not the file you are editing.
     </p>
   </section>
 
@@ -182,7 +248,9 @@ const schema = {
     <p>
       Everything else — the pages, styles, scripts, and the Inter font — is served
       from this site. We do not load Google Fonts, embedded videos, social widgets, or
-      third-party analytics.
+      third-party analytics. When advertising is enabled, the page loads the Google
+      AdSense script from Google’s advertising domains; that is the only advertising
+      request the site makes.
     </p>
   </section>
 
@@ -232,11 +300,15 @@ const schema = {
       correspondence, subject to any legal obligation to keep it.
     </p>
     <p>
-      We do not sell or share personal information for cross-context behavioural
-      advertising. To make a request, email{' '}
-      <a href="mailto:hello@imageredaction.com">hello@imageredaction.com</a> from the
-      address you used. We may ask for enough information to find the relevant
-      correspondence.
+      We do not sell personal information for money. When advertising is enabled and
+      you accept, Google may process data for personalised advertising as described
+      under <a href="#advertising">advertising</a>; under laws such as the CCPA/CPRA
+      that may count as sharing for cross-context behavioural advertising. You can
+      reject or withdraw that consent at any time with <strong>Privacy settings</strong>{' '}
+      in the footer, or use the Google and industry opt-outs linked above. To make a
+      request, email <a href="mailto:hello@imageredaction.com">hello@imageredaction.com</a>{' '}
+      from the address you used. We may ask for enough information to find the
+      relevant correspondence.
     </p>
   </section>
 

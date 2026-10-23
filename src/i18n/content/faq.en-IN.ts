@@ -5,8 +5,6 @@ import { toBritishEnglish } from './englishVariants';
 const homeIndiaOverrides: Record<string, string> = {
   'Can I redact things other than faces?':
     'Yes. You can cover anything visible in an image: faces, names, email addresses, phone numbers, card numbers, Aadhaar numbers, PANs, GSTINs, UPI IDs, addresses, QR codes, barcodes and more. Smart detection automatically suggests text that looks like emails, card numbers, phone numbers, government IDs, addresses and dates. Faces, QR codes, barcodes and logos still need a manual box.',
-  'Does Redact use cookies or track me?':
-    'Only a functional one. Redact has no analytics, advertising pixels or third-party trackers, and your image is never uploaded. The one cookie stores your light/dark theme preference, alongside a local-storage copy, so the page does not flash the wrong theme on your next visit. There is no personal data in it, it is never sent to a server, and it can be cleared in your browser settings at any time.',
 };
 
 const privacyIndiaOverrides: Record<string, string> = {

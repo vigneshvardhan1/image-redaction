@@ -4,6 +4,8 @@ import Button from '../Button.astro';
 import Icon from '../Icon.astro';
 import GuideCard from '../GuideCard.astro';
 import CtaBand from '../CtaBand.astro';
+import AdSlot from '../AdSlot.astro';
+import { adsense } from '../../config/ads';
 import type { Guide, GuideBlock } from '../../data/guides';
 import type { Locale } from '../../i18n/config';
 import { DEFAULT_LOCALE, LOCALES, localeConfig, localizePath } from '../../i18n/config';
@@ -46,16 +48,19 @@ const headings = guide.blocks
   .filter((block): block is Extract<GuideBlock, { type: 'h2' }> => block.type === 'h2')
   .map((block) => ({ text: block.text, id: slugify(block.text) }));
 
+const guideOgImage = `/og/guides/${guide.slug}.png`;
+const publishedISO = `${guide.dateISO}T00:00:00.000Z`;
+
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: guide.title,
   description: guide.description,
-  datePublished: guide.dateISO,
-  dateModified: guide.dateISO,
+  datePublished: publishedISO,
+  dateModified: publishedISO,
   articleSection: guide.category,
   inLanguage: locale,
-  image: new URL(guide.cover, site).href,
+  image: new URL(guideOgImage, site).href,
   mainEntityOfPage: canonical,
   author: {
     '@type': 'Organization',
@@ -66,6 +71,7 @@ const articleSchema = {
     '@type': 'Organization',
     name: 'Redact',
     url: homeHref,
+    logo: new URL('/icon-512.png', site).href,
   },
 };
 
@@ -98,7 +104,11 @@ const sample = guide.slug.includes('receipt')
   description={guide.description}
   schema={[articleSchema, breadcrumbSchema]}
   ogType="article"
+  ogImage={guideOgImage}
   ogImageAlt={guide.title}
+  articlePublishedTime={publishedISO}
+  articleModifiedTime={publishedISO}
+  articleSection={guide.category}
   locale={locale}
   availableLocales={availableLocales}
   splash
@@ -298,6 +308,10 @@ const sample = guide.slug.includes('receipt')
       </div>
     </div>
   </article>
+
+  <div class="container-page mt-16 md:mt-24">
+    <AdSlot slot={adsense.slots.article} label={t(locale, 'ad.label')} />
+  </div>
 
   <section class="container-page mt-20 md:mt-28">
     <div class="flex flex-col justify-between gap-4 border-b border-hairline-soft pb-5 sm:flex-row sm:items-end">

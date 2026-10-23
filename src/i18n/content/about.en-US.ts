@@ -17,7 +17,7 @@ export const aboutEnUS: AboutContent = {
   stats: [
     { value: '0', label: 'Files uploaded' },
     { value: '0', label: 'Accounts required' },
-    { value: '0', label: 'Trackers or analytics' },
+    { value: '1', label: 'Functional theme cookie' },
     { value: '100%', label: 'Processing in your browser' },
   ],
   why: {
@@ -97,7 +97,7 @@ export const aboutEnUS: AboutContent = {
   stack: {
     eyebrow: 'Under the hood',
     title: 'Small stack. No hidden service.',
-    copy: 'The site is static HTML, CSS, and JavaScript. There is no backend that receives files, no analytics SDK, and no advertising code. The pieces that do the work are ordinary web APIs and open-source software.',
+    copy: 'The site is static HTML, CSS, and JavaScript. There is no backend that receives files and no first-party analytics. Advertising is optional: when enabled, Google AdSense loads under the consent banner described in the Privacy Policy. The pieces that do the work are ordinary web APIs and open-source software.',
     note: 'Smart detection and PDF support are the features that fetch extra code after the page loads. They load Tesseract.js, language data, MediaPipe’s face model, and the self-hosted PDF engine; your file stays in the tab.',
     items: [
       { label: 'Astro', value: 'Static pages and components' },

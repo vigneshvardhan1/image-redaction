@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import sharp from 'sharp';
 
@@ -75,3 +75,109 @@ const output = resolve('public/og.png');
 await sharp(Buffer.from(svg)).png().toFile(output);
 writeFileSync(resolve('scripts/og.svg'), svg, 'utf8');
 console.log(`wrote ${output}`);
+
+/**
+ * Per-guide social cards. The titles and covers mirror src/data/guides.ts;
+ * update this list when a guide is added or renamed.
+ */
+const guideCards = [
+  {
+    slug: 'how-to-redact-a-screenshot',
+    title: 'How to redact a screenshot without missing anything',
+    category: 'Screenshots',
+    cover: 'public/samples/chat-redacted.svg',
+  },
+  {
+    slug: 'blur-vs-pixelate-vs-black-box',
+    title: 'Blur vs pixelate vs black box: which redaction is actually safe?',
+    category: 'Styles',
+    cover: 'public/samples/id-redacted.svg',
+  },
+  {
+    slug: 'redact-a-receipt',
+    title: 'How to redact a receipt before you expense it',
+    category: 'Receipts',
+    cover: 'public/samples/receipt-redacted.svg',
+  },
+  {
+    slug: 'redact-an-id-card',
+    title: 'Redacting an ID card: the fields you should never share',
+    category: 'Identity',
+    cover: 'public/samples/id-redacted.svg',
+  },
+  {
+    slug: 'work-screenshot-checklist',
+    title: 'Sharing a work screenshot? Check these 12 things first',
+    category: 'Work',
+    cover: 'public/samples/dashboard-redacted.svg',
+  },
+];
+
+function escapeMarkup(value) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+}
+
+function wrapTitle(title, maxChars = 27) {
+  const words = title.split(/\s+/);
+  const lines = [];
+  let line = '';
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > maxChars && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.slice(0, 4);
+}
+
+const guidesDir = resolve('public/og/guides');
+mkdirSync(guidesDir, { recursive: true });
+
+for (const card of guideCards) {
+  const cover = readFileSync(resolve(card.cover));
+  const base = await sharp(cover)
+    .resize(1200, 630, { fit: 'cover', position: 'centre' })
+    .png()
+    .toBuffer();
+
+  const titleLines = wrapTitle(card.title);
+  const title = titleLines
+    .map(
+      (line, index) =>
+        `<text x="72" y="${238 + index * 50}" font-family="Arial, Helvetica, sans-serif" font-size="41" font-weight="700" fill="#141414">${escapeMarkup(line)}</text>`,
+    )
+    .join('\n  ');
+
+  const overlay = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="fade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="0.7" stop-color="#ffffff" stop-opacity="0.97"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="mark"><rect x="72" y="54" width="44" height="44" rx="12"/></clipPath>
+  </defs>
+  <rect width="760" height="630" fill="url(#fade)"/>
+  <rect x="72" y="54" width="44" height="44" rx="12" fill="#141414"/>
+  <g clip-path="url(#mark)">
+    <rect x="61" y="72.7" width="66" height="6.6" rx="1.4" fill="#e7e5df" transform="rotate(36 94 76)"/>
+    <rect x="61" y="72.7" width="66" height="6.6" rx="1.4" fill="#e7e5df" transform="rotate(-36 94 76)"/>
+  </g>
+  <text x="130" y="84" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#141414">redact</text>
+  <text x="72" y="170" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="700" letter-spacing="2" fill="#0066ff">${escapeMarkup(card.category.toUpperCase())}</text>
+  ${title}
+  <text x="72" y="576" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#707070">imageredaction.com/guides</text>
+</svg>`;
+
+  const out = resolve(guidesDir, `${card.slug}.png`);
+  await sharp(base).composite([{ input: Buffer.from(overlay) }]).png().toFile(out);
+  console.log(`wrote ${out}`);
+}

@@ -1,0 +1,48 @@
+---
+import { adsense, isAdSlot } from '../config/ads';
+
+interface Props {
+  slot?: string;
+  format?: string;
+  layout?: string;
+  /** Visible label. AdSense requires the unit to be distinguishable from content. */
+  label?: string;
+  class?: string;
+}
+
+const {
+  slot = '',
+  format = 'auto',
+  layout = '',
+  label = 'Advertisement',
+  class: className = '',
+} = Astro.props;
+
+const show = adsense.enabled && isAdSlot(slot);
+---
+
+{
+  show && (
+    <aside
+      class:list={['ad-slot w-full', className]}
+      aria-label={label}
+      data-ad-unit
+    >
+      <p class="mb-2 text-center text-[10px] font-heading uppercase tracking-[0.16em] text-faint">
+        {label}
+      </p>
+      <ins
+        class="adsbygoogle block min-h-[90px]"
+        style="display:block"
+        data-ad-client={adsense.client}
+        data-ad-slot={slot}
+        data-ad-format={format}
+        data-full-width-responsive="true"
+        {...(layout ? { 'data-ad-layout': layout } : {})}
+      />
+      <script is:inline>
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </aside>
+  )
+}

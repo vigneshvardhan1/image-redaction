@@ -69,6 +69,13 @@ function setup(editor: HTMLElement) {
   const compareBtn = query<HTMLButtonElement>('[data-action="compare"]');
   const downloadBtn = query<HTMLButtonElement>('[data-action="download"]');
   const copyBtn = query<HTMLButtonElement>('[data-action="copy"]');
+  const shareBtn = query<HTMLButtonElement>('[data-action="share"]');
+  const shareMenu = query<HTMLElement>('[data-share-menu]');
+  const shareNativeBtn = query<HTMLButtonElement>('[data-share-native]');
+  const shareCopyBtn = query<HTMLButtonElement>('[data-share-copy]');
+  const shareLinks = Array.from(
+    editor.querySelectorAll<HTMLAnchorElement>('[data-share-platform]')
+  );
   const verifyBtn = query<HTMLButtonElement>('[data-action="verify"]');
   const scanBtn = query<HTMLButtonElement>('[data-action="scan"]');
   const facesBtn = query<HTMLButtonElement>('[data-action="faces"]');
@@ -469,6 +476,7 @@ function setup(editor: HTMLElement) {
     countLabel.textContent = total === 1 ? 'redaction' : 'redactions';
     downloadBtn.disabled = total === 0;
     copyBtn.disabled = total === 0;
+    shareBtn.disabled = total === 0;
     verifyBtn.disabled = shapes.length === 0;
     compareBtn.disabled = shapes.length === 0;
     clearBtn.disabled = shapes.length === 0;
@@ -1092,14 +1100,10 @@ function setup(editor: HTMLElement) {
    * Pages that were never opened are still rasterized, so no page keeps an
    * original text layer or hidden object.
    */
-  async function downloadPdf(): Promise<void> {
-    if (!pdfDoc) return;
+  async function buildPdfExport(): Promise<{ blob: Blob; filename: string }> {
+    if (!pdfDoc) throw new Error('No PDF is open');
+    if (totalRedactions() === 0) throw new Error('No redactions');
     syncPageState();
-    const total = totalRedactions();
-    if (total === 0) {
-      toast('Add at least one redaction before downloading.');
-      return;
-    }
 
     setBusy(
       true,
@@ -1108,6 +1112,7 @@ function setup(editor: HTMLElement) {
       'PDF pages are rendered locally. The original file is never uploaded.'
     );
     downloadBtn.disabled = true;
+    shareBtn.disabled = true;
     updatePageChrome();
 
     try {
@@ -1166,17 +1171,47 @@ function setup(editor: HTMLElement) {
         'PDF pages are rendered locally. The original file is never uploaded.'
       );
       const blob = await buildPdf(rendered);
-      saveBlob(blob, `${baseName()}-redacted.pdf`);
+      return { blob, filename: `${baseName()}-redacted.pdf` };
+    } finally {
+      setBusy(false);
+      refreshChrome();
+    }
+  }
+
+  async function downloadPdf(): Promise<void> {
+    if (!pdfDoc) return;
+    if (totalRedactions() === 0) {
+      toast('Add at least one redaction before downloading.');
+      return;
+    }
+
+    try {
+      const { blob, filename } = await buildPdfExport();
+      saveBlob(blob, filename);
       toast(
         `Downloaded a flattened PDF (${formatBytes(blob.size)}). The original text layer, links, and metadata are gone.`
       );
     } catch (error) {
       console.error(error);
       toast('The PDF could not be exported. Try reopening the file, or use a smaller PDF.');
-    } finally {
-      setBusy(false);
-      refreshChrome();
     }
+  }
+
+  async function buildImageExport(): Promise<{
+    blob: Blob;
+    filename: string;
+    reduced: boolean;
+  }> {
+    if (shapes.length === 0) throw new Error('No redactions');
+    const type = formatSelect.value;
+    const extension = type === 'image/jpeg' ? 'jpg' : type === 'image/webp' ? 'webp' : 'png';
+    const output = exportCanvas(type);
+    const blob = await toBlob(output, type, reduceQuality);
+    return {
+      blob,
+      filename: `${baseName()}-redacted.${extension}`,
+      reduced: sizeSettingsActive(),
+    };
   }
 
   async function download(): Promise<void> {
@@ -1189,13 +1224,10 @@ function setup(editor: HTMLElement) {
       return;
     }
     try {
-      const type = formatSelect.value;
-      const extension = type === 'image/jpeg' ? 'jpg' : type === 'image/webp' ? 'webp' : 'png';
-      const output = exportCanvas(type);
-      const blob = await toBlob(output, type, reduceQuality);
-      saveBlob(blob, `${baseName()}-redacted.${extension}`);
-      const reduced = sizeSettingsActive() ? ` (${formatBytes(blob.size)}, reduced)` : '';
-      toast(`Downloaded${reduced}. EXIF, GPS, and other metadata are stripped.`);
+      const { blob, filename, reduced } = await buildImageExport();
+      saveBlob(blob, filename);
+      const reducedText = reduced ? ` (${formatBytes(blob.size)}, reduced)` : '';
+      toast(`Downloaded${reducedText}. EXIF, GPS, and other metadata are stripped.`);
     } catch (error) {
       console.error(error);
       toast('The download could not be created. Try PNG instead.');
@@ -1218,6 +1250,116 @@ function setup(editor: HTMLElement) {
     } catch (error) {
       console.error(error);
       toast('Clipboard access is blocked here. Use Download instead.');
+    }
+  }
+
+  // --- Sharing ------------------------------------------------------------
+
+  function sharePageUrl(): string {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
+
+  function updateShareLinks(): void {
+    const url = sharePageUrl();
+    const text = 'Redact images and PDFs in your browser. Nothing is uploaded.';
+    const encodedUrl = encodeURIComponent(url);
+    const encodedText = encodeURIComponent(text);
+    const targets: Record<string, string> = {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`,
+      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
+      x: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+      email: `mailto:?subject=${encodeURIComponent('Redact — image redaction')}&body=${encodeURIComponent(
+        `${text}\n\n${url}`
+      )}`,
+    };
+
+    for (const link of shareLinks) {
+      const platform = link.dataset.sharePlatform;
+      if (platform && targets[platform]) link.href = targets[platform];
+    }
+  }
+
+  function setShareMenu(open: boolean, moveFocus = false): void {
+    shareMenu.hidden = !open;
+    shareBtn.setAttribute('aria-expanded', String(open));
+    if (!open) return;
+
+    updateShareLinks();
+    if (moveFocus) {
+      const first = shareNativeBtn.hidden ? shareLinks[0] ?? shareCopyBtn : shareNativeBtn;
+      first.focus();
+    }
+  }
+
+  async function shareFile(): Promise<void> {
+    if (totalRedactions() === 0) {
+      toast('Add at least one redaction before sharing.');
+      return;
+    }
+    if (typeof navigator.share !== 'function' || typeof navigator.canShare !== 'function') {
+      toast('This browser cannot share files directly. Download the file instead.');
+      return;
+    }
+
+    setShareMenu(false);
+    shareNativeBtn.disabled = true;
+    try {
+      const exported =
+        docKind === 'pdf' ? await buildPdfExport() : await buildImageExport();
+      const file = new File([exported.blob], exported.filename, {
+        type: exported.blob.type || 'application/octet-stream',
+      });
+
+      if (!navigator.canShare({ files: [file] })) {
+        toast('This browser cannot share this file. Download it instead.');
+        return;
+      }
+
+      await navigator.share({
+        files: [file],
+        title: 'Redacted with Redact',
+        text: 'Redacted with Redact. The original file was never uploaded.',
+      });
+      toast('Shared the redacted file.');
+    } catch (error) {
+      if ((error as DOMException | undefined)?.name === 'AbortError') return;
+      console.error(error);
+      toast('The file could not be shared. Download it instead.');
+    } finally {
+      shareNativeBtn.disabled = false;
+    }
+  }
+
+  async function copyPageLink(): Promise<void> {
+    const url = sharePageUrl();
+    setShareMenu(false);
+
+    try {
+      if (!navigator.clipboard) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(url);
+      toast('Link copied to the clipboard.');
+      return;
+    } catch {
+      /* Fall back to a temporary field. */
+    }
+
+    try {
+      const field = document.createElement('textarea');
+      field.value = url;
+      field.setAttribute('readonly', '');
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.appendChild(field);
+      field.select();
+      const copied = document.execCommand('copy');
+      field.remove();
+      if (!copied) throw new Error('Copy blocked');
+      toast('Link copied to the clipboard.');
+    } catch (error) {
+      console.error(error);
+      toast('The link could not be copied. Select it from the address bar instead.');
     }
   }
 
@@ -1801,6 +1943,21 @@ function setup(editor: HTMLElement) {
   verifyBtn.addEventListener('click', () => void runScan('verify'));
   downloadBtn.addEventListener('click', () => void download());
   copyBtn.addEventListener('click', () => void copyImage());
+  shareBtn.addEventListener('click', (event) => {
+    event.stopPropagation();
+    const open = shareMenu.hidden;
+    setShareMenu(open, open);
+  });
+  shareNativeBtn.addEventListener('click', () => void shareFile());
+  shareCopyBtn.addEventListener('click', () => void copyPageLink());
+  for (const link of shareLinks) {
+    link.addEventListener('click', () => setShareMenu(false));
+  }
+  document.addEventListener('click', (event) => {
+    if (shareMenu.hidden) return;
+    const target = event.target as Element | null;
+    if (!target?.closest('[data-share]')) setShareMenu(false);
+  });
   detectPrimary.addEventListener('click', () => applyFindings('selected'));
   detectAll.addEventListener('click', () => applyFindings('all'));
   detectDismiss.addEventListener('click', dismissFindings);
@@ -2136,6 +2293,11 @@ function setup(editor: HTMLElement) {
   });
 
   document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !shareMenu.hidden) {
+      setShareMenu(false);
+      shareBtn.focus();
+      return;
+    }
     if (!hasDoc || !editorInView()) return;
     const target = event.target as HTMLElement | null;
     if (target?.matches('input, textarea, select, [contenteditable="true"]')) return;
@@ -2227,6 +2389,10 @@ function setup(editor: HTMLElement) {
     });
   });
 
+  shareNativeBtn.hidden = !(
+    typeof navigator.share === 'function' && typeof navigator.canShare === 'function'
+  );
+  updateShareLinks();
   setMode('ink');
   setShapeKind('rect');
   refreshChrome();

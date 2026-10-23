@@ -49,9 +49,9 @@ export const homeEnUS: HomeContent = {
       copy: 'No email, no plan, no watermark.',
     },
     {
-      icon: 'wifi-off',
-      title: 'Works offline',
-      copy: 'Keep editing after the page loads.',
+      icon: 'globe',
+      title: 'Runs in your browser',
+      copy: 'Any modern browser works. Nothing to install.',
     },
   ],
   proof: {
@@ -231,7 +231,7 @@ export const homeEnUS: HomeContent = {
         title: 'Image redaction online, without the upload',
         paragraphs: [
           'Most image redaction online tools ask you to send the file to a server, wait for it to come back, and trust that the copy was deleted. This one is built the other way around. The browser decodes the image into a canvas in the current tab, keeps the pixels in memory, and draws every redaction locally. There is no upload endpoint, so there is no server copy to delete. The privacy page documents every request the site makes.',
-          'One set of requests worth knowing about is smart detection. On first use, the page downloads Tesseract.js, an English language model, and the MediaPipe face model. Your image is not part of those requests. Manual redaction, undo, copy, and export work without them, and once the page has loaded you can keep editing offline.',
+          'One set of requests worth knowing about is smart detection. On first use, the page downloads Tesseract.js, an English language model, and the MediaPipe face model. Your image is not part of those requests. Manual redaction, undo, copy, and export do not need the detectors, and you can watch every request in your browser’s Network tab.',
         ],
       },
       {

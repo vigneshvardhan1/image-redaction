@@ -22,7 +22,7 @@ export const aboutFrFR: AboutContent = {
   stats: [
     { value: '0', label: 'Fichiers envoyés' },
     { value: '0', label: 'Comptes requis' },
-    { value: '0', label: 'Traceurs ou analyse d’audience' },
+    { value: '1', label: 'Cookie fonctionnel de thème' },
     { value: '100%', label: 'Traitement dans votre navigateur' },
   ],
   why: {
@@ -102,7 +102,7 @@ export const aboutFrFR: AboutContent = {
   stack: {
     eyebrow: 'Sous le capot',
     title: 'Une architecture légère. Aucun service caché.',
-    copy: 'Le site est en HTML, CSS et JavaScript statiques. Il n’y a aucun backend qui reçoit des fichiers, aucun SDK d’analyse d’audience et aucun code publicitaire. Les éléments qui font le travail sont des API web ordinaires et des logiciels open source.',
+    copy: 'Le site est en HTML, CSS et JavaScript statiques. Il n’y a aucun backend qui reçoit des fichiers et aucune analyse d’audience de première partie. La publicité est facultative : lorsqu’elle est activée, Google AdSense se charge via la bannière de consentement décrite dans la Politique de confidentialité. Les éléments qui font le travail sont des API web ordinaires et des logiciels open source.',
     note: 'La détection intelligente et la prise en charge des PDF sont les fonctionnalités qui récupèrent du code après le chargement de la page. Elles chargent Tesseract.js, des données de langue, le modèle de visages MediaPipe et le moteur PDF auto-hébergé ; votre fichier reste dans l’onglet.',
     items: [
       { label: 'Astro', value: 'Pages et composants statiques' },

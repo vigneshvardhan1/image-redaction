@@ -76,12 +76,6 @@ export const comparisonRows: ComparisonRow[] = [
     desktop: 'Paid',
   },
   {
-    feature: 'Offline editing after load',
-    ours: 'Yes',
-    web: 'No',
-    desktop: 'Yes',
-  },
-  {
     feature: 'Batch queue',
     ours: 'Not yet',
     web: 'Varies',

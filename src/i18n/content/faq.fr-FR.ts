@@ -49,7 +49,7 @@ export const faqsFrFR: FaqItem[] = [
   {
     question: 'Redact utilise-t-il des cookies ou me suit-il ?',
     answer:
-      'Un seul cookie fonctionnel. Redact n’a ni analyse d’audience, ni pixels publicitaires, ni traceurs tiers, et votre image n’est jamais envoyée. L’unique cookie enregistre votre préférence de thème clair/sombre, avec une copie dans le stockage local, pour que la page n’affiche pas le mauvais thème lors de votre prochaine visite. Il ne contient aucune donnée personnelle, n’est jamais envoyé à un serveur et peut être supprimé dans les paramètres de votre navigateur à tout moment.',
+      'Votre choix de thème utilise un cookie fonctionnel, avec une copie dans le stockage local, pour que la page n’affiche pas le mauvais thème à votre prochaine visite. L’éditeur ne pose lui-même aucun cookie d’analyse ou de publicité. Lorsque la publicité est activée, Google AdSense peut utiliser des cookies ou des technologies similaires après votre acceptation de la bannière de consentement ; si vous refusez le stockage non essentiel, les annonces sont limitées à une diffusion non personnalisée. Vous pouvez modifier ce choix à tout moment via « Paramètres de confidentialité » dans le pied de page. Votre image n’est jamais envoyée, dans un cas comme dans l’autre.',
   },
 ];
 
@@ -70,9 +70,9 @@ export const privacyFaqsFrFR: FaqItem[] = [
       'Elle exécute l’OCR Tesseract dans un Web Worker au sein de votre navigateur, puis applique des contrôles de motifs : e-mails, numéros de carte valides au regard de Luhn, SSN, numéros Aadhaar, PAN, GSTIN, IBAN, numéros de téléphone, adresses IP, dates, mots-clés d’adresse et noms probables. « Détecter les visages » utilise le modèle BlazeFace de MediaPipe, également sur l’appareil. Chaque résultat est une suggestion que vous pouvez inclure ou exclure. Les deux détecteurs font au mieux : vérifiez donc les cadres et utilisez la vérification.',
   },
   {
-    question: 'Fonctionne-t-il hors ligne ?',
+    question: 'Fonctionne-t-il sans connexion Internet ?',
     answer:
-      'L’éditeur, oui. Une fois la page ouverte, vous pouvez continuer à caviarder sans connexion réseau. La détection intelligente a besoin du moteur OCR, du modèle anglais et du modèle de visages au premier usage ; votre navigateur peut les mettre en cache, mais ne comptez pas sur lui pour une première utilisation hors ligne. Le caviardage manuel, la copie et l’export fonctionnent tous hors ligne.',
+      'Non. Redact est un site web, pas une application installée : une connexion est nécessaire pour l’ouvrir et charger les modèles de détection. Il n’existe ni mode hors ligne ni service worker mettant les pages en cache pour une utilisation hors connexion. Si la connexion tombe pendant que la page est ouverte, le travail non enregistré reste dans l’onglet ; exportez avant de perdre le réseau.',
   },
   {
     question: 'Les données EXIF et GPS sont-elles supprimées ?',

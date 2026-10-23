@@ -30,9 +30,9 @@ export const faqs: FaqItem[] = [
       'If the scan is not sure whether a line is sensitive — or you simply want everything gone — choose All text. It covers every OCR line instead of only the sensitive matches. It is the bluntest, safest option for a busy screenshot.',
   },
   {
-    question: 'Does it work offline?',
+    question: 'Does it work without an internet connection?',
     answer:
-      'The editor does. Once the page is open, you can keep redacting without a network connection. Smart detection needs the OCR engine, English model, and face model on first use; your browser may cache them, but do not rely on that for a first offline run. Manual redactions, copy, and export all work offline.',
+      'No. Redact is a website, not an installed app, so you need a connection to open it and to fetch the detector models. There is no offline mode and no service worker caching pages for offline use. If the connection drops while the page is already open, unsaved work stays in the tab, but save your export before you lose the network.',
   },
   {
     question: 'Can blur or pixelation be reversed?',
@@ -130,7 +130,7 @@ export const homeFaqs: FaqItem[] = [
   {
     question: 'Does Redact use cookies or track me?',
     answer:
-      'Only a functional one. Redact has no analytics, advertising pixels, or third-party trackers, and your image is never uploaded. The one cookie stores your light/dark theme preference, alongside a local-storage copy, so the page does not flash the wrong theme on your next visit. It contains no personal data, is never sent to a server, and can be cleared in your browser settings at any time.',
+      'Your theme choice uses one functional cookie, alongside a local-storage copy, so the page does not flash the wrong theme on your next visit. The editor sets no analytics or advertising cookies of its own. When advertising is enabled, Google AdSense may use cookies or similar technologies after you accept the consent banner; if you reject non-essential storage, ads are limited to non-personalised delivery. You can change the choice any time through “Privacy settings” in the footer. Your image is never uploaded either way.',
   },
 ];
 

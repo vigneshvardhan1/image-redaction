@@ -49,7 +49,7 @@ export const faqsDeDE: FaqItem[] = [
   {
     question: 'Verwendet Redact Cookies oder verfolgt es mich?',
     answer:
-      'Nur ein funktionales. Redact hat keine Analysedienste, Werbepixel oder Tracker von Drittanbietern, und Ihr Bild wird nie hochgeladen. Das eine Cookie speichert Ihre Einstellung für das helle oder dunkle Design, zusammen mit einer Kopie im lokalen Speicher, damit die Seite bei Ihrem nächsten Besuch nicht kurz das falsche Design zeigt. Es enthält keine personenbezogenen Daten, wird nie an einen Server gesendet und kann jederzeit in Ihren Browsereinstellungen gelöscht werden.',
+      'Für Ihre Designwahl wird ein funktionales Cookie verwendet, zusammen mit einer Kopie im lokalen Speicher, damit die Seite beim nächsten Besuch nicht kurz das falsche Design zeigt. Der Editor selbst setzt keine Analyse- oder Werbe-Cookies. Wenn Werbung aktiviert ist, kann Google AdSense nach Ihrer Zustimmung im Consent-Banner Cookies oder ähnliche Technologien verwenden; wenn Sie nicht notwendige Speicherung ablehnen, werden Anzeigen nur ohne Personalisierung ausgeliefert. Sie können die Auswahl jederzeit über „Datenschutzeinstellungen“ in der Fußzeile ändern. Ihr Bild wird in beiden Fällen nie hochgeladen.',
   },
 ];
 
@@ -70,9 +70,9 @@ export const privacyFaqsDeDE: FaqItem[] = [
       'Sie führt Tesseract OCR in einem Web Worker in Ihrem Browser aus und wendet dann Musterprüfungen an: E-Mails, Luhn-gültige Kartennummern, SSNs, Aadhaar-Nummern, PANs, GSTINs, IBANs, Telefonnummern, IP-Adressen, Daten, Adressstichwörter und wahrscheinliche Namen. „Gesichter erkennen“ nutzt MediaPipes BlazeFace-Modell, ebenfalls auf dem Gerät. Jeder Fund ist ein Vorschlag, den Sie einbeziehen oder ausschließen können. Beide Detektoren liefern bestmögliche Ergebnisse, prüfen Sie daher die Rahmen und nutzen Sie die Überprüfung.',
   },
   {
-    question: 'Funktioniert es offline?',
+    question: 'Funktioniert es ohne Internetverbindung?',
     answer:
-      'Der Editor schon. Sobald die Seite geöffnet ist, können Sie ohne Netzwerkverbindung weiter schwärzen. Die intelligente Erkennung benötigt beim ersten Einsatz die OCR-Engine, das englische Modell und das Gesichtsmodell; Ihr Browser kann sie zwischenspeichern, aber verlassen Sie sich bei einem ersten Offline-Lauf nicht darauf. Manuelles Schwärzen, Kopieren und Exportieren funktionieren alle offline.',
+      'Nein. Redact ist eine Website und keine installierte App. Sie brauchen eine Verbindung, um die Seite zu öffnen und die Erkennungsmodelle zu laden. Es gibt keinen Offline-Modus und keinen Service Worker, der Seiten für die Offline-Nutzung zwischenspeichert. Wenn die Verbindung während einer geöffneten Seite ausfällt, bleibt Ihre ungespeicherte Arbeit im Tab; speichern Sie den Export, bevor das Netzwerk weg ist.',
   },
   {
     question: 'Werden EXIF- und GPS-Daten entfernt?',

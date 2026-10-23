@@ -1,6 +1,6 @@
 /**
- * PWA wiring: registers the service worker in production builds and lights up
- * the install button when the browser offers a native install prompt.
+ * Install-prompt wiring: lights up the install button when the browser offers
+ * a native install prompt. There is no service worker and no offline cache.
  *
  * The install event can fire before this module is attached, so BaseLayout
  * stashes it on `window.__redactInstallPrompt` and announces it with a custom
@@ -63,11 +63,3 @@ window.addEventListener('appinstalled', () => {
 });
 
 syncInstallButtons();
-
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((error) => {
-      console.warn('[pwa] the offline worker could not be registered.', error);
-    });
-  });
-}

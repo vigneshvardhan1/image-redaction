@@ -1,0 +1,48 @@
+---
+import { adsense } from '../config/ads';
+---
+
+{
+  adsense.enabled && (
+    <script is:inline define:vars={{ client: adsense.client }}>
+      (() => {
+        // Consent Mode v2 defaults must be in place before the AdSense tag
+        // loads. The stored choice is read directly here so a returning
+        // visitor does not briefly fall back to denied.
+        const KEY = 'ir-consent-v1';
+        let granted = false;
+        try {
+          const stored = JSON.parse(localStorage.getItem(KEY) || 'null');
+          granted = stored && stored.version === 1 && stored.choice === 'granted';
+        } catch {
+          /* Storage blocked: keep the denied default. */
+        }
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          window.dataLayer.push(arguments);
+        }
+        window.gtag = window.gtag || gtag;
+
+        const state = granted ? 'granted' : 'denied';
+        gtag('consent', 'default', {
+          ad_storage: state,
+          ad_user_data: state,
+          ad_personalization: state,
+          analytics_storage: 'denied',
+          functionality_storage: 'granted',
+          security_storage: 'granted',
+          wait_for_update: 500,
+        });
+
+        const script = document.createElement('script');
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        script.src =
+          'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' +
+          encodeURIComponent(client);
+        document.head.appendChild(script);
+      })();
+    </script>
+  )
+}

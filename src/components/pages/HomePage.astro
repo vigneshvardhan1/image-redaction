@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Button from '../Button.astro';
 import Icon from '../Icon.astro';
+import AdSlot from '../AdSlot.astro';
 import Redactor from '../Redactor.astro';
 import SectionHead from '../SectionHead.astro';
 import DetectionShowcase from '../DetectionShowcase.astro';
@@ -19,6 +20,7 @@ import { getHomeFaqs } from '../../i18n/content/faq';
 import { getGuides } from '../../i18n/content/guides';
 import { getFeaturesContent } from '../../i18n/content/features';
 import { buildFaqSchema } from '../../data/faq';
+import { adsense } from '../../config/ads';
 import { t } from '../../i18n/ui';
 
 interface Props {
@@ -240,6 +242,10 @@ const faqSchema = buildFaqSchema(homeFaqs);
       }
     </div>
   </section>
+
+  <div class="container-page mt-16 md:mt-24">
+    <AdSlot slot={adsense.slots.home} label={t(locale, 'ad.label')} />
+  </div>
 
   <section id="detection" class="container-page mt-20 scroll-mt-28 md:mt-28">
     <div class="rounded-panel bg-canvas-soft p-5 md:p-10 lg:p-12">

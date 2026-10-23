@@ -110,12 +110,6 @@ const deDE: ComparisonContent = {
       desktop: 'Kostenpflichtig',
     },
     {
-      feature: 'Offline-Bearbeitung nach dem Laden',
-      ours: 'Ja',
-      web: 'Nein',
-      desktop: 'Ja',
-    },
-    {
       feature: 'Stapelverarbeitung',
       ours: 'Noch nicht',
       web: 'Unterschiedlich',
@@ -204,12 +198,6 @@ const frFR: ComparisonContent = {
       ours: 'Gratuit',
       web: 'Gratuit ou payant',
       desktop: 'Payant',
-    },
-    {
-      feature: 'Édition hors ligne après chargement',
-      ours: 'Oui',
-      web: 'Non',
-      desktop: 'Oui',
     },
     {
       feature: 'File d’attente par lots',

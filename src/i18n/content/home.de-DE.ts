@@ -49,9 +49,9 @@ export const homeDeDE: HomeContent = {
       copy: 'Keine E-Mail, kein Tarif, kein Wasserzeichen.',
     },
     {
-      icon: 'wifi-off',
-      title: 'Funktioniert offline',
-      copy: 'Sie können nach dem Laden der Seite weiterarbeiten.',
+      icon: 'globe',
+      title: 'Läuft im Browser',
+      copy: 'Jeder moderne Browser reicht. Nichts zu installieren.',
     },
   ],
   proof: {
@@ -231,7 +231,7 @@ export const homeDeDE: HomeContent = {
         title: 'Bilder online schwärzen, ohne Upload',
         paragraphs: [
           'Die meisten Online-Werkzeuge zum Schwärzen von Bildern verlangen, dass Sie die Datei an einen Server senden, auf die Rückkehr warten und darauf vertrauen, dass die Kopie gelöscht wurde. Dieses Werkzeug ist umgekehrt gebaut. Der Browser dekodiert das Bild im aktuellen Tab in ein Canvas, hält die Pixel im Speicher und zeichnet jede Schwärzung lokal. Es gibt keinen Upload-Endpunkt und damit auch keine Serverkopie, die gelöscht werden müsste. Die Datenschutzseite dokumentiert jede Anfrage, die die Website stellt.',
-          'Eine Gruppe von Anfragen ist erwähnenswert: die Detektoren. Bei der ersten Nutzung lädt die Seite Tesseract.js, ein englisches Sprachmodell und das MediaPipe-Gesichtsmodell herunter. Ihr Bild ist nicht Teil dieser Anfragen. Manuelles Schwärzen, Rückgängig, Kopieren und Export funktionieren auch ohne. Sobald die Seite geladen ist, können Sie offline weiterarbeiten.',
+          'Eine Gruppe von Anfragen ist erwähnenswert: die Detektoren. Bei der ersten Nutzung lädt die Seite Tesseract.js, ein englisches Sprachmodell und das MediaPipe-Gesichtsmodell herunter. Ihr Bild ist nicht Teil dieser Anfragen. Manuelles Schwärzen, Rückgängig, Kopieren und Export benötigen die Detektoren nicht, und Sie können jede Anfrage im Netzwerk-Tab Ihres Browsers beobachten.',
         ],
       },
       {

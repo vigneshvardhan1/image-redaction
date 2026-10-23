@@ -17,7 +17,7 @@ export const aboutDeDE: AboutContent = {
   stats: [
     { value: '0', label: 'Hochgeladene Dateien' },
     { value: '0', label: 'Benötigte Konten' },
-    { value: '0', label: 'Tracker oder Analysedienste' },
+    { value: '1', label: 'Funktionales Design-Cookie' },
     { value: '100%', label: 'Verarbeitung in Ihrem Browser' },
   ],
   why: {
@@ -97,7 +97,7 @@ export const aboutDeDE: AboutContent = {
   stack: {
     eyebrow: 'Unter der Haube',
     title: 'Kleiner Stack. Kein versteckter Dienst.',
-    copy: 'Die Website besteht aus statischem HTML, CSS und JavaScript. Es gibt kein Backend, das Dateien empfängt, kein Analyse-SDK und keinen Werbecode. Die Komponenten, die die Arbeit erledigen, sind gewöhnliche Web-APIs und Open-Source-Software.',
+    copy: 'Die Website besteht aus statischem HTML, CSS und JavaScript. Es gibt kein Backend, das Dateien empfängt, und keine Analyse der ersten Partei. Werbung ist optional: Wenn sie aktiviert ist, lädt Google AdSense über den Consent-Banner, der in der Datenschutzerklärung beschrieben ist. Die Komponenten, die die Arbeit erledigen, sind gewöhnliche Web-APIs und Open-Source-Software.',
     note: 'Intelligente Erkennung und PDF-Unterstützung sind die Funktionen, die nach dem Laden der Seite zusätzlichen Code abrufen. Sie laden Tesseract.js, Sprachdaten, das MediaPipe-Gesichtsmodell und die selbst gehostete PDF-Engine; Ihre Datei bleibt im Tab.',
     items: [
       { label: 'Astro', value: 'Statische Seiten und Komponenten' },

@@ -1,7 +1,7 @@
 ---
 import LegalLayout from '../layouts/LegalLayout.astro';
 
-const updated = 'October 21, 2026';
+const updated = 'October 23, 2026';
 
 const toc = [
   { id: 'acceptance', label: 'Acceptance' },
@@ -10,6 +10,7 @@ const toc = [
   { id: 'acceptable-use', label: 'Acceptable use' },
   { id: 'no-professional-advice', label: 'No professional advice' },
   { id: 'intellectual-property', label: 'Intellectual property' },
+  { id: 'advertising', label: 'Advertising' },
   { id: 'third-parties', label: 'Third-party services' },
   { id: 'changes', label: 'Changes' },
   { id: 'disclaimer', label: 'Disclaimer' },
@@ -31,8 +32,8 @@ const schema = {
   name: 'Terms & Conditions',
   url: 'https://imageredaction.com/terms',
   description:
-    'The rules for using Redact: free to use, your images stay yours, and the tool is best-effort.',
-  dateModified: '2026-10-21',
+    'The rules for using Redact: free to use, your images stay yours, advertising is consent-controlled, and the tool is best-effort.',
+  dateModified: '2026-10-23',
   publisher: {
     '@type': 'Organization',
     name: 'Redact',
@@ -72,9 +73,9 @@ const schema = {
     <h2>The service</h2>
     <p>
       Redact is a free, browser-based tool for covering parts of images. It runs on your
-      device, requires no account, and does not upload your files. The current version
-      is provided free of charge. If paid features are introduced, their prices and
-      terms will be shown before any purchase.
+      device, requires an internet connection and no account, and does not upload your
+      files. The current version is provided free of charge. If paid features are
+      introduced, their prices and terms will be shown before any purchase.
     </p>
     <p>
       We may add, change, suspend, or discontinue any part of the service at any time.
@@ -161,18 +162,35 @@ const schema = {
     </p>
   </section>
 
+  <section id="advertising">
+    <h2>Advertising</h2>
+    <p>
+      The service is free. Advertising may be enabled to support it. When advertising
+      is enabled, ads are served by Google AdSense under the consent banner described
+      in the <a href="/privacy-policy#advertising">Privacy Policy</a>. Advertising is
+      optional: rejecting non-essential storage does not block the editor.
+    </p>
+    <p>
+      Ads are provided by third parties. We do not control which ads appear, and an ad
+      does not mean we endorse the product or service it promotes. Any transaction you
+      enter into with an advertiser is between you and that advertiser.
+    </p>
+  </section>
+
   <section id="third-parties">
     <h2>Third-party services</h2>
     <p>
       Smart detection loads the Tesseract.js library and language data from jsDelivr,
       and Detect faces loads the MediaPipe vision library from jsDelivr plus a small
-      face model from Google Cloud Storage. Those services have their own terms and
-      privacy practices, and their availability is outside our control. We are not
-      responsible for third-party services or for the content of external sites we
-      link to.
+      face model from Google Cloud Storage. When advertising is enabled, the page also
+      loads Google AdSense from Google’s advertising domains. Those services have their
+      own terms and privacy practices, and their availability is outside our control.
+      We are not responsible for third-party services or for the content of external
+      sites we link to.
     </p>
     <p>
-      Manual redaction, copy, and export do not depend on those third-party requests.
+      Manual redaction, copy, and export do not depend on the detection, PDF, or
+      advertising requests.
     </p>
   </section>
 

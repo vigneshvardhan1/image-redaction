@@ -22,7 +22,7 @@ export const privacyEnUS: PrivacyContent = {
   },
   policyNotice:
     'This page explains how the editor handles your file. For the formal policy — cookies, hosting logs, and your rights — read the Privacy Policy.',
-  badges: ['No image or PDF uploads', 'No account', 'No analytics', 'No tracking cookies'],
+  badges: ['No image or PDF uploads', 'No account', 'One functional cookie', 'Ads only with consent'],
   flow: {
     eyebrow: 'Data flow',
     title: 'The whole trip happens inside the page.',
@@ -70,6 +70,12 @@ export const privacyEnUS: PrivacyContent = {
         contains: 'HTML, CSS, JavaScript, and the self-hosted Inter font. No file data.',
       },
       {
+        request: 'Google AdSense (when enabled)',
+        when: 'After the page loads, if advertising is configured',
+        contains:
+          'The ad script, ad units, and consent signals. It may set or read cookies after you accept the consent banner. No file data.',
+      },
+      {
         request: 'Tesseract.js',
         when: 'First time you run Smart detect',
         contains: 'The OCR library from jsDelivr. No file data.',
@@ -115,7 +121,7 @@ export const privacyEnUS: PrivacyContent = {
       'Open your browser’s developer tools and switch to the Network tab. Clear the list.',
       'Load an image or PDF and draw a few boxes. Watch the request list: no upload request appears.',
       'Run Smart detect or Detect faces, or open a PDF. You will see requests for the OCR, face, or PDF engine. Your file is not among them.',
-      'Disconnect from the internet. Manual redaction, copy, and download still work because the pixels are already local.',
+      'Check the full request list for an upload. The only requests are for code, fonts, models, and — if advertising is enabled — Google AdSense. Your file is never among them.',
       'Open the downloaded file’s properties. There is no camera, GPS, or device metadata field to find.',
     ],
   },
@@ -133,7 +139,7 @@ export const privacyEnUS: PrivacyContent = {
     {
       icon: 'code',
       title: 'Open to inspection',
-      copy: 'The editor is plain JavaScript and canvas. There is no hidden native layer. Use the network tab, read the request list, and test the offline behaviour.',
+      copy: 'The editor is plain JavaScript and canvas. There is no hidden native layer. Use the network tab, read the request list, and watch what the page fetches.',
     },
   ],
   faq: {

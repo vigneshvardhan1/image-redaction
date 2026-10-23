@@ -1,0 +1,68 @@
+---
+import { adsense } from '../config/ads';
+import type { Locale } from '../i18n/config';
+import { t } from '../i18n/ui';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = 'en-US' } = Astro.props;
+---
+
+{
+  adsense.enabled && (
+    <aside
+      data-consent-banner
+      hidden
+      role="dialog"
+      aria-labelledby="consent-title"
+      aria-describedby="consent-copy"
+      class="fixed inset-x-2 bottom-2 z-[90] mx-auto max-w-xl rounded-card border border-hairline bg-canvas p-4 shadow-2xl shadow-ink/10 md:bottom-4 md:p-5"
+    >
+      <p
+        id="consent-title"
+        class="flex items-center gap-2 text-[12px] font-heading leading-none text-ink"
+      >
+        <span class="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden="true"></span>
+        {t(locale, 'consent.title')}
+      </p>
+      <p id="consent-copy" class="mt-2.5 text-[12px] leading-relaxed text-muted">
+        {t(locale, 'consent.copy')}
+        <a
+          href="/privacy-policy"
+          class="font-heading text-ink underline decoration-hairline underline-offset-2 hover:decoration-ink"
+        >
+          {t(locale, 'footer.privacyPolicy')}
+        </a>
+      </p>
+      <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <button
+          type="button"
+          data-consent-accept
+          class="inline-flex h-9 items-center justify-center rounded-full bg-ink px-4 text-[12px] font-heading text-on-ink transition-colors hover:bg-ink-soft"
+        >
+          {t(locale, 'consent.accept')}
+        </button>
+        <button
+          type="button"
+          data-consent-reject
+          class="inline-flex h-9 items-center justify-center rounded-full border border-hairline bg-canvas px-4 text-[12px] font-heading text-ink transition-colors hover:bg-canvas-soft"
+        >
+          {t(locale, 'consent.reject')}
+        </button>
+        <p class="text-[10px] leading-snug text-faint sm:ml-auto sm:max-w-[13rem]">
+          {t(locale, 'consent.note')}
+        </p>
+      </div>
+    </aside>
+  )
+}
+
+{
+  adsense.enabled && (
+    <script>
+      import '../scripts/consent';
+    </script>
+  )
+}

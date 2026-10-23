@@ -46,11 +46,18 @@ export interface UIStrings {
   'footer.privacyPolicy': string;
   'footer.terms': string;
   'footer.verify': string;
-  'footer.noTrackingCookies': string;
-  'footer.noTrackers': string;
   'footer.noUploads': string;
+  'footer.noAccount': string;
+  'footer.privacySettings': string;
   'footer.backToTop': string;
   'footer.rights': string;
+
+  'consent.title': string;
+  'consent.copy': string;
+  'consent.accept': string;
+  'consent.reject': string;
+  'consent.note': string;
+  'ad.label': string;
 
   'common.openEditor': string;
   'common.redactImage': string;
@@ -153,11 +160,19 @@ const enUS: UIStrings = {
   'footer.privacyPolicy': 'Privacy Policy',
   'footer.terms': 'Terms & Conditions',
   'footer.verify': 'Verify our claims',
-  'footer.noTrackingCookies': 'No tracking cookies.',
-  'footer.noTrackers': 'No trackers.',
   'footer.noUploads': 'No uploads.',
+  'footer.noAccount': 'No account.',
+  'footer.privacySettings': 'Privacy settings',
   'footer.backToTop': 'Back to top',
   'footer.rights': 'All rights reserved.',
+
+  'consent.title': 'Your privacy choice',
+  'consent.copy':
+    'Redact uses Google AdSense to show ads when advertising is enabled. With your permission, Google and its partners may use cookies or similar technologies to personalise ads and measure them. You can accept or reject; the editor works either way.',
+  'consent.accept': 'Accept ads',
+  'consent.reject': 'Reject non-essential',
+  'consent.note': 'You can change this later with “Privacy settings” in the footer.',
+  'ad.label': 'Advertisement',
 
   'common.openEditor': 'Open the editor',
   'common.redactImage': 'Redact an image',
@@ -283,11 +298,20 @@ const deDE: UIStrings = {
   'footer.privacyPolicy': 'Datenschutzerklärung',
   'footer.terms': 'Allgemeine Geschäftsbedingungen',
   'footer.verify': 'Unsere Aussagen prüfen',
-  'footer.noTrackingCookies': 'Keine Tracking-Cookies.',
-  'footer.noTrackers': 'Keine Tracker.',
   'footer.noUploads': 'Keine Uploads.',
+  'footer.noAccount': 'Kein Konto.',
+  'footer.privacySettings': 'Datenschutzeinstellungen',
   'footer.backToTop': 'Nach oben',
   'footer.rights': 'Alle Rechte vorbehalten.',
+
+  'consent.title': 'Ihre Datenschutzauswahl',
+  'consent.copy':
+    'Redact verwendet Google AdSense, um Anzeigen zu zeigen, wenn Werbung aktiviert ist. Mit Ihrer Erlaubnis können Google und seine Partner Cookies oder ähnliche Technologien verwenden, um Anzeigen zu personalisieren und zu messen. Sie können zustimmen oder ablehnen; der Editor funktioniert in beiden Fällen.',
+  'consent.accept': 'Anzeigen zustimmen',
+  'consent.reject': 'Nicht notwendige ablehnen',
+  'consent.note':
+    'Sie können dies später über „Datenschutzeinstellungen“ in der Fußzeile ändern.',
+  'ad.label': 'Anzeige',
 
   'common.openEditor': 'Editor öffnen',
   'common.redactImage': 'Bild redigieren',
@@ -396,11 +420,20 @@ const frFR: UIStrings = {
   'footer.privacyPolicy': 'Politique de confidentialité',
   'footer.terms': 'Conditions générales',
   'footer.verify': 'Vérifier nos affirmations',
-  'footer.noTrackingCookies': 'Aucun cookie de suivi.',
-  'footer.noTrackers': 'Aucun traceur.',
   'footer.noUploads': 'Aucun envoi.',
+  'footer.noAccount': 'Aucun compte.',
+  'footer.privacySettings': 'Paramètres de confidentialité',
   'footer.backToTop': 'Retour en haut',
   'footer.rights': 'Tous droits réservés.',
+
+  'consent.title': 'Votre choix de confidentialité',
+  'consent.copy':
+    'Redact utilise Google AdSense pour afficher des annonces lorsque la publicité est activée. Avec votre autorisation, Google et ses partenaires peuvent utiliser des cookies ou des technologies similaires pour personnaliser et mesurer les annonces. Vous pouvez accepter ou refuser ; l’éditeur fonctionne dans les deux cas.',
+  'consent.accept': 'Accepter les annonces',
+  'consent.reject': 'Refuser le non-essentiel',
+  'consent.note':
+    'Vous pourrez changer ce choix plus tard via « Paramètres de confidentialité » dans le pied de page.',
+  'ad.label': 'Publicité',
 
   'common.openEditor': "Ouvrir l'éditeur",
   'common.redactImage': 'Caviarder une image',
