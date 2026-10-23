@@ -8,6 +8,10 @@ import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist';
 let pdfjsPromise: Promise<typeof import('pdfjs-dist')> | null = null;
 
 export const PDF_EDIT_MAX_EDGE = 1800;
+/**
+ * Export resolution. A4 comes out at ~180 DPI: sharp for reading, printing,
+ * and zooming, without the memory and JPEG-encoding cost of a 300 DPI scan.
+ */
 export const PDF_EXPORT_MAX_EDGE = 2400;
 export const PDF_EXPORT_SCALE = 2.5;
 
@@ -54,7 +58,7 @@ export async function renderPdfPage(
   canvas.width = Math.max(1, Math.round(viewport.width));
   canvas.height = Math.max(1, Math.round(viewport.height));
 
-  const context = canvas.getContext('2d');
+  const context = canvas.getContext('2d', { alpha: false });
   if (!context) throw new Error('Canvas is unavailable in this browser');
 
   context.fillStyle = '#ffffff';

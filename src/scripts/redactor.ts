@@ -154,6 +154,9 @@ function setup(editor: HTMLElement) {
   let pdfDestroy: (() => Promise<void>) | null = null;
   let pdfGeneration = 0;
   let pdfObserver: IntersectionObserver | null = null;
+  /** The last finished PDF export. Re-download or share is instant while the
+   *  document and its redactions are unchanged. */
+  let pdfExportCache: { key: string; blob: Blob; filename: string } | null = null;
   let pageIndex = 0;
   let pages: PageState[] = [createPageState()];
   let imageName = 'image';
@@ -500,6 +503,9 @@ function setup(editor: HTMLElement) {
   }
 
   function commitHistory(): void {
+    // Any committed edit makes the flattened export stale; release the blob
+    // now instead of keeping a large PDF alive until the next download.
+    pdfExportCache = null;
     history = history.slice(0, historyIndex + 1);
     history.push(cloneShapes());
     historyIndex = history.length - 1;
@@ -1080,15 +1086,69 @@ function setup(editor: HTMLElement) {
     window.setTimeout(() => URL.revokeObjectURL(url), 1200);
   }
 
+  /** Identifies the current PDF pixels and redactions. Any edit changes it. */
+  function pdfExportKey(): string {
+    const parts: string[] = [String(pdfGeneration)];
+    for (const page of pages) {
+      parts.push(
+        page.shapes
+          .map(
+            (shape) =>
+              `${shape.id}:${shape.mode}:${shape.kind}:${shape.x}:${shape.y}:${shape.w}:${shape.h}:${
+                shape.emoji ?? ''
+              }`
+          )
+          .join(',')
+      );
+    }
+    return parts.join('|');
+  }
+
+  /** Stops the lazy view renderer from competing with an export for the same
+   *  pages (and from touching a page while it is being cleaned up). */
+  function pausePdfViewRendering(): void {
+    pdfObserver?.disconnect();
+  }
+
+  function resumePdfViewRendering(): void {
+    if (!pdfObserver) return;
+    pages.forEach((page) => {
+      if (page.sheet) pdfObserver?.observe(page.sheet);
+    });
+  }
+
+  /** JPEG encoding dominates export time. One page renders while the next
+   *  encodes; two in flight keeps the encoder busy without piling up the
+   *  ~12 MB canvases a wider pool would hold on a phone. */
+  function pdfEncodeConcurrency(): number {
+    const device = navigator as Navigator & { deviceMemory?: number };
+    const cores = navigator.hardwareConcurrency || 4;
+    const memory = device.deviceMemory ?? 4;
+    return Math.max(1, Math.min(2, Math.floor(cores / 2), Math.floor(memory / 2)));
+  }
+
   /**
    * Flattens every PDF page into an image and assembles a fresh document.
    * Pages that were never opened are still rasterized, so no page keeps an
    * original text layer or hidden object.
+   *
+   * Performance notes: one pristine source canvas is reused for every page,
+   * then composited into a small pool of output canvases whose JPEGs encode
+   * concurrently. Keeping the source pristine matters for correctness: blur
+   * and pixelate sample original pixels, so overlapping redactions must not
+   * sample each other. The view renderer is paused so it does not rasterize
+   * the same pages again, and each page's PDF.js resources are released as
+   * soon as it has been composited.
    */
   async function buildPdfExport(): Promise<{ blob: Blob; filename: string }> {
     if (!pdfDoc) throw new Error('No PDF is open');
     if (totalRedactions() === 0) throw new Error('No redactions');
     syncPageState();
+
+    const key = pdfExportKey();
+    if (pdfExportCache?.key === key) {
+      return { blob: pdfExportCache.blob, filename: pdfExportCache.filename };
+    }
 
     setBusy(
       true,
@@ -1099,9 +1159,36 @@ function setup(editor: HTMLElement) {
     downloadBtn.disabled = true;
     shareBtn.disabled = true;
     updatePageChrome();
+    pausePdfViewRendering();
+    // Let an in-flight lazy render finish before any page is cleaned up.
+    await Promise.allSettled(pages.map((page) => page.renderPromise));
+
+    const source = document.createElement('canvas');
+    source.width = 1;
+    source.height = 1;
+
+    const encodeLimit = pdfEncodeConcurrency();
+    let activeEncodes = 0;
+    const encodeWaiters: Array<() => void> = [];
+    const outputPool: HTMLCanvasElement[] = [];
+    /** Waits for an encode slot; each slot keeps one full-size canvas alive. */
+    const acquireEncodeSlot = async (): Promise<void> => {
+      if (activeEncodes < encodeLimit) {
+        activeEncodes += 1;
+        return;
+      }
+      await new Promise<void>((resolve) => encodeWaiters.push(resolve));
+      activeEncodes += 1;
+    };
+    const releaseEncodeSlot = (): void => {
+      activeEncodes -= 1;
+      encodeWaiters.shift()?.();
+    };
+
+    let encodes: Promise<void>[] = [];
 
     try {
-      const rendered: PdfImagePage[] = [];
+      const rendered: PdfImagePage[] = new Array(pages.length);
       for (let index = 0; index < pages.length; index += 1) {
         const progress = 4 + (index / pages.length) * 88;
         setBusy(
@@ -1111,28 +1198,29 @@ function setup(editor: HTMLElement) {
           'PDF pages are rendered locally. The original file is never uploaded.'
         );
 
+        const state = pages[index];
         const page = await pdfDoc.getPage(index + 1);
         const base = page.getViewport({ scale: 1 });
-        const exportScale = pageScale(
-          { width: base.width, height: base.height },
-          PDF_EXPORT_MAX_EDGE,
-          PDF_EXPORT_SCALE
-        );
+        const width = base.width;
+        const height = base.height;
 
-        const source = document.createElement('canvas');
+        const exportScale = pageScale({ width, height }, PDF_EXPORT_MAX_EDGE, PDF_EXPORT_SCALE);
         await renderPdfPage(page, source, exportScale);
 
-        const state = pages[index];
         const factor = state.viewScale > 0 ? exportScale / state.viewScale : 1;
-        const scaledShapes = state.shapes.map((shape) => ({
-          ...shape,
-          x: shape.x * factor,
-          y: shape.y * factor,
-          w: shape.w * factor,
-          h: shape.h * factor,
-        }));
+        const scaledShapes =
+          factor === 1
+            ? state.shapes
+            : state.shapes.map((shape) => ({
+                ...shape,
+                x: shape.x * factor,
+                y: shape.y * factor,
+                w: shape.w * factor,
+                h: shape.h * factor,
+              }));
 
-        const output = document.createElement('canvas');
+        await acquireEncodeSlot();
+        const output = outputPool.pop() ?? document.createElement('canvas');
         renderScene({
           canvas: output,
           source,
@@ -1142,11 +1230,25 @@ function setup(editor: HTMLElement) {
           background: '#ffffff',
         });
 
-        rendered.push({
-          data: await canvasToJpeg(output, 0.92),
-          width: base.width,
-          height: base.height,
-        });
+        encodes.push(
+          canvasToJpeg(output, 0.92)
+            .then((data) => {
+              rendered[index] = { data, width, height };
+            })
+            .finally(() => {
+              outputPool.push(output);
+              releaseEncodeSlot();
+            })
+        );
+
+        // The composited pixels no longer depend on the parsed page. Release
+        // them now so the next page does not add to the parsed-page footprint.
+        // Best effort: a failed cleanup must never lose the export.
+        try {
+          page.cleanup();
+        } catch {
+          // Ignore: pdf.js will release the page with the document.
+        }
       }
 
       setBusy(
@@ -1155,9 +1257,33 @@ function setup(editor: HTMLElement) {
         94,
         'PDF pages are rendered locally. The original file is never uploaded.'
       );
+      // A failed encode must still wait for the others so the finally block
+      // never resizes a canvas that is being encoded.
+      const settled = await Promise.allSettled(encodes);
+      const failure = settled.find((result) => result.status === 'rejected');
+      if (failure?.status === 'rejected') throw failure.reason;
+
       const blob = await buildPdf(rendered);
-      return { blob, filename: `${baseName()}-redacted.pdf` };
+      const filename = `${baseName()}-redacted.pdf`;
+      // Keep re-download immediate for normal documents. Very large exports
+      // are not retained: a second full PDF blob can exhaust a phone tab.
+      if (blob.size <= 32 * 1024 * 1024) {
+        pdfExportCache = { key, blob, filename };
+      }
+      return { blob, filename };
     } finally {
+      await Promise.allSettled(encodes);
+      // Drop the page pixels before the blob goes to the download/share sheet.
+      // A 50-page document would otherwise hold several canvases plus the
+      // encoded pages until the tab is closed.
+      for (const canvas of outputPool) {
+        canvas.width = 1;
+        canvas.height = 1;
+      }
+      outputPool.length = 0;
+      source.width = 1;
+      source.height = 1;
+      resumePdfViewRendering();
       setBusy(false);
       refreshChrome();
     }
@@ -1377,6 +1503,7 @@ function setup(editor: HTMLElement) {
 
     // Release the old stack before replacing the page state it points at.
     teardownPdfView();
+    pdfExportCache = null;
     docKind = kind;
     stage.dataset.mode = kind;
     pageIndex = 0;
